@@ -1,53 +1,50 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { connectDB } from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import postRoutes from './routes/postRoutes.js';
+import friendRoutes from './routes/friendRoutes.js';
+import storyRoutes from './routes/storyRoutes.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Connect to MongoDB
+connectDB();
+
 // Middleware
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  })
+);
 app.use(express.json());
 
 // Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/friends', friendRoutes);
+app.use('/api/stories', storyRoutes);
+
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    service: 'Kite API',
+    service: 'Kite Social Platform API',
     uptime: `${Math.floor(process.uptime())}s`,
-    message: 'Backend server is running smoothly',
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/api/info', (req, res) => {
-  res.json({
-    name: 'Kite Backend Service',
-    version: '1.0.0',
-    framework: 'Express 4.21',
-    nodeVersion: process.version,
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
-
-app.post('/api/echo', (req, res) => {
-  res.json({
-    status: 'received',
-    data: req.body,
-    receivedAt: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
 app.get('/', (req, res) => {
-  res.send('Kite API is running. Visit /api/health for system status.');
+  res.send('Kite Social Platform API is live. Health check at /api/health');
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Kite Server running on port ${PORT}`);
 });
