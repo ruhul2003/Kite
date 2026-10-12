@@ -9,6 +9,7 @@ export const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(uri, {
+      dbName: 'kite',
       serverSelectionTimeoutMS: 5000,
     });
     console.log(`MongoDB connected successfully: ${conn.connection.host}`);
