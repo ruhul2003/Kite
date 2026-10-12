@@ -1,25 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
-  Video,
+  Mic,
+  MicOff,
+  Code,
   Image as ImageIcon,
-  Smile,
+  BarChart2,
   X,
+  Sparkles,
   Globe,
   Users,
   Lock,
-  Sparkles,
+  Play,
+  Square,
   Check,
   Palette,
+  FileCode,
+  Layers,
 } from "lucide-react";
 import { COLOR_BACKGROUNDS, FEELING_PRESETS } from "../data/mockData";
 
 const SAMPLE_PHOTO_PRESETS = [
-  { name: "Workspace", url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1000&auto=format&fit=crop&q=80" },
-  { name: "Sunset Beach", url: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1000&auto=format&fit=crop&q=80" },
-  { name: "Healthy Food", url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1000&auto=format&fit=crop&q=80" },
-  { name: "AI & Tech", url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1000&auto=format&fit=crop&q=80" },
+  { name: "Cyber Workspace", url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1000&auto=format&fit=crop&q=80" },
+  { name: "Golden Sunset", url: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1000&auto=format&fit=crop&q=80" },
+  { name: "Healthy Craft", url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1000&auto=format&fit=crop&q=80" },
+  { name: "Neural AI", url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1000&auto=format&fit=crop&q=80" },
 ];
 
 export default function CreatePostBox({
@@ -28,23 +34,72 @@ export default function CreatePostBox({
   isOpen,
   setIsOpen,
 }) {
+  const [activeTab, setActiveTab] = useState("thought"); // 'thought' | 'audio' | 'code' | 'poll'
   const [content, setContent] = useState("");
   const [privacy, setPrivacy] = useState("public");
-  const [selectedFeeling, setSelectedFeeling] = useState(null);
   const [selectedGradient, setSelectedGradient] = useState("none");
   const [selectedImage, setSelectedImage] = useState(null);
-  const [showFeelingPicker, setShowFeelingPicker] = useState(false);
-  const [showColorPicker, setShowColorPicker] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
+
+  // Voice Spark Recorder State
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [hasRecordedAudio, setHasRecordedAudio] = useState(false);
+  const [recordedAudioTitle, setRecordedAudioTitle] = useState("Voice Thought on Focus");
+  const recordTimerRef = useRef(null);
+
+  // Code Snippet State
+  const [codeLanguage, setCodeLanguage] = useState("typescript");
+  const [codeFilename, setCodeFilename] = useState("spark.ts");
+  const [codeContent, setCodeContent] = useState("");
+
+  // Poll State
+  const [pollQuestion, setPollQuestion] = useState("");
+  const [pollOptions, setPollOptions] = useState([
+    { id: "opt-1", text: "" },
+    { id: "opt-2", text: "" },
+  ]);
+
+  // Voice recording timer simulation
+  useEffect(() => {
+    if (isRecording) {
+      recordTimerRef.current = setInterval(() => {
+        setRecordingSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+    }
+    return () => {
+      if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+    };
+  }, [isRecording]);
+
+  const handleStartRecord = () => {
+    setIsRecording(true);
+    setRecordingSeconds(0);
+    setHasRecordedAudio(false);
+  };
+
+  const handleStopRecord = () => {
+    setIsRecording(false);
+    setHasRecordedAudio(true);
+  };
 
   const resetForm = () => {
     setContent("");
-    setSelectedFeeling(null);
     setSelectedGradient("none");
     setSelectedImage(null);
-    setShowFeelingPicker(false);
-    setShowColorPicker(false);
     setShowImagePicker(false);
+    setIsRecording(false);
+    setRecordingSeconds(0);
+    setHasRecordedAudio(false);
+    setCodeContent("");
+    setPollQuestion("");
+    setPollOptions([
+      { id: "opt-1", text: "" },
+      { id: "opt-2", text: "" },
+    ]);
+    setActiveTab("thought");
   };
 
   const handleClose = () => {
@@ -54,7 +109,52 @@ export default function CreatePostBox({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!content.trim() && !selectedImage) return;
+    if (!content.trim() && !selectedImage && !hasRecordedAudio && !codeContent.trim() && !pollQuestion.trim()) {
+      return;
+    }
+
+    let vibeTag = "spark";
+    let audioSpark = null;
+    let codeSnippet = null;
+    let poll = null;
+    let feeling = null;
+
+    if (hasRecordedAudio) {
+      vibeTag = "audio";
+      feeling = { emoji: "🎙️", text: "recorded an Audio Spark" };
+      audioSpark = {
+        title: recordedAudioTitle || "Audio Reflection",
+        duration: `0:${recordingSeconds < 10 ? "0" : ""}${recordingSeconds || 28}`,
+        recordedAt: "Just now",
+        waves: [30, 45, 60, 80, 50, 70, 90, 85, 60, 40, 75, 90, 65, 45, 55, 70, 40, 20],
+      };
+    } else if (codeContent.trim()) {
+      vibeTag = "code";
+      feeling = { emoji: "💻", text: "shared a code snippet" };
+      codeSnippet = {
+        language: codeLanguage,
+        filename: codeFilename || `snippet.${codeLanguage === "typescript" ? "ts" : "js"}`,
+        code: codeContent.trim(),
+      };
+    } else if (pollQuestion.trim()) {
+      vibeTag = "poll";
+      feeling = { emoji: "📊", text: "created a Vibe Poll" };
+      const validOptions = pollOptions
+        .filter((o) => o.text.trim())
+        .map((o, idx) => ({
+          id: `opt-${idx + 1}`,
+          text: o.text.trim(),
+          votes: 1,
+          percentage: 0,
+        }));
+      poll = {
+        id: `poll-${Date.now()}`,
+        question: pollQuestion.trim(),
+        totalVotes: validOptions.length,
+        userVotedOptionId: null,
+        options: validOptions,
+      };
+    }
 
     const newPost = {
       id: `post-${Date.now()}`,
@@ -63,14 +163,20 @@ export default function CreatePostBox({
         name: currentUser.name,
         avatar: currentUser.avatar,
         isVerified: !currentUser.isGuest,
+        role: currentUser.work || "Creator",
+        vibe: "⚡ Building",
       },
       timestamp: "Just now",
       privacy,
-      feeling: selectedFeeling,
+      vibeTag,
+      feeling,
       bgGradient: selectedGradient !== "none" ? COLOR_BACKGROUNDS.find((b) => b.id === selectedGradient)?.class : null,
       content: content.trim(),
       media: selectedImage ? [{ type: "image", url: selectedImage, caption: "" }] : [],
-      reactions: { like: 0, love: 0, care: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
+      audioSpark,
+      codeSnippet,
+      poll,
+      reactions: { spark: 0, insight: 0, fire: 0, vibe: 0, liftoff: 0, zen: 0 },
       userReaction: null,
       sharesCount: 0,
       isSaved: false,
@@ -95,305 +201,400 @@ export default function CreatePostBox({
 
   return (
     <>
-      {/* TRIGGER CARD */}
-      <div className="bg-white dark:bg-[#242526] rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/60 p-3.5 mb-4 select-none">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-zinc-100 dark:border-zinc-700/60">
+      {/* TRIGGER COMPOSER CARD (Feed view) */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 p-4 mb-4 select-none transition">
+        <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
           <img
             src={currentUser?.avatar}
             alt={currentUser?.name}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-10 h-10 rounded-2xl object-cover ring-2 ring-indigo-500/20"
           />
           <button
-            onClick={() => setIsOpen(true)}
-            className="flex-1 text-left px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200/80 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] rounded-full text-zinc-500 dark:text-zinc-400 text-sm font-medium transition cursor-pointer"
+            onClick={() => {
+              setActiveTab("thought");
+              setIsOpen(true);
+            }}
+            className="flex-1 text-left px-4 py-2.5 bg-slate-100/80 hover:bg-slate-200/60 dark:bg-slate-800/80 dark:hover:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium transition cursor-pointer"
           >
-            What&apos;s on your mind, {currentUser?.name?.split(" ")[0]}?
+            Drop a spark or voice note, {currentUser?.name?.split(" ")[0]}...
           </button>
         </div>
 
-        {/* 3 Facebook Action Buttons */}
-        <div className="grid grid-cols-3 gap-1 pt-2">
+        {/* 4 Feature Composer Buttons (Distinct from Facebook) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-2.5">
           <button
             onClick={() => {
+              setActiveTab("audio");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-zinc-600 dark:text-zinc-300 font-semibold text-xs"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-rose-500 font-semibold text-xs cursor-pointer"
           >
-            <Video className="w-5 h-5 text-rose-500" />
-            <span>Live video</span>
+            <Mic className="w-4 h-4" />
+            <span>Voice Spark</span>
           </button>
 
           <button
             onClick={() => {
+              setActiveTab("code");
               setIsOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-cyan-500 font-semibold text-xs cursor-pointer"
+          >
+            <Code className="w-4 h-4" />
+            <span>Code Block</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab("poll");
+              setIsOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-indigo-500 font-semibold text-xs cursor-pointer"
+          >
+            <BarChart2 className="w-4 h-4" />
+            <span>Vibe Poll</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab("thought");
               setShowImagePicker(true);
-            }}
-            className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-zinc-600 dark:text-zinc-300 font-semibold text-xs"
-          >
-            <ImageIcon className="w-5 h-5 text-emerald-500" />
-            <span>Photo/video</span>
-          </button>
-
-          <button
-            onClick={() => {
               setIsOpen(true);
-              setShowFeelingPicker(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-zinc-600 dark:text-zinc-300 font-semibold text-xs"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-emerald-500 font-semibold text-xs cursor-pointer"
           >
-            <Smile className="w-5 h-5 text-amber-500" />
-            <span>Feeling/activity</span>
+            <ImageIcon className="w-4 h-4" />
+            <span>Media</span>
           </button>
         </div>
       </div>
 
-      {/* CREATE POST MODAL */}
+      {/* FULL MODAL COMPOSER */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div
-            className="w-full max-w-lg bg-white dark:bg-[#242526] rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700/60 overflow-hidden flex flex-col text-zinc-900 dark:text-[#e4e6eb] max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="relative flex items-center justify-center px-4 py-3.5 border-b border-zinc-200 dark:border-zinc-700/60">
-              <h3 className="font-bold text-base">Create post</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="relative px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                  Compose a Kite Spark
+                </h3>
+              </div>
               <button
                 onClick={handleClose}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-zinc-100 dark:bg-[#3a3b3c] hover:bg-zinc-200 dark:hover:bg-[#4e4f50] flex items-center justify-center text-zinc-600 dark:text-zinc-200 transition"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Author info & Privacy selector */}
-            <div className="p-4 overflow-y-auto space-y-3.5 flex-1">
+            {/* Author & Privacy Bar */}
+            <div className="p-4 pb-2 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img
                   src={currentUser?.avatar}
                   alt={currentUser?.name}
-                  className="w-11 h-11 rounded-full object-cover"
+                  className="w-10 h-10 rounded-2xl object-cover ring-2 ring-indigo-500/20"
                 />
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <p className="font-bold text-sm">{currentUser?.name}</p>
-                    {selectedFeeling && (
-                      <span className="text-xs text-zinc-500 font-normal">
-                        is {selectedFeeling.emoji} {selectedFeeling.text}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Privacy dropdown */}
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setPrivacy(privacy === "public" ? "friends" : privacy === "friends" ? "only_me" : "public")
-                      }
-                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-zinc-100 dark:bg-[#3a3b3c] hover:bg-zinc-200 dark:hover:bg-[#4e4f50] rounded-md text-[11px] font-semibold text-zinc-600 dark:text-zinc-300 transition"
-                    >
-                      {privacy === "public" && <Globe className="w-3 h-3" />}
-                      {privacy === "friends" && <Users className="w-3 h-3" />}
-                      {privacy === "only_me" && <Lock className="w-3 h-3" />}
-                      <span className="capitalize">{privacy === "only_me" ? "Only me" : privacy}</span>
-                    </button>
-                  </div>
+                  <p className="font-bold text-xs text-slate-900 dark:text-slate-100">
+                    {currentUser?.name}
+                  </p>
+                  <select
+                    value={privacy}
+                    onChange={(e) => setPrivacy(e.target.value)}
+                    className="mt-0.5 text-[11px] font-medium bg-slate-100 dark:bg-slate-800 border-none rounded-lg px-2 py-0.5 text-slate-600 dark:text-slate-400 focus:outline-none"
+                  >
+                    <option value="public">🌐 Public Sanctuary</option>
+                    <option value="friends">👥 Circle Only</option>
+                    <option value="only_me">🔒 Private Draft</option>
+                  </select>
                 </div>
               </div>
 
-              {/* Textarea or Colored Background Box */}
-              {selectedGradient === "none" ? (
-                <textarea
-                  rows={4}
-                  placeholder={`What's on your mind, ${currentUser?.name?.split(" ")[0]}?`}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full text-base sm:text-lg bg-transparent placeholder-zinc-400 focus:outline-none resize-none"
-                />
-              ) : (
-                <div
-                  className={`rounded-2xl p-6 transition flex items-center justify-center min-h-[180px] ${
-                    COLOR_BACKGROUNDS.find((b) => b.id === selectedGradient)?.class
+              {/* Mode Tabs */}
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-full text-[11px] font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("thought")}
+                  className={`px-2.5 py-1 rounded-full transition ${
+                    activeTab === "thought" ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-xs" : "text-slate-500"
                   }`}
                 >
+                  Text
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("audio")}
+                  className={`px-2.5 py-1 rounded-full transition ${
+                    activeTab === "audio" ? "bg-white dark:bg-slate-700 text-rose-500 shadow-xs" : "text-slate-500"
+                  }`}
+                >
+                  🎙️ Audio
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("code")}
+                  className={`px-2.5 py-1 rounded-full transition ${
+                    activeTab === "code" ? "bg-white dark:bg-slate-700 text-cyan-500 shadow-xs" : "text-slate-500"
+                  }`}
+                >
+                  💻 Code
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("poll")}
+                  className={`px-2.5 py-1 rounded-full transition ${
+                    activeTab === "poll" ? "bg-white dark:bg-slate-700 text-indigo-500 shadow-xs" : "text-slate-500"
+                  }`}
+                >
+                  📊 Poll
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body / Tab Contents */}
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 py-2 space-y-3">
+              {/* Main Thought Input */}
+              <div className="relative">
+                <textarea
+                  rows={activeTab === "thought" ? 4 : 2}
+                  placeholder="Share a thought, insight, or story..."
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className={`w-full p-3 rounded-2xl resize-none text-sm placeholder-slate-400 focus:outline-none transition ${
+                    selectedGradient !== "none"
+                      ? `${COLOR_BACKGROUNDS.find((b) => b.id === selectedGradient)?.class} rounded-2xl`
+                      : "bg-slate-50/80 dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800 focus:border-indigo-500"
+                  }`}
+                />
+              </div>
+
+              {/* TAB: VOICE SPARK (Audio Note Recorder) */}
+              {activeTab === "audio" && (
+                <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center">
+                        <Mic className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-rose-600 dark:text-rose-400">
+                          Voice Spark Studio
+                        </h4>
+                        <p className="text-[10px] text-slate-400">
+                          Record an authentic voice reflection for your circle
+                        </p>
+                      </div>
+                    </div>
+                    <span className="font-mono text-xs font-bold text-rose-500">
+                      0:{recordingSeconds < 10 ? `0${recordingSeconds}` : recordingSeconds}
+                    </span>
+                  </div>
+
+                  {/* Waveform Visualization Preview */}
+                  <div className="h-10 bg-white/60 dark:bg-slate-900/60 rounded-xl flex items-center justify-center gap-1 px-4">
+                    {[16, 28, 45, 60, 30, 80, 50, 40, 75, 90, 60, 35, 20, 50, 70, 45, 30].map((h, i) => (
+                      <span
+                        key={i}
+                        className={`w-1 rounded-full transition-all duration-150 ${
+                          isRecording ? "bg-rose-500 animate-pulse" : hasRecordedAudio ? "bg-rose-400" : "bg-slate-300 dark:bg-slate-700"
+                        }`}
+                        style={{ height: isRecording ? `${Math.max(8, (h * Math.random()).toFixed(0))}px` : `${h / 3}px` }}
+                      ></span>
+                    ))}
+                  </div>
+
+                  {/* Voice Controls */}
+                  <div className="flex items-center justify-between">
+                    <input
+                      type="text"
+                      placeholder="Title this voice note (e.g. Thoughts on UX)..."
+                      value={recordedAudioTitle}
+                      onChange={(e) => setRecordedAudioTitle(e.target.value)}
+                      className="text-xs bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-900/60 rounded-lg px-2.5 py-1 text-slate-800 dark:text-slate-200 flex-1 mr-2"
+                    />
+
+                    {!isRecording ? (
+                      <button
+                        type="button"
+                        onClick={handleStartRecord}
+                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow"
+                      >
+                        <Mic className="w-3.5 h-3.5" />
+                        <span>{hasRecordedAudio ? "Re-record" : "Record"}</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleStopRecord}
+                        className="px-3 py-1.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow"
+                      >
+                        <Square className="w-3.5 h-3.5 fill-current" />
+                        <span>Done</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB: CODE BLOCK SNIPPET */}
+              {activeTab === "code" && (
+                <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 text-slate-200 space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <FileCode className="w-4 h-4 text-cyan-400" />
+                      <input
+                        type="text"
+                        placeholder="filename.ts"
+                        value={codeFilename}
+                        onChange={(e) => setCodeFilename(e.target.value)}
+                        className="text-xs bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-slate-300 font-mono w-28"
+                      />
+                    </div>
+
+                    <select
+                      value={codeLanguage}
+                      onChange={(e) => setCodeLanguage(e.target.value)}
+                      className="text-xs bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-cyan-400 font-mono focus:outline-none"
+                    >
+                      <option value="typescript">TypeScript</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="python">Python</option>
+                      <option value="rust">Rust</option>
+                      <option value="css">CSS</option>
+                      <option value="html">HTML</option>
+                    </select>
+                  </div>
+
                   <textarea
-                    rows={3}
-                    placeholder={`What's on your mind?`}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="w-full bg-transparent text-center text-white placeholder-white/80 focus:outline-none resize-none font-bold text-xl sm:text-2xl"
+                    rows={5}
+                    placeholder={`// Paste or write your ${codeLanguage} code here...`}
+                    value={codeContent}
+                    onChange={(e) => setCodeContent(e.target.value)}
+                    className="w-full bg-slate-900/80 p-2.5 rounded-xl font-mono text-xs text-slate-200 placeholder-slate-600 focus:outline-none resize-none leading-relaxed border border-slate-800/80"
                   />
                 </div>
               )}
 
-              {/* Photo Attachment Preview */}
+              {/* TAB: VIBE POLL */}
+              {activeTab === "poll" && (
+                <div className="p-3.5 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl space-y-2.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-500 dark:text-cyan-400">
+                    <BarChart2 className="w-4 h-4" />
+                    <span>Create Community Poll</span>
+                  </div>
+
+                  <input
+                    type="text"
+                    placeholder="Poll Question (e.g. Favorite new design trend?)..."
+                    value={pollQuestion}
+                    onChange={(e) => setPollQuestion(e.target.value)}
+                    className="w-full text-xs p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100"
+                  />
+
+                  <div className="space-y-1.5">
+                    {pollOptions.map((opt, i) => (
+                      <input
+                        key={opt.id}
+                        type="text"
+                        placeholder={`Option ${i + 1}`}
+                        value={opt.text}
+                        onChange={(e) => {
+                          const updated = [...pollOptions];
+                          updated[i].text = e.target.value;
+                          setPollOptions(updated);
+                        }}
+                        className="w-full text-xs p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100"
+                      />
+                    ))}
+                  </div>
+
+                  {pollOptions.length < 4 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPollOptions([...pollOptions, { id: `opt-${pollOptions.length + 1}`, text: "" }])
+                      }
+                      className="text-[11px] font-bold text-indigo-500 hover:underline"
+                    >
+                      + Add another option
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Attached Media Preview */}
               {selectedImage && (
-                <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800">
-                  <img src={selectedImage} alt="Attachment" className="w-full max-h-72 object-cover" />
+                <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                  <img src={selectedImage} alt="Attachment" className="w-full max-h-48 object-cover" />
                   <button
                     type="button"
                     onClick={() => setSelectedImage(null)}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition"
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black transition"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               )}
 
-              {/* Color Gradient Themes Picker */}
-              {showColorPicker && (
-                <div className="p-3 bg-zinc-50 dark:bg-[#18191a] rounded-xl border border-zinc-200 dark:border-zinc-700/60 animate-in fade-in">
-                  <p className="text-xs font-bold text-zinc-500 mb-2">Post Backgrounds</p>
-                  <div className="flex items-center gap-2 overflow-x-auto py-1">
-                    {COLOR_BACKGROUNDS.map((bg) => (
-                      <button
-                        key={bg.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedGradient(bg.id);
-                          if (bg.id !== "none") setSelectedImage(null);
-                        }}
-                        className={`w-9 h-9 rounded-xl shrink-0 border-2 transition ${
-                          bg.id === "none"
-                            ? "bg-white dark:bg-zinc-800 border-zinc-300"
-                            : bg.id === "bg-sunset"
-                            ? "bg-gradient-to-tr from-amber-500 to-rose-500"
-                            : bg.id === "bg-ocean"
-                            ? "bg-gradient-to-tr from-cyan-500 to-blue-600"
-                            : bg.id === "bg-emerald"
-                            ? "bg-gradient-to-tr from-emerald-500 to-teal-700"
-                            : bg.id === "bg-violet"
-                            ? "bg-gradient-to-tr from-purple-600 to-pink-500"
-                            : "bg-zinc-900"
-                        } ${selectedGradient === bg.id ? "ring-2 ring-[#1877f2] scale-110" : "opacity-80"}`}
-                        title={bg.name}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Image Picker Panel */}
+              {/* Preset Image Picker Tray */}
               {showImagePicker && !selectedImage && (
-                <div className="p-3 bg-zinc-50 dark:bg-[#18191a] rounded-xl border border-zinc-200 dark:border-zinc-700/60 space-y-2.5 animate-in fade-in">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold text-zinc-500">Attach a Photo</p>
-                    <label className="cursor-pointer text-xs font-bold text-[#1877f2] hover:underline">
-                      Upload from file
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageFileChange}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-
-                  <div className="grid grid-cols-4 gap-2">
-                    {SAMPLE_PHOTO_PRESETS.map((p, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <p className="text-[10px] font-bold uppercase text-slate-400 mb-2">Preset High-Res Visuals</p>
+                  <div className="grid grid-cols-4 gap-2 mb-2">
+                    {SAMPLE_PHOTO_PRESETS.map((p, i) => (
+                      <img
+                        key={i}
+                        src={p.url}
+                        alt={p.name}
                         onClick={() => {
                           setSelectedImage(p.url);
-                          setSelectedGradient("none");
                           setShowImagePicker(false);
                         }}
-                        className="relative rounded-lg overflow-hidden h-14 group border border-zinc-200 dark:border-zinc-700"
-                      >
-                        <img src={p.url} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition" />
-                        <span className="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] text-white font-bold text-center px-1">
-                          {p.name}
-                        </span>
-                      </button>
+                        className="h-16 w-full object-cover rounded-xl cursor-pointer hover:opacity-80 transition"
+                      />
                     ))}
                   </div>
+                  <label className="block text-center text-xs text-indigo-500 font-bold cursor-pointer py-1 bg-white dark:bg-slate-900 rounded-xl border border-dashed border-indigo-400">
+                    Upload from your device
+                    <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+                  </label>
                 </div>
               )}
 
-              {/* Feelings Picker Panel */}
-              {showFeelingPicker && (
-                <div className="p-3 bg-zinc-50 dark:bg-[#18191a] rounded-xl border border-zinc-200 dark:border-zinc-700/60 animate-in fade-in">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-bold text-zinc-500">How are you feeling?</p>
-                    {selectedFeeling && (
-                      <button
-                        type="button"
-                        onClick={() => setSelectedFeeling(null)}
-                        className="text-[11px] text-red-500 hover:underline"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto">
-                    {FEELING_PRESETS.map((f, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          setSelectedFeeling(f);
-                          setShowFeelingPicker(false);
-                        }}
-                        className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium text-left transition ${
-                          selectedFeeling?.text === f.text
-                            ? "bg-[#1877f2]/10 text-[#1877f2] font-bold"
-                            : "hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-                        }`}
-                      >
-                        <span className="text-base">{f.emoji}</span>
-                        <span>{f.text}</span>
-                      </button>
-                    ))}
-                  </div>
+              {/* Color Gradient Themes for Thoughts */}
+              {activeTab === "thought" && (
+                <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 shrink-0 mr-1">Vibe Aura:</span>
+                  {COLOR_BACKGROUNDS.map((bg) => (
+                    <button
+                      key={bg.id}
+                      type="button"
+                      onClick={() => setSelectedGradient(bg.id)}
+                      className={`w-6 h-6 rounded-full shrink-0 border-2 transition ${
+                        bg.id === "none" ? "bg-slate-200 dark:bg-slate-700" : bg.class.split(" ")[0]
+                      } ${selectedGradient === bg.id ? "border-indigo-500 scale-110" : "border-transparent"}`}
+                      title={bg.name}
+                    />
+                  ))}
                 </div>
               )}
 
-              {/* Add to your post bar */}
-              <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-between">
-                <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200">
-                  Add to your post
-                </span>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setShowImagePicker(!showImagePicker)}
-                    className="p-1.5 hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] rounded-full transition"
-                    title="Photo"
-                  >
-                    <ImageIcon className="w-5 h-5 text-emerald-500" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowColorPicker(!showColorPicker)}
-                    className="p-1.5 hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] rounded-full transition"
-                    title="Post Background"
-                  >
-                    <Palette className="w-5 h-5 text-purple-500" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowFeelingPicker(!showFeelingPicker)}
-                    className="p-1.5 hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] rounded-full transition"
-                    title="Feeling/activity"
-                  >
-                    <Smile className="w-5 h-5 text-amber-500" />
-                  </button>
-                </div>
+              {/* Modal Footer / Submit Button */}
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end">
+                <button
+                  type="submit"
+                  disabled={
+                    !content.trim() && !selectedImage && !hasRecordedAudio && !codeContent.trim() && !pollQuestion.trim()
+                  }
+                  className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-xs rounded-full shadow-md shadow-indigo-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition transform active:scale-95"
+                >
+                  Publish Spark 🚀
+                </button>
               </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="p-4 border-t border-zinc-200 dark:border-zinc-700/60">
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!content.trim() && !selectedImage}
-                className="w-full py-2.5 bg-[#1877f2] hover:bg-[#166fe5] disabled:opacity-50 text-white font-bold rounded-xl shadow-md transition transform active:scale-[0.98] text-sm"
-              >
-                Post
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}

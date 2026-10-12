@@ -7,7 +7,8 @@ import RightSidebar from "../components/RightSidebar";
 import StoriesTray from "../components/StoriesTray";
 import CreatePostBox from "../components/CreatePostBox";
 import PostCard from "../components/PostCard";
-import AuthModal from "../components/AuthModal";
+import { useRouter } from "next/navigation";
+import { apiCreatePost } from "../utils/api";
 import StoryViewerModal from "../components/StoryViewerModal";
 import ProfileModal from "../components/ProfileModal";
 import ImageViewerModal from "../components/ImageViewerModal";
@@ -25,19 +26,36 @@ import {
   INITIAL_FRIEND_REQUESTS,
   INITIAL_NOTIFICATIONS,
   INITIAL_CONVERSATIONS,
+  VIBE_STATUSES,
+  SOUNDSCAPE_TRACKS,
 } from "../data/mockData";
-import { Bookmark, Sparkles, UserPlus } from "lucide-react";
+import { playAmbientSound, stopAmbientSound, setAmbientVolume } from "../utils/soundscape";
+import { Bookmark, Sparkles, UserPlus, Zap, Mic, Code, BarChart2, Leaf, Flame } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
+
   // Authentication & Current User
   const [currentUser, setCurrentUser] = useState(INITIAL_CURRENT_USER);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState("signup");
 
   // Navigation & View State
   const [activeTab, setActiveTab] = useState("feed"); // 'feed' | 'friends' | 'watch' | 'marketplace' | 'saved'
   const [searchQuery, setSearchQuery] = useState("");
   const [darkMode, setDarkMode] = useState(false);
+
+  // FEATURE: ZEN MODE STATE (Hides vanity metrics)
+  const [zenMode, setZenMode] = useState(false);
+
+  // FEATURE: VIBE STATUS
+  const [currentVibe, setCurrentVibe] = useState(VIBE_STATUSES[0]);
+
+  // FEATURE: FEED VIBE FILTER
+  const [selectedVibeFilter, setSelectedVibeFilter] = useState("all"); // 'all' | 'audio' | 'code' | 'poll' | 'zen' | 'creative'
+
+  // FEATURE: AMBIENT SOUNDSCAPE ENGINE
+  const [isAmbientPlaying, setIsAmbientPlaying] = useState(false);
+  const [ambientTrack, setAmbientTrack] = useState(SOUNDSCAPE_TRACKS[0]);
+  const [ambientVolumeLevel, setAmbientVolumeLevel] = useState(0.4);
 
   // Social Data State
   const [posts, setPosts] = useState(INITIAL_POSTS);
@@ -65,7 +83,7 @@ export default function Home() {
     }
   }, [darkMode]);
 
-  // Load saved user from localStorage if available
+  // Load saved user & zen settings from localStorage
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem("kite_user");
@@ -76,10 +94,46 @@ export default function Home() {
       if (savedTheme === "dark") {
         setDarkMode(true);
       }
+      const savedZen = localStorage.getItem("kite_zen");
+      if (savedZen === "true") {
+        setZenMode(true);
+      }
     } catch {
       // ignore
     }
   }, []);
+
+  const handleToggleZenMode = (val) => {
+    setZenMode(val);
+    try {
+      localStorage.setItem("kite_zen", val ? "true" : "false");
+    } catch {
+      // ignore
+    }
+  };
+
+  // Ambient sound handlers
+  const handleToggleAmbient = () => {
+    if (isAmbientPlaying) {
+      stopAmbientSound();
+      setIsAmbientPlaying(false);
+    } else {
+      playAmbientSound(ambientTrack?.id || "rain", ambientVolumeLevel);
+      setIsAmbientPlaying(true);
+    }
+  };
+
+  const handleSelectAmbientTrack = (track) => {
+    setAmbientTrack(track);
+    if (isAmbientPlaying) {
+      playAmbientSound(track.id, ambientVolumeLevel);
+    }
+  };
+
+  const handleChangeAmbientVolume = (vol) => {
+    setAmbientVolumeLevel(vol);
+    setAmbientVolume(vol);
+  };
 
   // Save user changes to localStorage
   const handleSetUser = (user) => {
@@ -114,18 +168,25 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem("kite_user");
-    setAuthModalMode("login");
-    setIsAuthModalOpen(true);
+    router.push("/login");
   };
 
   const handleOpenAuth = (mode = "signup") => {
-    setAuthModalMode(mode);
-    setIsAuthModalOpen(true);
+    if (mode === "login") {
+      router.push("/login");
+    } else {
+      router.push("/signup");
+    }
   };
 
   // Post Actions
-  const handleCreatePost = (newPost) => {
+  const handleCreatePost = async (newPost) => {
     setPosts([newPost, ...posts]);
+    try {
+      await apiCreatePost(newPost);
+    } catch {
+      // non-blocking fallback
+    }
   };
 
   const handleReactToPost = (postId, reactionType) => {
@@ -200,7 +261,7 @@ export default function Home() {
         return p;
       })
     );
-    alert("Post shared to your feed!");
+    alert("Spark echoed to your circle!");
   };
 
   // Friend Request Actions
@@ -212,7 +273,7 @@ export default function Home() {
       avatar: request.avatar,
       online: true,
       mutualFriends: request.mutualFriends,
-      work: "Kite Friend",
+      work: "Circle Member",
     };
     setFriends([newFriend, ...friends]);
   };
@@ -259,11 +320,11 @@ export default function Home() {
     // Friendly auto-reply simulation
     setTimeout(() => {
       const replies = [
-        "That sounds awesome! Let me know when you're free.",
-        "Totally agree with you on this! 👍",
-        "Thanks for reaching out! Really enjoying Kite so far.",
-        "Haha that's great! Let's catch up soon.",
-        "Got it, appreciate the message! ✨",
+        "Loved that voice spark you shared earlier! ✨",
+        "Totally agree with you on this! The Zen mode is so peaceful.",
+        "Thanks for the note! Really enjoying the new Kite interface.",
+        "Brilliant idea. Let's collaborate on this circle project soon! 🚀",
+        "Got it, appreciate the message! 🍵",
       ];
       const randomReply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -305,9 +366,19 @@ export default function Home() {
     handleSetUser(updated);
   };
 
-  // Filter posts by search query or saved view
+  // Filter posts by search query, saved view, and Vibe Filter
   const displayedPosts = posts.filter((post) => {
     if (activeTab === "saved" && !post.isSaved) return false;
+
+    // Vibe Category Filter
+    if (activeTab === "feed" && selectedVibeFilter !== "all") {
+      if (selectedVibeFilter === "audio" && !post.audioSpark && post.vibeTag !== "audio") return false;
+      if (selectedVibeFilter === "code" && !post.codeSnippet && post.vibeTag !== "code") return false;
+      if (selectedVibeFilter === "poll" && !post.poll && post.vibeTag !== "poll") return false;
+      if (selectedVibeFilter === "zen" && post.vibeTag !== "zen") return false;
+      if (selectedVibeFilter === "creative" && post.vibeTag !== "creative" && !post.bgGradient) return false;
+    }
+
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     const matchContent = post.content?.toLowerCase().includes(q);
@@ -317,13 +388,25 @@ export default function Home() {
 
   const unreadNotifsCount = notifications.filter((n) => !n.read).length;
 
+  const VIBE_FILTER_BUTTONS = [
+    { id: "all", label: "✦ All Sparks", icon: Zap },
+    { id: "audio", label: "🎙️ Voice & Audio", icon: Mic },
+    { id: "code", label: "💻 Dev & Code", icon: Code },
+    { id: "poll", label: "📊 Vibe Polls", icon: BarChart2 },
+    { id: "zen", label: "🌿 Mindful & Zen", icon: Leaf },
+    { id: "creative", label: "🎨 Creative Art", icon: Sparkles },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#18191a] text-zinc-900 dark:text-[#e4e6eb] flex flex-col font-sans transition-colors duration-200">
-      {/* Facebook Navigation Bar */}
+    <div className={`min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-250 ${zenMode ? "zen-active" : ""}`}>
+      {/* Modern Kite Glassmorphic Header */}
       <Navbar
         currentUser={currentUser}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          if (tab === "feed") setSelectedVibeFilter("all");
+        }}
         unreadMessagesCount={activeChats.length > 0 ? 1 : 0}
         unreadNotifsCount={unreadNotifsCount}
         onOpenNotifications={() => setIsNotifsOpen(!isNotifsOpen)}
@@ -343,6 +426,13 @@ export default function Home() {
         setSearchQuery={setSearchQuery}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
+        zenMode={zenMode}
+        setZenMode={handleToggleZenMode}
+        ambientTrack={ambientTrack}
+        isAmbientPlaying={isAmbientPlaying}
+        onToggleAmbient={handleToggleAmbient}
+        currentVibe={currentVibe}
+        setCurrentVibe={setCurrentVibe}
       />
 
       {/* Notifications Dropdown Tray */}
@@ -354,23 +444,29 @@ export default function Home() {
         onSelectNotification={handleSelectNotification}
       />
 
-      {/* 3-Column Main Social Body */}
+      {/* Main Social Sanctuary Layout */}
       <div className="flex-1 max-w-[1920px] w-full mx-auto flex justify-between">
-        {/* Left Sidebar */}
+        {/* Left Navigation Rail */}
         <LeftSidebar
           currentUser={currentUser}
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={(tab) => {
+            setActiveTab(tab);
+            if (tab === "feed") setSelectedVibeFilter("all");
+          }}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onOpenAuth={handleOpenAuth}
+          zenMode={zenMode}
+          selectedVibeFilter={selectedVibeFilter}
+          setSelectedVibeFilter={setSelectedVibeFilter}
         />
 
         {/* Central Feed / View Area */}
-        <main className="flex-1 max-w-2xl px-2 sm:px-4 py-4 min-h-[calc(100vh-3.5rem)]">
+        <main className="flex-1 max-w-2xl px-2 sm:px-4 py-4 min-h-[calc(100vh-4rem)]">
           {/* VIEW: MAIN NEWS FEED */}
           {activeTab === "feed" && (
             <div>
-              {/* Stories Tray */}
+              {/* Visual Drops & Sparks Tray */}
               <StoriesTray
                 currentUser={currentUser}
                 stories={stories}
@@ -378,7 +474,7 @@ export default function Home() {
                 onCreateStory={() => setIsCreatePostOpen(true)}
               />
 
-              {/* Create Post Box */}
+              {/* Rich Creative Composer */}
               <CreatePostBox
                 currentUser={currentUser}
                 onCreatePost={handleCreatePost}
@@ -386,15 +482,35 @@ export default function Home() {
                 setIsOpen={setIsCreatePostOpen}
               />
 
+              {/* FEATURE: VIBE FILTER PILLS BAR (Exclusive to Kite!) */}
+              <div className="mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
+                {VIBE_FILTER_BUTTONS.map((filter) => {
+                  const isActive = selectedVibeFilter === filter.id;
+                  return (
+                    <button
+                      key={filter.id}
+                      onClick={() => setSelectedVibeFilter(filter.id)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 transition flex items-center gap-1.5 cursor-pointer ${
+                        isActive
+                          ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25 font-bold"
+                          : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-800"
+                      }`}
+                    >
+                      <span>{filter.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
               {/* Feed Search Indicator */}
               {searchQuery && (
-                <div className="mb-4 p-3 bg-white dark:bg-[#242526] rounded-xl shadow-sm text-xs flex items-center justify-between">
+                <div className="mb-4 p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-xs text-xs flex items-center justify-between border border-slate-200/80 dark:border-slate-800">
                   <span>
-                    Search results for &ldquo;<strong>{searchQuery}</strong>&rdquo; ({displayedPosts.length} posts found)
+                    Searching sparks for &ldquo;<strong>{searchQuery}</strong>&rdquo; ({displayedPosts.length} results)
                   </span>
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="text-[#1877f2] font-bold hover:underline"
+                    className="text-indigo-600 dark:text-cyan-400 font-bold hover:underline"
                   >
                     Clear search
                   </button>
@@ -403,19 +519,23 @@ export default function Home() {
 
               {/* Posts Feed */}
               {displayedPosts.length === 0 ? (
-                <div className="bg-white dark:bg-[#242526] p-12 rounded-2xl text-center shadow-sm border border-zinc-200 dark:border-zinc-700/60 text-zinc-500">
-                  <Sparkles className="w-12 h-12 mx-auto mb-3 text-zinc-300 dark:text-zinc-600" />
-                  <h3 className="text-base font-bold text-zinc-800 dark:text-zinc-200">
-                    No posts to display
+                <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl text-center shadow-xs border border-slate-200/80 dark:border-slate-800 text-slate-400">
+                  <Sparkles className="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+                  <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
+                    No sparks in this stream yet
                   </h3>
                   <p className="text-xs mt-1 max-w-sm mx-auto">
-                    {searchQuery ? "Try searching for a different keyword." : "Be the first to share something exciting with your community!"}
+                    {searchQuery
+                      ? "Try searching for a different concept."
+                      : selectedVibeFilter !== "all"
+                      ? `No sparks tagged with "${selectedVibeFilter}". Be the first to drop one!`
+                      : "Be the first to share an insight, voice note, or code snippet with the circle!"}
                   </p>
                   <button
                     onClick={() => setIsCreatePostOpen(true)}
-                    className="mt-4 px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white font-bold text-xs rounded-xl shadow transition"
+                    className="mt-4 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-bold text-xs rounded-full shadow transition"
                   >
-                    Create a Post
+                    Drop a Spark
                   </button>
                 </div>
               ) : (
@@ -430,28 +550,31 @@ export default function Home() {
                     onDeletePost={handleDeletePost}
                     onShare={handleSharePost}
                     onImageClick={(url) => setLightboxImage(url)}
+                    zenMode={zenMode}
                   />
                 ))
               )}
             </div>
           )}
 
-          {/* VIEW: SAVED POSTS */}
+          {/* VIEW: STASH / SAVED SPARKS */}
           {activeTab === "saved" && (
             <div className="space-y-4">
-              <div className="bg-white dark:bg-[#242526] p-4 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/60 flex items-center justify-between">
+              <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight">Saved Posts</h2>
-                  <p className="text-xs text-zinc-500">Articles, photos, and updates you saved for later</p>
+                  <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                    Your Stash & Bookmarks
+                  </h2>
+                  <p className="text-xs text-slate-400">Curated sparks, code snippets, and audio notes saved for later</p>
                 </div>
                 <Bookmark className="w-6 h-6 text-purple-500" />
               </div>
 
               {displayedPosts.length === 0 ? (
-                <div className="bg-white dark:bg-[#242526] p-12 rounded-2xl text-center shadow-sm border border-zinc-200 dark:border-zinc-700/60 text-zinc-400">
+                <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl text-center shadow-xs border border-slate-200/80 dark:border-slate-800 text-slate-400">
                   <Bookmark className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p className="font-bold text-zinc-700 dark:text-zinc-300">No saved posts</p>
-                  <p className="text-xs mt-1">Save posts by clicking the three dots on any post.</p>
+                  <p className="font-bold text-slate-700 dark:text-slate-300">Your stash is currently empty</p>
+                  <p className="text-xs mt-1">Tap the three dots on any spark to stash it here.</p>
                 </div>
               ) : (
                 displayedPosts.map((post) => (
@@ -465,13 +588,14 @@ export default function Home() {
                     onDeletePost={handleDeletePost}
                     onShare={handleSharePost}
                     onImageClick={(url) => setLightboxImage(url)}
+                    zenMode={zenMode}
                   />
                 ))
               )}
             </div>
           )}
 
-          {/* VIEW: FRIENDS HUB */}
+          {/* VIEW: CIRCLE NETWORK (Friends) */}
           {activeTab === "friends" && (
             <FriendsView
               friends={friends}
@@ -482,26 +606,33 @@ export default function Home() {
             />
           )}
 
-          {/* VIEW: WATCH / REELS */}
+          {/* VIEW: CINEMA (Watch / Reels) */}
           {activeTab === "watch" && <WatchView />}
 
-          {/* VIEW: MARKETPLACE */}
+          {/* VIEW: BAZAAR (Marketplace) */}
           {activeTab === "marketplace" && (
             <MarketplaceView onOpenChatWithSeller={handleOpenChatWithSeller} />
           )}
         </main>
 
-        {/* Right Sidebar */}
+        {/* Right Rail: Kite Soundscape & Community Pulse */}
         <RightSidebar
           friends={friends}
           friendRequests={friendRequests}
           onAcceptRequest={handleAcceptRequest}
           onDeclineRequest={handleDeclineRequest}
           onOpenChatWithFriend={handleOpenChatWithFriend}
+          isAmbientPlaying={isAmbientPlaying}
+          onToggleAmbient={handleToggleAmbient}
+          ambientTrack={ambientTrack}
+          onSelectAmbientTrack={handleSelectAmbientTrack}
+          ambientVolume={ambientVolumeLevel}
+          onChangeAmbientVolume={handleChangeAmbientVolume}
+          onOpenCreatePost={() => setIsCreatePostOpen(true)}
         />
       </div>
 
-      {/* Floating Messenger Chat Windows (Bottom Right) */}
+      {/* Floating Direct Whisper Chat Windows */}
       <FloatingMessenger
         activeChats={activeChats}
         conversations={conversations}
@@ -512,15 +643,6 @@ export default function Home() {
         friends={friends}
       />
 
-      {/* Authentication Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        initialMode={authModalMode}
-        onLogin={handleLogin}
-        onSignup={handleSignup}
-        onGuestLogin={handleGuestLogin}
-      />
 
       {/* Fullscreen Story Viewer Modal */}
       {activeStory && (
@@ -551,6 +673,7 @@ export default function Home() {
         onToggleSave={handleToggleSavePost}
         onDeletePost={handleDeletePost}
         onShare={handleSharePost}
+        zenMode={zenMode}
       />
     </div>
   );

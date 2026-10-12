@@ -3,14 +3,17 @@
 import { useState } from "react";
 import {
   Search,
-  Home,
-  Users,
+  Sparkles,
+  Zap,
+  Radio,
+  Volume2,
+  VolumeX,
+  Compass,
   Tv,
   Store,
-  Compass,
   Bookmark,
   Plus,
-  MessageCircle,
+  MessageSquare,
   Bell,
   Sun,
   Moon,
@@ -19,10 +22,14 @@ import {
   LogOut,
   UserPlus,
   LogIn,
-  Sparkles,
   X,
-  Settings,
+  Shield,
+  Layers,
+  Leaf,
+  Sliders,
+  Check,
 } from "lucide-react";
+import { VIBE_STATUSES } from "../data/mockData";
 
 export default function Navbar({
   currentUser,
@@ -42,28 +49,35 @@ export default function Navbar({
   setSearchQuery,
   darkMode,
   setDarkMode,
+  zenMode,
+  setZenMode,
+  ambientTrack,
+  isAmbientPlaying,
+  onToggleAmbient,
+  currentVibe,
+  setCurrentVibe,
 }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
+  const [isVibeMenuOpen, setIsVibeMenuOpen] = useState(false);
   const [hideGuestBanner, setHideGuestBanner] = useState(false);
 
   return (
     <>
       {/* Optional Guest Announcement Bar */}
       {currentUser?.isGuest && !hideGuestBanner && (
-        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white text-xs font-medium px-4 py-1.5 flex items-center justify-between shadow-sm transition">
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 text-white text-xs font-medium px-4 py-1.5 flex items-center justify-between shadow-sm transition">
           <div className="flex items-center gap-2 mx-auto truncate">
-            <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
-              Guest Mode
+            <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
+              ✨ Guest Explorer
             </span>
             <span className="truncate">
-              You are exploring Kite as a guest! All features (posts, reactions, comments, chat) are unlocked.
+              Welcome to Kite! Experience Zen Mode, voice sparks, code snippets & ambient audio freely.
             </span>
             <button
               onClick={() => onOpenAuth("signup")}
-              className="underline font-bold hover:text-amber-100 shrink-0 ml-1"
+              className="underline font-bold hover:text-cyan-100 shrink-0 ml-1"
             >
-              Sign up for a permanent account →
+              Claim permanent handle →
             </button>
           </div>
           <button
@@ -76,343 +90,338 @@ export default function Navbar({
         </div>
       )}
 
-      {/* Main Top Navigation Header */}
-      <header className="sticky top-0 z-40 w-full bg-white dark:bg-[#242526] border-b border-zinc-200 dark:border-zinc-700/60 shadow-[0_2px_4px_rgba(0,0,0,0.04)] px-4 h-14 flex items-center justify-between select-none">
-        {/* Left Section: Logo & Search */}
-        <div className="flex items-center gap-2.5 min-w-[200px] lg:min-w-[280px]">
-          {/* Facebook-style Kite Logo */}
+      {/* Main Top Glassmorphic Navigation Header */}
+      <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/85 dark:bg-[#0b0f19]/85 border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-6 h-16 flex items-center justify-between select-none transition-colors duration-200">
+        {/* Left: Modern Kite Prism Emblem & Search */}
+        <div className="flex items-center gap-3 min-w-[200px] lg:min-w-[280px]">
           <button
             onClick={() => setActiveTab("feed")}
-            className="flex items-center gap-2 group cursor-pointer"
+            className="flex items-center gap-2.5 group cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-full bg-[#1877f2] group-hover:bg-[#166fe5] flex items-center justify-center text-white font-black text-2xl tracking-tighter shadow-sm transition transform group-hover:scale-105">
-              <svg
-                className="w-5 h-5 text-white"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 2L20 10L12 22L4 10L12 2Z" />
-                <path d="M4 10L20 10" />
-                <path d="M12 2L12 22" />
-              </svg>
+            {/* Aerodynamic Geometric Kite Emblem */}
+            <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 p-[1.5px] shadow-md shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition duration-300 transform group-hover:scale-105">
+              <div className="w-full h-full bg-white dark:bg-[#0b0f19] rounded-[14px] flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-indigo-600 dark:text-cyan-400 transform -rotate-12 group-hover:rotate-0 transition duration-300"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2L21 9L12 22L3 9L12 2Z" fillOpacity="0.25" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                  <path d="M12 2L12 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <path d="M3 9L21 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="12" cy="11" r="2" fill="currentColor" />
+                </svg>
+              </div>
             </div>
-            <span className="hidden sm:inline font-black text-2xl tracking-tight text-[#1877f2]">
-              kite
-            </span>
+
+            <div className="flex flex-col text-left">
+              <div className="flex items-center gap-1">
+                <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+                  kite
+                </span>
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              </div>
+              <span className="hidden sm:inline text-[9px] font-semibold uppercase tracking-widest text-slate-400 -mt-1">
+                Sparks & Circles
+              </span>
+            </div>
           </button>
 
-          {/* Search Bar */}
-          <div className="relative flex-1 max-w-[240px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+          {/* Search Bar with Hotkey Badge */}
+          <div className="relative flex-1 max-w-[230px] hidden md:block">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search Kite..."
+              placeholder="Discover sparks, code, audio..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs md:text-sm bg-zinc-100 dark:bg-[#3a3b3c] text-zinc-900 dark:text-[#e4e6eb] placeholder-zinc-500 rounded-full border border-transparent focus:outline-none focus:border-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
+              className="w-full pl-9 pr-8 py-2 text-xs bg-slate-100/90 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 rounded-full border border-slate-200/60 dark:border-slate-700/60 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition"
             />
-            {searchQuery && (
+            {searchQuery ? (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
+            ) : (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 font-mono bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600">
+                ⌘K
+              </span>
             )}
           </div>
         </div>
 
-        {/* Center Section: Primary Navigation Tabs */}
-        <div className="hidden md:flex items-center justify-center flex-1 max-w-2xl h-full px-2">
-          {/* Home Tab */}
+        {/* Center: Modern Floating Pill Navigation */}
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/50 p-1.5 rounded-full border border-slate-200/70 dark:border-slate-700/50 shadow-inner">
           <button
             onClick={() => setActiveTab("feed")}
-            title="Home"
-            className={`flex-1 h-full flex items-center justify-center relative transition rounded-lg hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] ${
-              activeTab === "feed" ? "text-[#1877f2]" : "text-zinc-500 dark:text-zinc-400"
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+              activeTab === "feed"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <Home className="w-7 h-7" />
-            {activeTab === "feed" && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#1877f2] rounded-t-full" />
-            )}
+            <Zap className="w-4 h-4" />
+            <span>Sparks</span>
           </button>
 
-          {/* Friends Tab */}
           <button
             onClick={() => setActiveTab("friends")}
-            title="Friends"
-            className={`flex-1 h-full flex items-center justify-center relative transition rounded-lg hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] ${
-              activeTab === "friends" ? "text-[#1877f2]" : "text-zinc-500 dark:text-zinc-400"
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+              activeTab === "friends"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <div className="relative">
-              <Users className="w-7 h-7" />
-              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center">
-                3
-              </span>
-            </div>
-            {activeTab === "friends" && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#1877f2] rounded-t-full" />
-            )}
+            <Compass className="w-4 h-4" />
+            <span>Circles</span>
           </button>
 
-          {/* Watch Tab */}
           <button
             onClick={() => setActiveTab("watch")}
-            title="Watch"
-            className={`flex-1 h-full flex items-center justify-center relative transition rounded-lg hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] ${
-              activeTab === "watch" ? "text-[#1877f2]" : "text-zinc-500 dark:text-zinc-400"
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+              activeTab === "watch"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <Tv className="w-7 h-7" />
-            {activeTab === "watch" && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#1877f2] rounded-t-full" />
-            )}
+            <Tv className="w-4 h-4" />
+            <span>Cinema</span>
           </button>
 
-          {/* Marketplace Tab */}
           <button
             onClick={() => setActiveTab("marketplace")}
-            title="Marketplace"
-            className={`flex-1 h-full flex items-center justify-center relative transition rounded-lg hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] ${
-              activeTab === "marketplace" ? "text-[#1877f2]" : "text-zinc-500 dark:text-zinc-400"
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+              activeTab === "marketplace"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <Store className="w-7 h-7" />
-            {activeTab === "marketplace" && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#1877f2] rounded-t-full" />
-            )}
+            <Store className="w-4 h-4" />
+            <span>Bazaar</span>
           </button>
+        </nav>
 
-          {/* Saved Posts Tab */}
+        {/* Right Section: Zen Mode, Ambient Sound, Vibe Selector, New Spark, User */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* FEATURE 1: ZEN MODE TOGGLE (Eliminates vanity metrics) */}
           <button
-            onClick={() => setActiveTab("saved")}
-            title="Saved Posts"
-            className={`flex-1 h-full flex items-center justify-center relative transition rounded-lg hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] ${
-              activeTab === "saved" ? "text-[#1877f2]" : "text-zinc-500 dark:text-zinc-400"
+            onClick={() => setZenMode(!zenMode)}
+            title={zenMode ? "Zen Mode: Active (Metrics hidden for peace of mind)" : "Enable Zen Mode (Hide vanity metrics & counts)"}
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+              zenMode
+                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 shadow-sm shadow-emerald-500/10"
+                : "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 border border-transparent"
             }`}
           >
-            <Bookmark className="w-7 h-7" />
-            {activeTab === "saved" && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#1877f2] rounded-t-full" />
+            <Leaf className={`w-3.5 h-3.5 ${zenMode ? "animate-pulse text-emerald-500" : ""}`} />
+            <span className="hidden sm:inline">Zen {zenMode ? "On" : "Mode"}</span>
+            {zenMode && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             )}
           </button>
-        </div>
 
-        {/* Right Section: Action Icons & Profile */}
-        <div className="flex items-center gap-2 min-w-[200px] justify-end">
-          {/* Quick Create Button */}
-          <div className="relative">
+          {/* FEATURE 2: AMBIENT SOUNDSCAPE LAUNCHER */}
+          <button
+            onClick={onToggleAmbient}
+            title={isAmbientPlaying ? `Soundscape: Playing ${ambientTrack?.name || "Rain"} (Click to pause)` : "Play soothing ambient soundscape"}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+              isAmbientPlaying
+                ? "bg-indigo-500/15 text-indigo-600 dark:text-cyan-400 border border-indigo-500/40 shadow-sm shadow-indigo-500/10"
+                : "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 border border-transparent"
+            }`}
+          >
+            {isAmbientPlaying ? (
+              <>
+                <Volume2 className="w-3.5 h-3.5 text-indigo-500 dark:text-cyan-400" />
+                <div className="flex items-center gap-0.5 h-3">
+                  <span className="w-0.5 bg-indigo-500 dark:bg-cyan-400 wave-bar-1"></span>
+                  <span className="w-0.5 bg-indigo-500 dark:bg-cyan-400 wave-bar-2"></span>
+                  <span className="w-0.5 bg-indigo-500 dark:bg-cyan-400 wave-bar-3"></span>
+                </div>
+                <span className="hidden xl:inline text-[11px] truncate max-w-[70px]">
+                  {ambientTrack?.name || "Lofi"}
+                </span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sound</span>
+              </>
+            )}
+          </button>
+
+          {/* FEATURE 3: VIBE STATUS PICKER */}
+          <div className="relative hidden md:block">
             <button
-              onClick={() => setIsCreateMenuOpen(!isCreateMenuOpen)}
-              className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-[#3a3b3c] hover:bg-zinc-200 dark:hover:bg-[#4e4f50] text-zinc-800 dark:text-[#e4e6eb] flex items-center justify-center transition"
-              title="Create"
+              onClick={() => setIsVibeMenuOpen(!isVibeMenuOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full text-xs font-medium transition"
+              title="Set your current vibe"
             >
-              <Plus className="w-5 h-5" />
+              <span>{currentVibe?.emoji || "⚡"}</span>
+              <span className="hidden xl:inline max-w-[80px] truncate">{currentVibe?.label?.split(" ")[0] || "Vibing"}</span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
             </button>
 
-            {isCreateMenuOpen && (
-              <div 
-                className="absolute right-0 top-12 w-56 bg-white dark:bg-[#242526] rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-700/80 p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
-                onClick={() => setIsCreateMenuOpen(false)}
+            {isVibeMenuOpen && (
+              <div
+                className="absolute right-0 top-10 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95"
+                onClick={() => setIsVibeMenuOpen(false)}
               >
-                <div className="p-2 border-b border-zinc-100 dark:border-zinc-700/60 mb-1">
-                  <p className="text-xs font-bold text-zinc-900 dark:text-white">Create New</p>
-                </div>
-                <button
-                  onClick={onOpenCreatePost}
-                  className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-left text-xs font-semibold"
-                >
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 text-[#1877f2] flex items-center justify-center">
-                    <Plus className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p>Post</p>
-                    <p className="text-[10px] text-zinc-500 font-normal">Share on News Feed</p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveTab("feed");
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-left text-xs font-semibold"
-                >
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p>Story</p>
-                    <p className="text-[10px] text-zinc-500 font-normal">Share a photo or thought</p>
-                  </div>
-                </button>
+                <p className="text-[10px] uppercase font-bold text-slate-400 px-2.5 py-1">Set Your Vibe</p>
+                {VIBE_STATUSES.map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={() => setCurrentVibe(v)}
+                    className="w-full flex items-center justify-between p-2 rounded-xl text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">{v.emoji}</span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200">{v.label}</span>
+                    </div>
+                    {currentVibe?.id === v.id && <Check className="w-3.5 h-3.5 text-indigo-500" />}
+                  </button>
+                ))}
               </div>
             )}
           </div>
 
-          {/* Messenger Button */}
+          {/* Create New Spark Button */}
+          <button
+            onClick={onOpenCreatePost}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white rounded-full text-xs font-bold shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 transition transform hover:-translate-y-0.5 cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span className="hidden sm:inline">Spark</span>
+          </button>
+
+          {/* Whisper Chat Drawer Launcher */}
           <button
             onClick={onToggleMessenger}
-            className={`relative w-10 h-10 rounded-full flex items-center justify-center transition ${
-              isMessengerOpen
-                ? "bg-[#1877f2] text-white"
-                : "bg-zinc-100 dark:bg-[#3a3b3c] hover:bg-zinc-200 dark:hover:bg-[#4e4f50] text-zinc-800 dark:text-[#e4e6eb]"
-            }`}
-            title="Messenger"
+            className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition"
+            title="Whisper Direct Sparks"
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageSquare className="w-4 h-4" />
             {unreadMessagesCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center border-2 border-white dark:border-[#242526]">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
                 {unreadMessagesCount}
               </span>
             )}
           </button>
 
-          {/* Notifications Button */}
+          {/* Notifications Bell */}
           <button
             onClick={onOpenNotifications}
-            className={`relative w-10 h-10 rounded-full flex items-center justify-center transition ${
-              isNotifsOpen
-                ? "bg-[#1877f2] text-white"
-                : "bg-zinc-100 dark:bg-[#3a3b3c] hover:bg-zinc-200 dark:hover:bg-[#4e4f50] text-zinc-800 dark:text-[#e4e6eb]"
-            }`}
+            className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition"
             title="Notifications"
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-4 h-4" />
             {unreadNotifsCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center border-2 border-white dark:border-[#242526]">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
                 {unreadNotifsCount}
               </span>
             )}
           </button>
 
-          {/* Dark / Light Mode Toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-[#3a3b3c] hover:bg-zinc-200 dark:hover:bg-[#4e4f50] text-zinc-800 dark:text-[#e4e6eb] flex items-center justify-center transition"
-            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {darkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-zinc-700" />}
-          </button>
-
-          {/* Profile Dropdown Menu */}
+          {/* User Profile Avatar & Menu */}
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="relative rounded-full focus:outline-none p-0.5 hover:ring-2 hover:ring-[#1877f2] transition"
-              title="Account Menu"
+              className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-indigo-500/50 transition cursor-pointer"
             >
-              <img
-                src={currentUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80"}
-                alt={currentUser?.name}
-                className="w-9 h-9 rounded-full object-cover"
-              />
-              {currentUser?.isGuest ? (
-                <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1 rounded-full uppercase">
-                  G
-                </span>
-              ) : (
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#242526]" />
-              )}
+              <div className="relative">
+                <img
+                  src={currentUser?.avatar}
+                  alt={currentUser?.name}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/30"
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0b0f19]"></span>
+              </div>
             </button>
 
             {isUserMenuOpen && (
               <div
-                className="absolute right-0 top-12 w-72 bg-white dark:bg-[#242526] rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700/80 p-3 z-50 animate-in fade-in zoom-in-95 duration-150"
+                className="absolute right-0 top-11 w-64 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95"
                 onClick={() => setIsUserMenuOpen(false)}
               >
-                {/* User Info Card */}
+                {/* Profile Brief */}
                 <div
                   onClick={onOpenProfile}
-                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition cursor-pointer border border-zinc-100 dark:border-zinc-700/60 shadow-sm"
+                  className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 cursor-pointer transition mb-1"
                 >
                   <img
                     src={currentUser?.avatar}
                     alt={currentUser?.name}
-                    className="w-11 h-11 rounded-full object-cover"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold text-sm text-zinc-900 dark:text-white truncate">
+                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                       {currentUser?.name}
                     </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
-                      {currentUser?.isGuest ? "Guest Profile" : `@${currentUser?.username}`}
+                    <p className="text-[11px] text-indigo-500 font-medium truncate">
+                      {currentUser?.isGuest ? "Guest Access" : "View Sanctuary"}
                     </p>
                   </div>
-                  {currentUser?.isGuest && (
-                    <span className="text-[10px] bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold px-2 py-0.5 rounded-full">
-                      Guest
-                    </span>
-                  )}
                 </div>
 
-                <div className="my-2 border-t border-zinc-100 dark:border-zinc-700/60" />
+                <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1"></div>
 
-                <div className="space-y-1">
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const next = !darkMode;
+                    setDarkMode(next);
+                    localStorage.setItem("kite_theme", next ? "dark" : "light");
+                  }}
+                  className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  <div className="flex items-center gap-2.5">
+                    {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
+                    <span>{darkMode ? "Light Sanctuary" : "Dark Canvas"}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    {darkMode ? "Light" : "Dark"}
+                  </span>
+                </button>
+
+                {/* Zen Mode toggle in menu */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZenMode(!zenMode);
+                  }}
+                  className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Leaf className="w-4 h-4 text-emerald-500" />
+                    <span>Zen Mode</span>
+                  </div>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${zenMode ? "bg-emerald-500/20 text-emerald-500" : "text-slate-400"}`}>
+                    {zenMode ? "ACTIVE" : "OFF"}
+                  </span>
+                </button>
+
+                <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1"></div>
+
+                {currentUser?.isGuest ? (
                   <button
-                    onClick={onOpenProfile}
-                    className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-left text-xs font-semibold text-zinc-700 dark:text-zinc-200"
+                    onClick={() => onOpenAuth("signup")}
+                    className="w-full flex items-center gap-2.5 p-2 rounded-xl text-xs font-bold text-indigo-600 dark:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
                   >
-                    <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-[#3a3b3c] flex items-center justify-center">
-                      <User className="w-4 h-4" />
-                    </div>
-                    <span>View Profile</span>
+                    <UserPlus className="w-4 h-4" />
+                    <span>Create Full Account</span>
                   </button>
-
-                  {currentUser?.isGuest ? (
-                    <button
-                      onClick={() => onOpenAuth("signup")}
-                      className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-left text-xs font-semibold text-emerald-600 dark:text-emerald-400"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                        <UserPlus className="w-4 h-4" />
-                      </div>
-                      <span>Sign Up Permanent Account</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => onOpenAuth("login")}
-                      className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-left text-xs font-semibold text-zinc-700 dark:text-zinc-200"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-[#3a3b3c] flex items-center justify-center">
-                        <LogIn className="w-4 h-4" />
-                      </div>
-                      <span>Switch Account</span>
-                    </button>
-                  )}
-
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] transition text-left text-xs font-semibold text-zinc-700 dark:text-zinc-200"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-[#3a3b3c] flex items-center justify-center">
-                        {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-                      </div>
-                      <span>Display Mode</span>
-                    </div>
-                    <span className="text-[10px] text-zinc-400 uppercase font-bold">
-                      {darkMode ? "Dark" : "Light"}
-                    </span>
-                  </button>
-
-                  <div className="my-1 border-t border-zinc-100 dark:border-zinc-700/60" />
-
+                ) : (
                   <button
                     onClick={onLogout}
-                    className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition text-left text-xs font-semibold text-red-600 dark:text-red-400"
+                    className="w-full flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
                   >
-                    <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center">
-                      <LogOut className="w-4 h-4" />
-                    </div>
-                    <span>Log Out</span>
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
                   </button>
-                </div>
+                )}
               </div>
             )}
           </div>

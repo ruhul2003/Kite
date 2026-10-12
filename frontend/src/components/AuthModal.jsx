@@ -5,6 +5,7 @@ import Link from "next/link";
 import { X, UserPlus, LogIn, Sparkles, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
 import { triggerGoogleSignIn } from "../utils/googleAuth";
+import { apiRegister, apiLogin, apiGoogleAuth, apiGuestAuth } from "../utils/api";
 
 const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
@@ -32,7 +33,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
 
   if (!isOpen) return null;
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       setError("Please provide your first and last name.");
@@ -47,45 +48,45 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
       return;
     }
 
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
-      username: formData.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, ""),
-      email: formData.email.trim(),
-      avatar: formData.avatar,
-      coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
-      bio: formData.bio.trim() || "Just joined Kite! Say hello 👋",
-      work: "Community Member",
-      livesIn: "San Francisco, CA",
-      from: "California, USA",
-      joined: "Just now",
-      followersCount: 1,
-      friendsCount: 0,
-      isGuest: false,
-    };
-
-    onSignup(newUser);
-    onClose();
+    try {
+      const savedUser = await apiRegister({
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+        email: formData.email.trim(),
+        password: formData.password,
+        avatar: formData.avatar,
+        bio: formData.bio.trim(),
+      });
+      onSignup(savedUser);
+      onClose();
+    } catch (err) {
+      setError(err.message || "Registration failed.");
+    }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (!loginEmail.trim() || !loginPassword.trim()) {
       setError("Please enter both email and password.");
       return;
     }
 
-    onLogin({
-      email: loginEmail.trim(),
-      password: loginPassword,
-    });
-    onClose();
+    try {
+      const user = await apiLogin({
+        email: loginEmail.trim(),
+        password: loginPassword,
+      });
+      onLogin(user);
+      onClose();
+    } catch (err) {
+      setError(err.message || "Invalid credentials.");
+    }
   };
 
   const handleGoogleAuth = () => {
     triggerGoogleSignIn(
-      (googleUser) => {
-        onLogin(googleUser);
+      async (googleUser) => {
+        const saved = await apiGoogleAuth(googleUser);
+        onLogin(saved);
         onClose();
       },
       (err) => {
@@ -94,47 +95,36 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
     );
   };
 
-  const handleQuickDemoLogin = (type) => {
+  const handleQuickDemoLogin = async (type) => {
     if (type === "alex") {
-      onLogin({
-        id: "user-alex",
+      const saved = await apiRegister({
         name: "Alex Morgan",
-        username: "alexmorgan",
         email: "alex@example.com",
+        password: "alex_password_123",
         avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-        coverPhoto: "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?w=1200&auto=format&fit=crop&q=80",
         bio: "Fullstack Creator & Tech Enthusiast 💻 Exploring the frontier of web apps and photography 📸",
-        work: "Software Engineer at Horizon Labs",
-        livesIn: "San Francisco, CA",
-        from: "Seattle, WA",
-        joined: "March 2021",
-        followersCount: 1420,
-        friendsCount: 584,
-        isGuest: false,
       });
+      onLogin(saved);
     } else {
-      onLogin({
-        id: "friend-sarah",
+      const saved = await apiRegister({
         name: "Sarah Chen",
-        username: "sarahchen",
         email: "sarah@example.com",
+        password: "sarah_password_123",
         avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-        coverPhoto: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
         bio: "UI/UX Designer • Visual Thinker • Coffee Lover ☕",
-        work: "Lead Designer at Studio Pulse",
-        livesIn: "San Francisco, CA",
-        from: "Vancouver, Canada",
-        joined: "July 2022",
-        followersCount: 980,
-        friendsCount: 412,
-        isGuest: false,
       });
+      onLogin(saved);
     }
     onClose();
   };
 
-  const handleGuestClick = () => {
-    onGuestLogin();
+  const handleGuestClick = async () => {
+    const guest = await apiGuestAuth();
+    if (guest) {
+      onLogin(guest);
+    } else {
+      onGuestLogin();
+    }
     onClose();
   };
 

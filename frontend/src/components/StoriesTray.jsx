@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Plus, ChevronRight, ChevronLeft } from "lucide-react";
+import { Plus, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
 
 export default function StoriesTray({ currentUser, stories, onOpenStory, onCreateStory }) {
   const scrollRef = useRef(null);
@@ -30,9 +30,9 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
       {canScrollLeft && (
         <button
           onClick={() => scroll("left")}
-          className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white dark:bg-[#3a3b3c] shadow-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:scale-105 transition"
+          className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:scale-105 transition"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
       )}
 
@@ -42,53 +42,49 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
         onScroll={checkScroll}
         className="flex items-center gap-2.5 overflow-x-auto scrollbar-none py-1 scroll-smooth"
       >
-        {/* CREATE STORY CARD */}
+        {/* CREATE SPARK DROP CARD */}
         <div
           onClick={onCreateStory}
-          className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-[#242526] border border-zinc-200 dark:border-zinc-700/60 shrink-0 cursor-pointer group flex flex-col justify-between hover:shadow-md transition transform hover:-translate-y-0.5"
+          className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-3xl overflow-hidden shadow-xs bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shrink-0 cursor-pointer group flex flex-col justify-between hover:shadow-md transition transform hover:-translate-y-0.5"
         >
-          {/* Top image (User Avatar / Cover) */}
-          <div className="h-[72%] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+          <div className="h-[72%] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
             <img
               src={currentUser?.coverPhoto || currentUser?.avatar}
-              alt="Create Story"
+              alt="Drop Spark"
               className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
             />
           </div>
 
           {/* Plus Button in center */}
-          <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#1877f2] border-4 border-white dark:border-[#242526] flex items-center justify-center text-white shadow-md group-hover:scale-110 transition">
+          <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 border-4 border-white dark:border-slate-900 flex items-center justify-center text-white shadow-md group-hover:scale-110 transition">
             <Plus className="w-5 h-5 stroke-[2.5]" />
           </div>
 
-          {/* Bottom Label */}
-          <div className="h-[28%] flex items-end justify-center pb-2 px-1 text-center bg-white dark:bg-[#242526]">
-            <span className="text-xs font-bold text-zinc-900 dark:text-[#e4e6eb] truncate">
-              Create story
+          <div className="h-[28%] flex items-end justify-center pb-2.5 px-1 text-center bg-white dark:bg-slate-900">
+            <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate flex items-center gap-1">
+              <span>Drop Spark</span>
             </span>
           </div>
         </div>
 
-        {/* FRIEND STORIES */}
+        {/* CIRCLE STORIES / VISUAL DROPS */}
         {stories.map((story) => (
           <div
             key={story.id}
             onClick={() => onOpenStory(story)}
-            className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer group hover:shadow-md transition transform hover:-translate-y-0.5"
+            className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-3xl overflow-hidden shadow-xs shrink-0 cursor-pointer group hover:shadow-md transition transform hover:-translate-y-0.5"
           >
-            {/* Story Background Image */}
             <img
               src={story.storyMedia}
               alt={story.authorName}
               className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
             />
 
-            {/* Dark Gradient Overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/75 group-hover:from-black/50 group-hover:to-black/85 transition" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 group-hover:from-black/50 group-hover:to-black/90 transition" />
 
-            {/* Author Avatar with glowing blue border */}
+            {/* Author Avatar with glowing gradient border */}
             <div className="absolute top-3 left-3">
-              <div className="w-10 h-10 rounded-full p-0.5 bg-[#1877f2] ring-2 ring-white/80 shadow-md">
+              <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 shadow-md">
                 <img
                   src={story.authorAvatar}
                   alt={story.authorName}
@@ -98,7 +94,7 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
             </div>
 
             {/* Caption Preview & Author Name */}
-            <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
+            <div className="absolute bottom-3 left-3 right-3 text-white">
               <p className="text-xs font-bold truncate drop-shadow-md">
                 {story.authorName}
               </p>
@@ -111,9 +107,9 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
       {canScrollRight && (
         <button
           onClick={() => scroll("right")}
-          className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white dark:bg-[#3a3b3c] shadow-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:scale-105 transition"
+          className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:scale-105 transition"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       )}
     </div>

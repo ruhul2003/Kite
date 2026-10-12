@@ -179,6 +179,38 @@ export const INITIAL_STORIES = [
   },
 ];
 
+export const KITE_REACTIONS = [
+  { id: "spark", label: "Spark", emoji: "⚡", color: "text-amber-500", bg: "hover:bg-amber-500/10" },
+  { id: "insight", label: "Insight", emoji: "💡", color: "text-cyan-500", bg: "hover:bg-cyan-500/10" },
+  { id: "fire", label: "Fire", emoji: "🔥", color: "text-orange-500", bg: "hover:bg-orange-500/10" },
+  { id: "vibe", label: "Resonance", emoji: "💜", color: "text-violet-500", bg: "hover:bg-violet-500/10" },
+  { id: "liftoff", label: "Lift-off", emoji: "🚀", color: "text-indigo-500", bg: "hover:bg-indigo-500/10" },
+  { id: "zen", label: "Zen", emoji: "🌿", color: "text-emerald-500", bg: "hover:bg-emerald-500/10" },
+];
+
+export const VIBE_STATUSES = [
+  { id: "building", emoji: "⚡", label: "Building something new", color: "text-amber-500" },
+  { id: "focus", emoji: "🎧", label: "Deep Focus mode", color: "text-indigo-500" },
+  { id: "creative", emoji: "🎨", label: "Creative Flow", color: "text-pink-500" },
+  { id: "zen", emoji: "🌿", label: "Mindful Zen", color: "text-emerald-500" },
+  { id: "curious", emoji: "💡", label: "Seeking insights", color: "text-cyan-500" },
+];
+
+export const DAILY_SPARK_PROMPT = {
+  id: "daily-spark-today",
+  tag: "⚡ Daily Community Spark",
+  question: "What is one counter-intuitive lesson you learned in your craft this year?",
+  author: "Kite Editorial Circle",
+  sparksCount: 42,
+};
+
+export const SOUNDSCAPE_TRACKS = [
+  { id: "rain", name: "Gentle Rain", icon: "🌧️", desc: "Soothing warm rainfall tone" },
+  { id: "lofi", name: "Lo-Fi Beats", icon: "🎧", desc: "Mellow chillhop chord progression" },
+  { id: "coffee", name: "Cozy Coffeehouse", icon: "☕", desc: "Warm ambient resonance" },
+  { id: "cosmic", name: "Cosmic Drone", icon: "🌌", desc: "Harmonic meditation frequency" },
+];
+
 export const INITIAL_POSTS = [
   {
     id: "post-1",
@@ -187,11 +219,20 @@ export const INITIAL_POSTS = [
       name: "Sarah Chen",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
       isVerified: true,
+      role: "Product Designer",
+      vibe: "🎨 Creative Flow",
     },
-    timestamp: "25 mins ago",
-    privacy: "public", // 'public' | 'friends' | 'only_me'
-    feeling: { emoji: "🎨", text: "feeling creative" },
-    content: "Golden hour over the bay never gets old. Taking a moment away from screens to watch the light change over the bridge. Reminder to rest and recharge! 🌅✨\n\nWhat did you do today to disconnect?",
+    timestamp: "18 mins ago",
+    privacy: "public",
+    vibeTag: "audio",
+    feeling: { emoji: "🎙️", text: "recorded an Audio Spark" },
+    content: "Took a walk by the waterfront without my phone notifications. Recorded this quick 35s voice note on why high-velocity design sprints often fail when teams don't pause to synthesize.\n\nTake a listen and let me know your take below! 👇",
+    audioSpark: {
+      title: "The Silent Cost of Never Pausing",
+      duration: "0:35",
+      recordedAt: "Today",
+      waves: [24, 45, 68, 80, 52, 90, 60, 40, 75, 95, 80, 60, 45, 30, 60, 85, 70, 40, 55, 30, 20],
+    },
     media: [
       {
         type: "image",
@@ -200,17 +241,16 @@ export const INITIAL_POSTS = [
       },
     ],
     reactions: {
-      like: 42,
-      love: 18,
-      care: 7,
-      haha: 1,
-      wow: 12,
-      sad: 0,
-      angry: 0,
+      spark: 38,
+      insight: 52,
+      fire: 14,
+      vibe: 29,
+      liftoff: 8,
+      zen: 41,
     },
-    userReaction: "love", // null or 'like' | 'love' | etc.
-    sharesCount: 5,
-    isSaved: false,
+    userReaction: "insight",
+    sharesCount: 12,
+    isSaved: true,
     comments: [
       {
         id: "c-1",
@@ -218,9 +258,9 @@ export const INITIAL_POSTS = [
           name: "David Miller",
           avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
         },
-        content: "The composition and color gradient here are absolutely stunning, Sarah! What lens did you use?",
-        timestamp: "18 mins ago",
-        likes: 4,
+        content: "That voice spark resonated so hard Sarah. 'Motion is not progress' — writing that down on my whiteboard.",
+        timestamp: "12 mins ago",
+        likes: 6,
         isLiked: true,
       },
       {
@@ -229,9 +269,9 @@ export const INITIAL_POSTS = [
           name: "Alex Morgan",
           avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
         },
-        content: "Needed this reminder today. Screen fatigue is real! Beautiful capture.",
-        timestamp: "10 mins ago",
-        likes: 2,
+        content: "Audio notes on Kite make conversations feel so much more genuine than plain walls of text. Love this!",
+        timestamp: "5 mins ago",
+        likes: 3,
         isLiked: false,
       },
     ],
@@ -239,39 +279,61 @@ export const INITIAL_POSTS = [
   {
     id: "post-2",
     author: {
-      id: "friend-david",
-      name: "David Miller",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      isVerified: false,
+      id: "friend-liam",
+      name: "Liam O'Connor",
+      avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80",
+      isVerified: true,
+      role: "Systems Architect",
+      vibe: "⚡ Building",
     },
-    timestamp: "2 hours ago",
+    timestamp: "1 hour ago",
     privacy: "public",
-    feeling: { emoji: "☕", text: "celebrating milestone" },
-    bgGradient: "from-blue-600 via-indigo-600 to-purple-700",
-    content: "Coffee first, questions later. Who's gearing up for an epic weekend? Hit ❤️ if you need extra espresso today!",
-    media: [],
-    reactions: {
-      like: 89,
-      love: 34,
-      care: 12,
-      haha: 41,
-      wow: 4,
-      sad: 1,
-      angry: 0,
+    vibeTag: "code",
+    feeling: { emoji: "💻", text: "sharing code snippet" },
+    content: "Facebook and legacy social apps strip out all code indentation. On Kite we treat code as a first-class creative medium!\n\nHere's a lightweight React 19 pattern for an optimistic async queue with automatic rollback:",
+    codeSnippet: {
+      language: "typescript",
+      filename: "useOptimisticQueue.ts",
+      code: `export function useOptimisticQueue<T>(initialItems: T[]) {
+  const [items, setItems] = useState<T[]>(initialItems);
+  const rollbackRef = useRef<T[]>(initialItems);
+
+  const applySpark = async (newItem: T, asyncAction: () => Promise<void>) => {
+    rollbackRef.current = items;
+    setItems((prev) => [newItem, ...prev]); // Instant optimistic update
+
+    try {
+      await asyncAction();
+    } catch (err) {
+      setItems(rollbackRef.current); // Graceful rollback
+      console.warn("Rollback applied:", err);
+    }
+  };
+
+  return { items, applySpark };
+}`,
     },
-    userReaction: "haha",
-    sharesCount: 14,
-    isSaved: true,
+    reactions: {
+      spark: 84,
+      insight: 67,
+      fire: 49,
+      vibe: 12,
+      liftoff: 33,
+      zen: 9,
+    },
+    userReaction: "spark",
+    sharesCount: 26,
+    isSaved: false,
     comments: [
       {
         id: "c-3",
         author: {
-          name: "Chloe Bennett",
-          avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80",
+          name: "Aisha Patel",
+          avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
         },
-        content: "On my 3rd cup already! Send help ☕🚀",
-        timestamp: "1 hour ago",
-        likes: 9,
+        content: "Clean implementation! Love having syntax highlighting directly in the social stream.",
+        timestamp: "45 mins ago",
+        likes: 8,
         isLiked: false,
       },
     ],
@@ -279,15 +341,70 @@ export const INITIAL_POSTS = [
   {
     id: "post-3",
     author: {
+      id: "friend-aisha",
+      name: "Aisha Patel",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      isVerified: true,
+      role: "AI Scientist",
+      vibe: "💡 Seeking insights",
+    },
+    timestamp: "3 hours ago",
+    privacy: "public",
+    vibeTag: "poll",
+    feeling: { emoji: "📊", text: "running a Vibe Poll" },
+    content: "Quick poll for everyone here! We're building the future of digital community spaces on Kite. Which feature matters most to your mental well-being online?",
+    poll: {
+      id: "poll-social-health",
+      question: "Which feature protects your creative focus the most?",
+      totalVotes: 328,
+      userVotedOptionId: "opt-1",
+      options: [
+        { id: "opt-1", text: "Zen Mode (Hiding all vanity like & follower counts)", votes: 164, percentage: 50 },
+        { id: "opt-2", text: "Built-in ambient soundscape while reading", votes: 72, percentage: 22 },
+        { id: "opt-3", text: "Audio voice sparks instead of endless comment flames", votes: 59, percentage: 18 },
+        { id: "opt-4", text: "Native syntax-highlighted code & markdown blocks", votes: 33, percentage: 10 },
+      ],
+    },
+    reactions: {
+      spark: 45,
+      insight: 91,
+      fire: 16,
+      vibe: 38,
+      liftoff: 19,
+      zen: 62,
+    },
+    userReaction: "zen",
+    sharesCount: 18,
+    isSaved: true,
+    comments: [
+      {
+        id: "c-4",
+        author: {
+          name: "Chloe Bennett",
+          avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80",
+        },
+        content: "Voted Zen Mode! Being able to read thoughts without seeing who got 1,000 likes completely changes the psychological feeling.",
+        timestamp: "2 hours ago",
+        likes: 14,
+        isLiked: true,
+      },
+    ],
+  },
+  {
+    id: "post-4",
+    author: {
       id: "friend-marcus",
       name: "Marcus Johnson",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
       isVerified: true,
+      role: "Holistic Health Coach",
+      vibe: "🌿 Mindful Zen",
     },
     timestamp: "5 hours ago",
-    privacy: "friends",
-    feeling: { emoji: "🥗", text: "feeling motivated" },
-    content: "Weekly meal prep done right! Wild Alaskan salmon, roasted rainbow carrots, quinoa, and homemade lemon tahini dressing. Eating clean doesn't have to be boring.\n\nDrop a comment if you want the 15-minute dressing recipe! 👇",
+    privacy: "public",
+    vibeTag: "zen",
+    feeling: { emoji: "🥗", text: "sharing recipe" },
+    content: "Weekly nourishing meal prep! Wild Alaskan salmon, roasted rainbow carrots, quinoa, and homemade lemon tahini dressing.\n\nDrop a comment or audio spark if you want the 5-minute dressing recipe! 👇",
     media: [
       {
         type: "image",
@@ -296,86 +413,46 @@ export const INITIAL_POSTS = [
       },
     ],
     reactions: {
-      like: 112,
-      love: 68,
-      care: 21,
-      haha: 2,
-      wow: 19,
-      sad: 0,
-      angry: 0,
+      spark: 28,
+      insight: 15,
+      fire: 73,
+      vibe: 44,
+      liftoff: 5,
+      zen: 82,
     },
-    userReaction: "like",
-    sharesCount: 22,
+    userReaction: "fire",
+    sharesCount: 14,
     isSaved: false,
-    comments: [
-      {
-        id: "c-4",
-        author: {
-          name: "Aisha Patel",
-          avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-        },
-        content: "Yes please, drop that recipe Marcus! Looks delicious 😋",
-        timestamp: "3 hours ago",
-        likes: 5,
-        isLiked: false,
-      },
-    ],
+    comments: [],
   },
   {
-    id: "post-4",
+    id: "post-5",
     author: {
-      id: "friend-aisha",
-      name: "Aisha Patel",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-      isVerified: true,
+      id: "friend-david",
+      name: "David Miller",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      isVerified: false,
+      role: "Visual Storyteller",
+      vibe: "🎨 Creative Flow",
     },
-    timestamp: "8 hours ago",
+    timestamp: "7 hours ago",
     privacy: "public",
-    feeling: { emoji: "🚀", text: "feeling thrilled" },
-    content: "Big news: Our team's paper on efficient neural architectures was just accepted at NeurIPS! Huge gratitude to the whole research team and collaborators who put countless late nights into this. Onto Vancouver! 🇨🇦🤖📚",
-    media: [
-      {
-        type: "image",
-        url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1000&auto=format&fit=crop&q=80",
-        caption: "Machine learning research code",
-      },
-    ],
+    vibeTag: "creative",
+    bgGradient: "from-indigo-900 via-purple-900 to-slate-900",
+    content: "“Creativity is not a talent. It is a state of play where you allow yourself to fail with elegance.”\n\nWhat are you crafting today? 🚀✨",
+    media: [],
     reactions: {
-      like: 230,
-      love: 145,
-      care: 38,
-      haha: 0,
-      wow: 76,
-      sad: 0,
-      angry: 0,
+      spark: 61,
+      insight: 79,
+      fire: 24,
+      vibe: 53,
+      liftoff: 18,
+      zen: 34,
     },
-    userReaction: null,
-    sharesCount: 41,
+    userReaction: "vibe",
+    sharesCount: 31,
     isSaved: false,
-    comments: [
-      {
-        id: "c-5",
-        author: {
-          name: "Sarah Chen",
-          avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-        },
-        content: "Huge congratulations Aisha! So well deserved! 🎉👏",
-        timestamp: "6 hours ago",
-        likes: 12,
-        isLiked: false,
-      },
-      {
-        id: "c-6",
-        author: {
-          name: "Liam O'Connor",
-          avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80",
-        },
-        content: "Brilliant news, can't wait to read the final camera-ready copy!",
-        timestamp: "5 hours ago",
-        likes: 3,
-        isLiked: false,
-      },
-    ],
+    comments: [],
   },
 ];
 
@@ -440,7 +517,7 @@ export const INITIAL_NOTIFICATIONS = [
 export const INITIAL_CONVERSATIONS = {
   "friend-sarah": [
     { id: "m-1", senderId: "friend-sarah", text: "Hey! Did you check out the new design system update?", time: "10:14 AM" },
-    { id: "m-2", senderId: "user-alex", text: "Yes! Loved the clean typography and soft shadows. Really feels like Facebook modern style.", time: "10:16 AM" },
+    { id: "m-2", senderId: "user-alex", text: "Yes! Loved the audio sparks and calm Zen mode. Truly feels like a fresh creative sanctuary.", time: "10:16 AM" },
     { id: "m-3", senderId: "friend-sarah", text: "Awesome! Let me know if you want to collaborate on the stories carousel next.", time: "10:18 AM" },
   ],
   "friend-david": [
@@ -570,10 +647,10 @@ export const FEELING_PRESETS = [
 ];
 
 export const COLOR_BACKGROUNDS = [
-  { id: "none", name: "Default Plain", class: "bg-white text-zinc-900 dark:bg-[#242526] dark:text-[#e4e6eb]" },
-  { id: "bg-sunset", name: "Sunset Flame", class: "bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-ocean", name: "Deep Ocean", class: "bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-800 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-emerald", name: "Emerald Magic", class: "bg-gradient-to-tr from-emerald-500 to-teal-700 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-violet", name: "Neon Violet", class: "bg-gradient-to-tr from-purple-700 via-pink-600 to-red-500 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-dark", name: "Midnight Charcoal", class: "bg-gradient-to-tr from-zinc-900 via-zinc-800 to-zinc-950 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
+  { id: "none", name: "Clean Minimal", class: "bg-white text-zinc-900 dark:bg-[#111827] dark:text-[#f1f5f9]" },
+  { id: "bg-aurora", name: "Cyber Aurora", class: "bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
+  { id: "bg-nebula", name: "Cosmic Nebula", class: "bg-gradient-to-tr from-purple-900 via-indigo-900 to-slate-900 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
+  { id: "bg-sunset", name: "Sunset Coral", class: "bg-gradient-to-tr from-rose-500 via-pink-600 to-amber-500 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
+  { id: "bg-emerald", name: "Matcha Zen", class: "bg-gradient-to-tr from-emerald-600 via-teal-700 to-slate-900 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
+  { id: "bg-obsidian", name: "Obsidian Neon", class: "bg-gradient-to-tr from-slate-950 via-zinc-900 to-indigo-950 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px] border border-indigo-500/30" },
 ];

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { X, Minus, Send, Smile, Phone, Video, MoreVertical, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { X, Minus, Send, Sparkles, Zap, MessageSquare } from "lucide-react";
 
 export default function FloatingMessenger({
   activeChats,
@@ -14,7 +14,6 @@ export default function FloatingMessenger({
 }) {
   const [minimizedChats, setMinimizedChats] = useState({});
   const [inputs, setInputs] = useState({});
-  const messagesEndRef = useRef({});
 
   const toggleMinimize = (friendId) => {
     setMinimizedChats((prev) => ({ ...prev, [friendId]: !prev[friendId] }));
@@ -42,64 +41,64 @@ export default function FloatingMessenger({
         return (
           <div
             key={friend.id}
-            className={`pointer-events-auto w-80 bg-white dark:bg-[#242526] rounded-t-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700/80 overflow-hidden flex flex-col transition-all duration-200 ${
+            className={`pointer-events-auto w-80 bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-all duration-200 ${
               isMinimized ? "h-12" : "h-96"
             }`}
           >
             {/* Header */}
             <div
               onClick={() => toggleMinimize(friend.id)}
-              className="flex items-center justify-between px-3 py-2.5 bg-white dark:bg-[#242526] border-b border-zinc-200 dark:border-zinc-700/60 cursor-pointer shadow-sm"
+              className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50/90 dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 cursor-pointer shadow-xs"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <div className="relative shrink-0">
                   <img
                     src={friend.avatar}
                     alt={friend.name}
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-8 h-8 rounded-xl object-cover ring-2 ring-indigo-500/20"
                   />
                   {friend.online && (
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#242526]" />
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-zinc-900 dark:text-white truncate">
+                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                     {friend.name}
                   </p>
-                  <p className="text-[10px] text-zinc-400 truncate">
-                    {friend.online ? "Active now" : "Offline"}
+                  <p className="text-[10px] text-indigo-500 dark:text-cyan-400 truncate flex items-center gap-1">
+                    <span>⚡ Whisper Active</span>
                   </p>
                 </div>
               </div>
 
               <div
-                className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400"
+                className="flex items-center gap-1 text-slate-400"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   onClick={() => toggleMinimize(friend.id)}
-                  className="p-1 hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] rounded-full transition"
+                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => onCloseChat(friend.id)}
-                  className="p-1 hover:bg-zinc-100 dark:hover:bg-[#3a3b3c] rounded-full transition"
+                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* Chat Body & Input when not minimized */}
+            {/* Chat Body & Input */}
             {!isMinimized && (
               <>
-                {/* Messages list */}
-                <div className="flex-1 p-3 overflow-y-auto space-y-2 text-xs bg-zinc-50/50 dark:bg-[#18191a]/40">
+                <div className="flex-1 p-3 overflow-y-auto space-y-2 text-xs bg-slate-50/40 dark:bg-slate-950/40 scrollbar-thin">
                   {messages.length === 0 ? (
-                    <div className="text-center py-8 text-zinc-400">
-                      <p className="font-bold text-zinc-700 dark:text-zinc-300">{friend.name}</p>
-                      <p className="text-[11px] mt-1">You&apos;re connected on Kite. Say hello! 👋</p>
+                    <div className="text-center py-8 text-slate-400">
+                      <Zap className="w-8 h-8 mx-auto mb-2 text-amber-500 opacity-80" />
+                      <p className="font-bold text-slate-700 dark:text-slate-300">{friend.name}</p>
+                      <p className="text-[11px] mt-1">Start a private whisper in your circle! 🚀</p>
                     </div>
                   ) : (
                     messages.map((m) => {
@@ -113,18 +112,18 @@ export default function FloatingMessenger({
                             <img
                               src={friend.avatar}
                               alt=""
-                              className="w-6 h-6 rounded-full object-cover shrink-0 mb-0.5"
+                              className="w-6 h-6 rounded-lg object-cover shrink-0 mb-0.5"
                             />
                           )}
                           <div
                             className={`px-3 py-2 rounded-2xl max-w-[75%] break-words ${
                               isMe
-                                ? "bg-[#1877f2] text-white rounded-br-xs"
-                                : "bg-zinc-200 dark:bg-[#3a3b3c] text-zinc-900 dark:text-[#e4e6eb] rounded-bl-xs"
+                                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-xs shadow-xs"
+                                : "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/60 dark:border-slate-700/60"
                             }`}
                           >
                             <p className="leading-snug">{m.text}</p>
-                            <span className="block text-[9px] opacity-70 mt-0.5 text-right">
+                            <span className="block text-[9px] opacity-70 mt-0.5 text-right font-mono">
                               {m.time}
                             </span>
                           </div>
@@ -137,21 +136,21 @@ export default function FloatingMessenger({
                 {/* Message input */}
                 <form
                   onSubmit={(e) => handleSend(friend.id, e)}
-                  className="p-2 bg-white dark:bg-[#242526] border-t border-zinc-200 dark:border-zinc-700/60 flex items-center gap-1.5"
+                  className="p-2.5 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 flex items-center gap-2"
                 >
                   <input
                     type="text"
-                    placeholder="Aa..."
+                    placeholder="Send a whisper spark..."
                     value={inputs[friend.id] || ""}
                     onChange={(e) => handleInputChange(friend.id, e.target.value)}
-                    className="flex-1 px-3 py-1.5 bg-zinc-100 dark:bg-[#3a3b3c] rounded-full text-xs text-zinc-900 dark:text-[#e4e6eb] placeholder-zinc-400 focus:outline-none"
+                    className="flex-1 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                   <button
                     type="submit"
                     disabled={!inputs[friend.id]?.trim()}
-                    className="p-1.5 text-[#1877f2] disabled:opacity-30 hover:scale-110 transition"
+                    className="p-1.5 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white rounded-full disabled:opacity-30 hover:scale-105 transition shadow-xs"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-3.5 h-3.5" />
                   </button>
                 </form>
               </>

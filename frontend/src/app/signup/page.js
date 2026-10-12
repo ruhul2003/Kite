@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Sparkles, CheckCircle2, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Sparkles, CheckCircle2 } from "lucide-react";
 import GoogleIcon from "../../components/GoogleIcon";
 import { GUEST_USER_TEMPLATE } from "../../data/mockData";
 import { triggerGoogleSignIn } from "../../utils/googleAuth";
+import { apiRegister, apiGoogleAuth, apiGuestAuth } from "../../utils/api";
 
 const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
@@ -35,10 +36,10 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      setError("Please enter your first and last name.");
+      setError("Please enter your first name and surname.");
       return;
     }
     if (!formData.email.trim() || !formData.password.trim()) {
@@ -51,47 +52,40 @@ export default function SignupPage() {
     }
 
     setIsLoading(true);
-
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
-      username: formData.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, ""),
-      email: formData.email.trim(),
-      avatar: formData.avatar,
-      coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
-      bio: formData.bio.trim() || "Just joined Kite! Connect and say hi 👋",
-      work: "Community Member",
-      livesIn: "San Francisco, CA",
-      from: "California, USA",
-      joined: "Today",
-      followersCount: 1,
-      friendsCount: 0,
-      isGuest: false,
-    };
+    setError("");
 
     try {
-      localStorage.setItem("kite_user", JSON.stringify(newUser));
-    } catch {
-      // ignore
-    }
+      const savedUser = await apiRegister({
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+        email: formData.email.trim(),
+        password: formData.password,
+        avatar: formData.avatar,
+        bio: formData.bio.trim() || `Exploring Kite social platform 🌟 (${formData.gender})`,
+      });
 
-    setTimeout(() => {
+      localStorage.setItem("kite_user", JSON.stringify(savedUser));
       setIsLoading(false);
       router.push("/");
-    }, 400);
+    } catch (err) {
+      setIsLoading(false);
+      setError(err.message || "Failed to create account. Please check your credentials.");
+    }
   };
 
   const handleGoogleSignup = () => {
     setIsLoading(true);
     triggerGoogleSignIn(
-      (googleUser) => {
+      async (googleUser) => {
         try {
-          localStorage.setItem("kite_user", JSON.stringify(googleUser));
+          const savedUser = await apiGoogleAuth(googleUser);
+          localStorage.setItem("kite_user", JSON.stringify(savedUser));
+          setIsLoading(false);
+          router.push("/");
         } catch {
-          // ignore
+          localStorage.setItem("kite_user", JSON.stringify(googleUser));
+          setIsLoading(false);
+          router.push("/");
         }
-        setIsLoading(false);
-        router.push("/");
       },
       (err) => {
         setIsLoading(false);
@@ -100,23 +94,22 @@ export default function SignupPage() {
     );
   };
 
-  const handleGuestSignup = () => {
-    const randomNum = Math.floor(100 + Math.random() * 900);
-    const guestUser = {
-      ...GUEST_USER_TEMPLATE,
-      id: `user-guest-${randomNum}`,
-      name: `Guest Explorer #${randomNum}`,
-      username: `guest_${randomNum}`,
-      email: `guest${randomNum}@kite.local`,
-    };
-
+  const handleGuestSignup = async () => {
+    setIsLoading(true);
     try {
-      localStorage.setItem("kite_user", JSON.stringify(guestUser));
+      const guestUser = await apiGuestAuth();
+      const fallback = {
+        ...GUEST_USER_TEMPLATE,
+        id: `user-guest-${Date.now()}`,
+      };
+      localStorage.setItem("kite_user", JSON.stringify(guestUser || fallback));
+      setIsLoading(false);
+      router.push("/");
     } catch {
-      // ignore
+      localStorage.setItem("kite_user", JSON.stringify(GUEST_USER_TEMPLATE));
+      setIsLoading(false);
+      router.push("/");
     }
-
-    router.push("/");
   };
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -125,7 +118,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#18191a] text-zinc-900 dark:text-[#e4e6eb] flex flex-col justify-between selection:bg-[#1877f2]/20 selection:text-[#1877f2]">
-      {/* Top Header */}
+      {/* Top Header Branding */}
       <div className="pt-6 pb-2 text-center">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-[#1877f2] flex items-center justify-center text-white shadow-md">
@@ -149,20 +142,20 @@ export default function SignupPage() {
         </Link>
       </div>
 
-      {/* Main Signup Form Card */}
+      {/* Main Signup Card */}
       <div className="flex-1 flex items-center justify-center px-4 py-4 sm:py-8">
         <div className="w-full max-w-lg bg-white dark:bg-[#242526] rounded-2xl shadow-xl border border-zinc-200/90 dark:border-zinc-700/80 overflow-hidden">
-          {/* Card Header */}
+          {/* Header */}
           <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700/60">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
               Create a new account
             </h2>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-              It&apos;s quick and easy.
+              It&apos;s quick and easy. All accounts are saved to MongoDB Atlas (Kite.users).
             </p>
           </div>
 
-          {/* Form Body */}
+          {/* Form */}
           <div className="p-6 space-y-4">
             {error && (
               <div className="p-3 text-xs bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 font-semibold">
@@ -171,7 +164,7 @@ export default function SignupPage() {
             )}
 
             <form onSubmit={handleSignup} className="space-y-3.5">
-              {/* Names */}
+              {/* First Name & Surname */}
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="text"
@@ -191,12 +184,12 @@ export default function SignupPage() {
                 />
               </div>
 
-              {/* Email / Mobile */}
+              {/* Email */}
               <div>
                 <input
                   type="email"
                   required
-                  placeholder="Mobile number or email address"
+                  placeholder="Email address"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
@@ -222,7 +215,7 @@ export default function SignupPage() {
                 </button>
               </div>
 
-              {/* Date of Birth (Facebook style) */}
+              {/* Date of Birth */}
               <div>
                 <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1">
                   Date of birth
@@ -258,7 +251,7 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              {/* Gender (Facebook style) */}
+              {/* Gender */}
               <div>
                 <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1">
                   Gender
@@ -327,7 +320,7 @@ export default function SignupPage() {
 
               {/* Terms notice */}
               <div className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                People who use our service may have uploaded your contact information to Kite. By clicking Sign Up, you agree to our Terms, Privacy Policy and Cookies Policy.
+                By clicking Sign Up, you agree to our Terms, Privacy Policy and Cookies Policy.
               </div>
 
               {/* Submit Button */}
@@ -336,7 +329,7 @@ export default function SignupPage() {
                 disabled={isLoading}
                 className="w-full py-3 bg-[#00a400] hover:bg-[#008f00] text-white font-bold rounded-xl shadow-md transition transform active:scale-[0.98] text-base"
               >
-                {isLoading ? "Creating account..." : "Sign Up"}
+                {isLoading ? "Creating account in MongoDB..." : "Sign Up"}
               </button>
             </form>
 

@@ -2,241 +2,230 @@
 
 import { useState } from "react";
 import {
+  Zap,
+  Mic,
+  Code,
+  Compass,
+  Lightbulb,
+  Bookmark,
   Users,
   Tv,
   Store,
-  Bookmark,
-  Clock,
-  Flag,
-  Calendar,
+  Sparkles,
   ChevronDown,
   ChevronUp,
-  Sparkles,
-  Compass,
-  HeartHandshake,
+  Leaf,
+  Layers,
+  Flame,
+  Radio,
+  Palette,
 } from "lucide-react";
 
-export default function LeftSidebar({ currentUser, activeTab, setActiveTab, onOpenProfile, onOpenAuth }) {
+export default function LeftSidebar({
+  currentUser,
+  activeTab,
+  setActiveTab,
+  onOpenProfile,
+  onOpenAuth,
+  zenMode,
+  selectedVibeFilter,
+  setSelectedVibeFilter,
+}) {
   const [showMore, setShowMore] = useState(false);
 
+  const navigationItems = [
+    {
+      id: "feed",
+      label: "Sparks Stream",
+      icon: Zap,
+      badge: "Live",
+      badgeColor: "bg-indigo-500/10 text-indigo-500 dark:text-cyan-400",
+      color: "text-indigo-500",
+      bg: "bg-indigo-500/10",
+    },
+    {
+      id: "audio",
+      label: "Voice & Audio",
+      icon: Mic,
+      badge: "Feature",
+      badgeColor: "bg-rose-500/10 text-rose-500",
+      color: "text-rose-500",
+      bg: "bg-rose-500/10",
+      filterTag: "audio",
+    },
+    {
+      id: "code",
+      label: "Dev & Code",
+      icon: Code,
+      badge: "Feature",
+      badgeColor: "bg-cyan-500/10 text-cyan-500",
+      color: "text-cyan-500",
+      bg: "bg-cyan-500/10",
+      filterTag: "code",
+    },
+    {
+      id: "friends",
+      label: "Circle Network",
+      icon: Users,
+      badge: "3 req",
+      badgeColor: "bg-amber-500/10 text-amber-500",
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
+    },
+    {
+      id: "saved",
+      label: "Stash & Saved",
+      icon: Bookmark,
+      color: "text-purple-500",
+      bg: "bg-purple-500/10",
+    },
+    {
+      id: "watch",
+      label: "Cinema & Reels",
+      icon: Tv,
+      color: "text-pink-500",
+      bg: "bg-pink-500/10",
+    },
+    {
+      id: "marketplace",
+      label: "Kite Bazaar",
+      icon: Store,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+    },
+  ];
+
+  const CIRCLE_COMMUNITIES = [
+    { name: "⚡ Indie Creators", members: "1.4k members", icon: "🚀", color: "from-indigo-500 to-purple-600" },
+    { name: "🎨 Generative Design", members: "980 members", icon: "✨", color: "from-pink-500 to-rose-600" },
+    { name: "🌿 Mindful Tech", members: "2.1k members", icon: "🍵", color: "from-emerald-500 to-teal-600" },
+    { name: "🤖 Machine Learning Lab", members: "3.2k members", icon: "💡", color: "from-cyan-500 to-blue-600" },
+  ];
+
   return (
-    <aside className="w-[280px] shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto px-2 py-3 hidden xl:block select-none scrollbar-thin">
-      {/* User Profile item */}
+    <aside className="w-[270px] shrink-0 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4 hidden xl:block select-none scrollbar-thin">
+      {/* User Sanctuary Card */}
       <button
         onClick={onOpenProfile}
-        className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] transition text-left group"
+        className="w-full flex items-center gap-3 p-3 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800/80 border border-slate-200/70 dark:border-slate-800/80 shadow-sm transition group text-left cursor-pointer mb-3"
       >
         <div className="relative">
           <img
             src={currentUser?.avatar}
             alt={currentUser?.name}
-            className="w-9 h-9 rounded-full object-cover ring-1 ring-zinc-300 dark:ring-zinc-700"
+            className="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-500/30 group-hover:ring-indigo-500/70 transition"
           />
-          {currentUser?.isGuest && (
-            <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[8px] font-black px-1 rounded-full uppercase">
-              G
-            </span>
-          )}
+          <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-zinc-900 dark:text-[#e4e6eb] truncate">
+          <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition">
             {currentUser?.name}
           </p>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-            {currentUser?.isGuest ? "Guest Access" : "View your profile"}
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
+            <span>@{currentUser?.username || "creator"}</span>
+            {currentUser?.isGuest && (
+              <span className="bg-amber-500/20 text-amber-500 text-[8px] font-bold px-1 rounded">
+                Guest
+              </span>
+            )}
           </p>
         </div>
       </button>
 
-      {/* Main Nav Items */}
-      <div className="mt-1 space-y-0.5">
-        <button
-          onClick={() => setActiveTab("friends")}
-          className={`w-full flex items-center gap-3.5 p-2.5 rounded-xl transition text-left text-sm font-medium ${
-            activeTab === "friends"
-              ? "bg-[#1877f2]/10 text-[#1877f2] font-semibold"
-              : "text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-          }`}
-        >
-          <div className="w-8 h-8 rounded-full bg-blue-500/10 text-[#1877f2] flex items-center justify-center">
-            <Users className="w-5 h-5" />
-          </div>
-          <div className="flex-1 flex items-center justify-between">
-            <span>Friends</span>
-            <span className="bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.2">
-              3 new
-            </span>
-          </div>
-        </button>
+      {/* Primary Navigation Rail */}
+      <div className="space-y-1">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          const isItemActive =
+            item.filterTag
+              ? activeTab === "feed" && selectedVibeFilter === item.filterTag
+              : activeTab === item.id && (!selectedVibeFilter || item.id !== "feed");
 
-        <button
-          onClick={() => setActiveTab("feed")}
-          className={`w-full flex items-center gap-3.5 p-2.5 rounded-xl transition text-left text-sm font-medium ${
-            activeTab === "feed"
-              ? "bg-[#1877f2]/10 text-[#1877f2] font-semibold"
-              : "text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-          }`}
-        >
-          <div className="w-8 h-8 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <span>Feeds (All Posts)</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("watch")}
-          className={`w-full flex items-center gap-3.5 p-2.5 rounded-xl transition text-left text-sm font-medium ${
-            activeTab === "watch"
-              ? "bg-[#1877f2]/10 text-[#1877f2] font-semibold"
-              : "text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-          }`}
-        >
-          <div className="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-            <Tv className="w-5 h-5" />
-          </div>
-          <span>Watch</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("marketplace")}
-          className={`w-full flex items-center gap-3.5 p-2.5 rounded-xl transition text-left text-sm font-medium ${
-            activeTab === "marketplace"
-              ? "bg-[#1877f2]/10 text-[#1877f2] font-semibold"
-              : "text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-          }`}
-        >
-          <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <Store className="w-5 h-5" />
-          </div>
-          <span>Marketplace</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("saved")}
-          className={`w-full flex items-center gap-3.5 p-2.5 rounded-xl transition text-left text-sm font-medium ${
-            activeTab === "saved"
-              ? "bg-[#1877f2]/10 text-[#1877f2] font-semibold"
-              : "text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-          }`}
-        >
-          <div className="w-8 h-8 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-            <Bookmark className="w-5 h-5" />
-          </div>
-          <span>Saved Posts</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("memories")}
-          className="w-full flex items-center gap-3.5 p-2.5 rounded-xl transition text-left text-sm font-medium text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c]"
-        >
-          <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-            <Clock className="w-5 h-5" />
-          </div>
-          <span>Memories</span>
-        </button>
-
-        {showMore && (
-          <div className="space-y-0.5 animate-in fade-in duration-200">
-            <div className="w-full flex items-center gap-3.5 p-2.5 rounded-xl text-left text-sm font-medium text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                <Flag className="w-5 h-5" />
+          return (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.filterTag) {
+                  setActiveTab("feed");
+                  setSelectedVibeFilter?.(item.filterTag);
+                } else {
+                  setActiveTab(item.id);
+                  if (item.id === "feed") {
+                    setSelectedVibeFilter?.("all");
+                  }
+                }
+              }}
+              className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition text-left text-xs font-semibold cursor-pointer ${
+                isItemActive
+                  ? "bg-indigo-500/10 text-indigo-600 dark:text-cyan-400 font-bold shadow-sm"
+                  : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+              }`}
+            >
+              <div
+                className={`w-7 h-7 rounded-lg flex items-center justify-center ${item.bg} ${item.color}`}
+              >
+                <Icon className="w-4 h-4" />
               </div>
-              <span>Pages</span>
-            </div>
-
-            <div className="w-full flex items-center gap-3.5 p-2.5 rounded-xl text-left text-sm font-medium text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center">
-                <Calendar className="w-5 h-5" />
-              </div>
-              <span>Events</span>
-            </div>
-
-            <div className="w-full flex items-center gap-3.5 p-2.5 rounded-xl text-left text-sm font-medium text-zinc-800 dark:text-[#e4e6eb] hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                <Compass className="w-5 h-5" />
-              </div>
-              <span>Fundraisers</span>
-            </div>
-          </div>
-        )}
-
-        <button
-          onClick={() => setShowMore(!showMore)}
-          className="w-full flex items-center gap-3.5 p-2.5 rounded-xl text-left text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] transition"
-        >
-          <div className="w-8 h-8 rounded-full bg-zinc-200/80 dark:bg-[#3a3b3c] flex items-center justify-center text-zinc-600 dark:text-zinc-300">
-            {showMore ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </div>
-          <span>{showMore ? "See Less" : "See More"}</span>
-        </button>
+              <span className="flex-1">{item.label}</span>
+              {item.badge && (
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeColor}`}
+                >
+                  {item.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="my-3 border-t border-zinc-200/80 dark:border-zinc-700/60" />
+      <div className="h-[1px] bg-slate-200/70 dark:border-slate-800/80 my-3.5"></div>
 
-      {/* Shortcuts / Popular Groups */}
-      <div>
-        <p className="px-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
-          Your Shortcuts
-        </p>
+      {/* Featured Circles / Spaces */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between px-2 mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            Active Circles
+          </p>
+          <span className="text-[10px] text-indigo-500 font-bold hover:underline cursor-pointer">
+            Explore
+          </span>
+        </div>
 
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer transition text-xs font-semibold text-zinc-800 dark:text-[#e4e6eb]">
-            <img
-              src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&auto=format&fit=crop&q=80"
-              alt="Tech"
-              className="w-8 h-8 rounded-lg object-cover"
-            />
-            <span className="truncate">Tech Enthusiasts & Founders</span>
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer transition text-xs font-semibold text-zinc-800 dark:text-[#e4e6eb]">
-            <img
-              src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=100&auto=format&fit=crop&q=80"
-              alt="Photography"
-              className="w-8 h-8 rounded-lg object-cover"
-            />
-            <span className="truncate">Landscape Photographers Club</span>
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer transition text-xs font-semibold text-zinc-800 dark:text-[#e4e6eb]">
-            <img
-              src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&auto=format&fit=crop&q=80"
-              alt="Healthy Foods"
-              className="w-8 h-8 rounded-lg object-cover"
-            />
-            <span className="truncate">Meal Prep & Healthy Habits</span>
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer transition text-xs font-semibold text-zinc-800 dark:text-[#e4e6eb]">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xs">
-              K
+        <div className="space-y-1">
+          {CIRCLE_COMMUNITIES.map((c, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition cursor-pointer group"
+            >
+              <div
+                className={`w-7 h-7 rounded-lg bg-gradient-to-tr ${c.color} flex items-center justify-center text-xs text-white shadow-sm shrink-0`}
+              >
+                {c.icon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-indigo-500 dark:group-hover:text-cyan-400 transition">
+                  {c.name}
+                </p>
+                <p className="text-[10px] text-slate-400 truncate">{c.members}</p>
+              </div>
             </div>
-            <span className="truncate">Kite Early Adopters</span>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Guest encouragement CTA in sidebar if guest */}
-      {currentUser?.isGuest && (
-        <div className="mt-4 p-3 rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-rose-500/10 border border-amber-500/20 text-xs">
-          <p className="font-bold text-amber-700 dark:text-amber-400">Enjoying Kite?</p>
-          <p className="text-[11px] text-zinc-600 dark:text-zinc-300 mt-0.5 leading-relaxed">
-            Create a free profile to keep your posts, reactions, and friends forever.
+      {/* Zen Mode Sanctuary Banner */}
+      {zenMode && (
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-800 dark:text-emerald-300 text-xs">
+          <div className="flex items-center gap-1.5 font-bold mb-1">
+            <Leaf className="w-4 h-4 text-emerald-500" />
+            <span>Zen Sanctuary Active</span>
+          </div>
+          <p className="text-[11px] text-emerald-700/80 dark:text-emerald-300/80 leading-relaxed">
+            Vanity numbers and metric counters are softened. Enjoy genuine ideas without algorithmic noise.
           </p>
-          <button
-            onClick={() => onOpenAuth("signup")}
-            className="mt-2 w-full py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-[11px] shadow-sm transition"
-          >
-            Create Permanent Account
-          </button>
         </div>
       )}
-
-      {/* Footer Links */}
-      <div className="mt-6 px-2 text-[11px] text-zinc-400 dark:text-zinc-500 leading-normal space-y-1">
-        <p>Privacy · Terms · Advertising · Ad Choices · Cookies · More</p>
-        <p className="text-[10px]">Kite Social Platform © 2026</p>
-      </div>
     </aside>
   );
 }

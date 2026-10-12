@@ -1,6 +1,22 @@
 "use client";
 
-import { Search, MoreHorizontal, Gift, ExternalLink, UserCheck, Check, X } from "lucide-react";
+import { useState } from "react";
+import {
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  Sliders,
+  Sparkles,
+  Zap,
+  TrendingUp,
+  MessageSquare,
+  Check,
+  X,
+  Radio,
+  ExternalLink,
+} from "lucide-react";
+import { SOUNDSCAPE_TRACKS, DAILY_SPARK_PROMPT } from "../data/mockData";
 
 export default function RightSidebar({
   friends,
@@ -8,86 +24,172 @@ export default function RightSidebar({
   onAcceptRequest,
   onDeclineRequest,
   onOpenChatWithFriend,
+  isAmbientPlaying,
+  onToggleAmbient,
+  ambientTrack,
+  onSelectAmbientTrack,
+  ambientVolume,
+  onChangeAmbientVolume,
+  onOpenCreatePost,
 }) {
-  return (
-    <aside className="w-[300px] shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-3 hidden lg:block select-none scrollbar-thin">
-      {/* Sponsored Ad Card */}
-      <div className="mb-4 pb-3 border-b border-zinc-200/80 dark:border-zinc-700/60">
-        <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
-          Sponsored
-        </p>
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
-        <a
-          href="https://github.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] transition group"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=200&auto=format&fit=crop&q=80"
-            alt="Ad"
-            className="w-24 h-24 rounded-xl object-cover shrink-0"
-          />
-          <div className="min-w-0">
-            <h4 className="text-xs font-bold text-zinc-900 dark:text-[#e4e6eb] group-hover:text-[#1877f2] line-clamp-2">
-              Next-Gen Cloud Workstations for Developers
-            </h4>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-1">
-              <span>cloudstack.dev</span>
-              <ExternalLink className="w-2.5 h-2.5" />
-            </p>
+  const TRENDING_TOPICS = [
+    { tag: "#buildinpublic", sparks: "1.4k sparks", category: "Craft & Code" },
+    { tag: "#generativeAI", sparks: "980 sparks", category: "Technology" },
+    { tag: "#mindfultech", sparks: "720 sparks", category: "Well-being" },
+    { tag: "#audiosparks", sparks: "430 sparks", category: "Voice" },
+  ];
+
+  return (
+    <aside className="w-[300px] shrink-0 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4 hidden lg:block select-none scrollbar-thin">
+      {/* FEATURE: BUILT-IN AMBIENT SOUNDSCAPE PLAYER */}
+      <div className="mb-4 p-3.5 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-slate-900/40 backdrop-blur-md rounded-2xl border border-indigo-500/30 shadow-sm relative overflow-hidden group">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-cyan-400 flex items-center justify-center">
+              <Radio className="w-4 h-4 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
+                <span>Kite Soundscape</span>
+                {isAmbientPlaying && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                )}
+              </h4>
+              <p className="text-[10px] text-slate-400">Audio sanctuary for focus</p>
+            </div>
           </div>
-        </a>
+
+          <button
+            onClick={onToggleAmbient}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition shadow-md ${
+              isAmbientPlaying
+                ? "bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                : "bg-indigo-600 text-white hover:bg-indigo-500"
+            }`}
+            title={isAmbientPlaying ? "Pause Soundscape" : "Play Soundscape"}
+          >
+            {isAmbientPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+          </button>
+        </div>
+
+        {/* Track Selection Chips */}
+        <div className="grid grid-cols-2 gap-1.5 mb-2.5">
+          {SOUNDSCAPE_TRACKS.map((track) => (
+            <button
+              key={track.id}
+              onClick={() => onSelectAmbientTrack(track)}
+              className={`p-2 rounded-xl text-left transition flex items-center gap-2 text-xs border ${
+                ambientTrack?.id === track.id
+                  ? "bg-indigo-500/30 border-cyan-400/60 text-white font-bold"
+                  : "bg-slate-800/40 hover:bg-slate-800/70 border-white/5 text-slate-300"
+              }`}
+            >
+              <span className="text-sm">{track.icon}</span>
+              <span className="truncate text-[11px]">{track.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Volume Slider & Animated Visualizer */}
+        <div className="flex items-center justify-between pt-1 border-t border-white/10 text-xs text-slate-400">
+          <div className="flex items-center gap-1 text-[11px]">
+            {isAmbientPlaying ? (
+              <div className="flex items-center gap-1 h-3 text-cyan-400">
+                <span className="w-1 bg-cyan-400 rounded-full wave-bar-1"></span>
+                <span className="w-1 bg-cyan-400 rounded-full wave-bar-2"></span>
+                <span className="w-1 bg-cyan-400 rounded-full wave-bar-3"></span>
+                <span className="w-1 bg-cyan-400 rounded-full wave-bar-4"></span>
+                <span className="ml-1 text-[10px] text-cyan-300 font-mono">Playing</span>
+              </div>
+            ) : (
+              <span>Tap play to listen</span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Volume2 className="w-3 h-3 text-slate-400" />
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={ambientVolume}
+              onChange={(e) => onChangeAmbientVolume(parseFloat(e.target.value))}
+              className="w-16 accent-cyan-400 h-1 bg-slate-700 rounded-lg cursor-pointer"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Friend Requests Section */}
+      {/* FEATURE: DAILY COMMUNITY SPARK */}
+      <div className="mb-4 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm transition">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-cyan-400 flex items-center gap-1">
+            <Zap className="w-3 h-3" />
+            <span>Daily Spark</span>
+          </span>
+          <span className="text-[10px] text-slate-400 font-medium">
+            {DAILY_SPARK_PROMPT.sparksCount} replies
+          </span>
+        </div>
+
+        <h5 className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-snug mb-2.5">
+          &ldquo;{DAILY_SPARK_PROMPT.question}&rdquo;
+        </h5>
+
+        <button
+          onClick={onOpenCreatePost}
+          className="w-full py-1.5 px-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-cyan-400 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Drop your Spark</span>
+        </button>
+      </div>
+
+      {/* Incoming Connection Requests */}
       {friendRequests && friendRequests.length > 0 && (
-        <div className="mb-4 pb-3 border-b border-zinc-200/80 dark:border-zinc-700/60">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-              Friend Requests
+        <div className="mb-4 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between mb-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Connection Sparks ({friendRequests.length})
             </p>
-            <span className="text-xs text-[#1877f2] font-semibold hover:underline cursor-pointer">
-              See all
-            </span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {friendRequests.map((req) => (
-              <div
-                key={req.id}
-                className="p-2.5 bg-white dark:bg-[#242526] rounded-xl shadow-sm border border-zinc-200/70 dark:border-zinc-700/60 transition"
-              >
-                <div className="flex items-center gap-3 mb-2">
+              <div key={req.id} className="p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
+                <div className="flex items-center gap-2.5 mb-2">
                   <img
                     src={req.avatar}
                     alt={req.name}
-                    className="w-11 h-11 rounded-full object-cover"
+                    className="w-9 h-9 rounded-xl object-cover"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-zinc-900 dark:text-white truncate">
+                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                       {req.name}
                     </p>
-                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
-                      {req.mutualFriends} mutual friends · {req.time}
+                    <p className="text-[10px] text-slate-400 truncate">
+                      {req.mutualFriends} shared connections
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 mt-1">
+                <div className="grid grid-cols-2 gap-1.5">
                   <button
                     onClick={() => onAcceptRequest(req)}
-                    className="py-1.5 px-3 bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center justify-center gap-1"
+                    className="py-1 px-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1"
                   >
-                    <Check className="w-3.5 h-3.5" />
-                    Confirm
+                    <Check className="w-3 h-3" />
+                    Accept
                   </button>
                   <button
                     onClick={() => onDeclineRequest(req.id)}
-                    className="py-1.5 px-3 bg-zinc-200 dark:bg-[#3a3b3c] hover:bg-zinc-300 dark:hover:bg-[#4e4f50] text-zinc-800 dark:text-zinc-200 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1"
+                    className="py-1 px-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-[11px] font-semibold rounded-lg transition flex items-center justify-center gap-1"
                   >
-                    <X className="w-3.5 h-3.5" />
-                    Delete
+                    <X className="w-3 h-3" />
+                    Decline
                   </button>
                 </div>
               </div>
@@ -96,64 +198,74 @@ export default function RightSidebar({
         </div>
       )}
 
-      {/* Birthdays Widget */}
-      <div className="mb-4 pb-3 border-b border-zinc-200/80 dark:border-zinc-700/60">
-        <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
-          Birthdays
-        </p>
-
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] cursor-pointer transition">
-          <div className="w-9 h-9 rounded-full bg-blue-500/10 text-[#1877f2] flex items-center justify-center shrink-0">
-            <Gift className="w-5 h-5 text-rose-500" />
-          </div>
-          <p className="text-xs text-zinc-800 dark:text-[#e4e6eb] leading-snug">
-            <span className="font-bold">Sarah Chen</span> and <span className="font-bold">2 others</span> have birthdays today.
+      {/* Trending Vibe Topics */}
+      <div className="mb-4 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div className="flex items-center gap-1.5 mb-2.5 text-slate-400">
+          <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
+          <p className="text-[10px] font-bold uppercase tracking-wider">
+            Trending in the Circle
           </p>
+        </div>
+
+        <div className="space-y-2">
+          {TRENDING_TOPICS.map((item, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer group"
+            >
+              <div>
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-500 dark:group-hover:text-cyan-400 transition">
+                  {item.tag}
+                </p>
+                <p className="text-[10px] text-slate-400">{item.category}</p>
+              </div>
+              <span className="text-[10px] font-mono font-medium text-slate-400">
+                {item.sparks}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Contacts / Online Friends Section */}
-      <div>
-        <div className="flex items-center justify-between px-2 mb-2">
-          <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            Contacts ({friends?.length || 0})
+      {/* Active Circle Members / Whisper Launcher */}
+      <div className="p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            Circle Network
           </p>
-          <div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
-            <button className="p-1 hover:bg-zinc-200 dark:hover:bg-[#3a3b3c] rounded-full transition" title="Search Contacts">
-              <Search className="w-3.5 h-3.5" />
-            </button>
-            <button className="p-1 hover:bg-zinc-200 dark:hover:bg-[#3a3b3c] rounded-full transition" title="Options">
-              <MoreHorizontal className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
         </div>
 
-        <div className="space-y-0.5">
-          {friends?.map((friend) => (
+        <div className="space-y-1">
+          {friends.slice(0, 5).map((friend) => (
             <button
               key={friend.id}
               onClick={() => onOpenChatWithFriend(friend)}
-              className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-200/60 dark:hover:bg-[#3a3b3c] transition text-left group"
+              className="w-full flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left cursor-pointer group"
             >
-              <div className="relative shrink-0">
-                <img
-                  src={friend.avatar}
-                  alt={friend.name}
-                  className="w-9 h-9 rounded-full object-cover"
-                />
-                {friend.online ? (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#242526]" />
-                ) : (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-zinc-400 ring-2 ring-white dark:ring-[#242526]" />
-                )}
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="relative">
+                  <img
+                    src={friend.avatar}
+                    alt={friend.name}
+                    className="w-8 h-8 rounded-xl object-cover"
+                  />
+                  {friend.online && (
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-indigo-500 dark:group-hover:text-cyan-400 transition">
+                    {friend.name}
+                  </p>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    {friend.online ? "Active now" : friend.lastSeen || "Offline"}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-zinc-900 dark:text-[#e4e6eb] truncate group-hover:text-[#1877f2]">
-                  {friend.name}
-                </p>
-                <p className="text-[10px] text-zinc-400 truncate">
-                  {friend.online ? "Active now" : friend.lastSeen || "Offline"}
-                </p>
+
+              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-500 transition">
+                <MessageSquare className="w-3.5 h-3.5" />
               </div>
             </button>
           ))}
