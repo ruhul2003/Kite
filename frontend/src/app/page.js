@@ -1,710 +1,557 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Navbar from "../components/Navbar";
+import LeftSidebar from "../components/LeftSidebar";
+import RightSidebar from "../components/RightSidebar";
+import StoriesTray from "../components/StoriesTray";
+import CreatePostBox from "../components/CreatePostBox";
+import PostCard from "../components/PostCard";
+import AuthModal from "../components/AuthModal";
+import StoryViewerModal from "../components/StoryViewerModal";
+import ProfileModal from "../components/ProfileModal";
+import ImageViewerModal from "../components/ImageViewerModal";
+import FloatingMessenger from "../components/FloatingMessenger";
+import NotificationsDropdown from "../components/NotificationsDropdown";
+import FriendsView from "../components/FriendsView";
+import WatchView from "../components/WatchView";
+import MarketplaceView from "../components/MarketplaceView";
 import {
-  ArrowRight,
-  Check,
-  Copy,
-  ExternalLink,
-  Layers,
-  RefreshCw,
-  Server,
-  Zap,
-  ShieldCheck,
-  Cpu,
-  Terminal,
-  Activity,
-  Code2,
-  Sparkles
-} from "lucide-react";
-
-function GithubIcon(props) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="16"
-      height="16"
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-    </svg>
-  );
-}
+  INITIAL_CURRENT_USER,
+  GUEST_USER_TEMPLATE,
+  INITIAL_POSTS,
+  INITIAL_STORIES,
+  INITIAL_FRIENDS,
+  INITIAL_FRIEND_REQUESTS,
+  INITIAL_NOTIFICATIONS,
+  INITIAL_CONVERSATIONS,
+} from "../data/mockData";
+import { Bookmark, Sparkles, UserPlus } from "lucide-react";
 
 export default function Home() {
-  const [copied, setCopied] = useState(false);
-  const [backendStatus, setBackendStatus] = useState({
-    state: "checking", // 'connected' | 'offline' | 'checking'
-    data: null,
-    latency: null,
-    error: null,
-  });
-  const [activeTab, setActiveTab] = useState("health");
-  const [apiResponse, setApiResponse] = useState(null);
-  const [apiLoading, setApiLoading] = useState(false);
+  // Authentication & Current User
+  const [currentUser, setCurrentUser] = useState(INITIAL_CURRENT_USER);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState("signup");
 
-  const checkBackendHealth = async () => {
-    setBackendStatus((prev) => ({ ...prev, state: "checking", error: null }));
-    const startTime = performance.now();
-    try {
-      const res = await fetch("http://localhost:5000/api/health", {
-        headers: { Accept: "application/json" },
-      });
-      const endTime = performance.now();
-      const latency = Math.round(endTime - startTime);
+  // Navigation & View State
+  const [activeTab, setActiveTab] = useState("feed"); // 'feed' | 'friends' | 'watch' | 'marketplace' | 'saved'
+  const [searchQuery, setSearchQuery] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
 
-      if (res.ok) {
-        const data = await res.json();
-        setBackendStatus({
-          state: "connected",
-          data,
-          latency,
-          error: null,
-        });
-        setApiResponse(data);
-      } else {
-        throw new Error(`HTTP ${res.status}`);
-      }
-    } catch (err) {
-      setBackendStatus({
-        state: "offline",
-        data: {
-          status: "standby",
-          message: "Backend server is offline. Run 'cd backend && npm run dev' to start.",
-          timestamp: new Date().toISOString(),
-        },
-        latency: null,
-        error: err.message,
-      });
-      setApiResponse({
-        status: "standby",
-        message: "Start backend server on port 5000: 'cd backend && npm run dev'",
-        tip: "Backend is decoupled for independent scalability."
-      });
-    }
-  };
+  // Social Data State
+  const [posts, setPosts] = useState(INITIAL_POSTS);
+  const [stories, setStories] = useState(INITIAL_STORIES);
+  const [friends, setFriends] = useState(INITIAL_FRIENDS);
+  const [friendRequests, setFriendRequests] = useState(INITIAL_FRIEND_REQUESTS);
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+  const [conversations, setConversations] = useState(INITIAL_CONVERSATIONS);
 
-  // Check backend health on mount
+  // Modals & Panels State
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [activeStory, setActiveStory] = useState(null);
+  const [lightboxImage, setLightboxImage] = useState(null);
+  const [isNotifsOpen, setIsNotifsOpen] = useState(false);
+  const [isMessengerOpen, setIsMessengerOpen] = useState(false);
+  const [activeChats, setActiveChats] = useState([]); // List of friend objects with open chat windows
+
+  // Sync dark mode class with root html
   useEffect(() => {
-    let ignore = false;
-    async function initCheck() {
-      const startTime = performance.now();
-      try {
-        const res = await fetch("http://localhost:5000/api/health", {
-          headers: { Accept: "application/json" },
-        });
-        const endTime = performance.now();
-        const latency = Math.round(endTime - startTime);
-
-        if (res.ok) {
-          const data = await res.json();
-          if (!ignore) {
-            setBackendStatus({
-              state: "connected",
-              data,
-              latency,
-              error: null,
-            });
-            setApiResponse(data);
-          }
-        } else {
-          throw new Error(`HTTP ${res.status}`);
-        }
-      } catch (err) {
-        if (!ignore) {
-          setBackendStatus({
-            state: "offline",
-            data: {
-              status: "standby",
-              message: "Backend server is offline. Run 'cd backend && npm run dev' to start.",
-              timestamp: new Date().toISOString(),
-            },
-            latency: null,
-            error: err.message,
-          });
-          setApiResponse({
-            status: "standby",
-            message: "Start backend server on port 5000: 'cd backend && npm run dev'",
-            tip: "Backend is decoupled for independent scalability."
-          });
-        }
-      }
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
+  }, [darkMode]);
 
-    initCheck();
-    return () => {
-      ignore = true;
-    };
+  // Load saved user from localStorage if available
+  useEffect(() => {
+    try {
+      const savedUser = localStorage.getItem("kite_user");
+      if (savedUser) {
+        setCurrentUser(JSON.parse(savedUser));
+      }
+      const savedTheme = localStorage.getItem("kite_theme");
+      if (savedTheme === "dark") {
+        setDarkMode(true);
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
-  const handleTestApi = async (endpoint, method = "GET", payload = null) => {
-    setApiLoading(true);
-    const startTime = performance.now();
+  // Save user changes to localStorage
+  const handleSetUser = (user) => {
+    setCurrentUser(user);
     try {
-      const options = {
-        method,
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-      };
-      if (payload) {
-        options.body = JSON.stringify(payload);
-      }
-
-      const res = await fetch(`http://localhost:5000${endpoint}`, options);
-      const data = await res.json();
-      setApiResponse(data);
+      localStorage.setItem("kite_user", JSON.stringify(user));
     } catch {
-      // Mock fallback if backend is offline so the UI remains interactive and informative
-      if (endpoint === "/api/info") {
-        setApiResponse({
-          name: "Kite Backend Service",
-          version: "1.0.0",
-          framework: "Express 4.21",
-          mode: "development",
-          note: "Simulated response (start backend on :5000 for live data)"
-        });
-      } else if (endpoint === "/api/echo") {
-        setApiResponse({
-          status: "received",
-          data: payload || { sample: "Hello from Kite Minimal UI" },
-          receivedAt: new Date().toISOString(),
-          note: "Echo simulation (start backend on :5000 for live response)"
-        });
-      } else {
-        setApiResponse({
-          status: "ok",
-          service: "Kite API",
-          message: "Backend is ready to launch via 'cd backend && npm run dev'",
-          uptime: "0s (standby)"
-        });
-      }
-    } finally {
-      setApiLoading(false);
+      // ignore
     }
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  // Auth actions
+  const handleSignup = (newUser) => {
+    handleSetUser(newUser);
   };
 
+  const handleLogin = (user) => {
+    handleSetUser(user);
+  };
+
+  const handleGuestLogin = () => {
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const guestUser = {
+      ...GUEST_USER_TEMPLATE,
+      id: `user-guest-${randomNum}`,
+      name: `Guest Explorer #${randomNum}`,
+      username: `guest_${randomNum}`,
+      email: `guest${randomNum}@kite.local`,
+    };
+    handleSetUser(guestUser);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("kite_user");
+    setAuthModalMode("login");
+    setIsAuthModalOpen(true);
+  };
+
+  const handleOpenAuth = (mode = "signup") => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  // Post Actions
+  const handleCreatePost = (newPost) => {
+    setPosts([newPost, ...posts]);
+  };
+
+  const handleReactToPost = (postId, reactionType) => {
+    setPosts(
+      posts.map((p) => {
+        if (p.id !== postId) return p;
+
+        const updatedReactions = { ...p.reactions };
+        const prevReaction = p.userReaction;
+
+        // Decrement previous reaction count if existing
+        if (prevReaction && updatedReactions[prevReaction] > 0) {
+          updatedReactions[prevReaction] -= 1;
+        }
+
+        // If clicking same reaction, toggle off
+        if (prevReaction === reactionType || !reactionType) {
+          return {
+            ...p,
+            userReaction: null,
+            reactions: updatedReactions,
+          };
+        }
+
+        // Increment new reaction count
+        updatedReactions[reactionType] = (updatedReactions[reactionType] || 0) + 1;
+
+        return {
+          ...p,
+          userReaction: reactionType,
+          reactions: updatedReactions,
+        };
+      })
+    );
+  };
+
+  const handleAddComment = (postId, comment) => {
+    setPosts(
+      posts.map((p) => {
+        if (p.id === postId) {
+          return {
+            ...p,
+            comments: [...(p.comments || []), comment],
+          };
+        }
+        return p;
+      })
+    );
+  };
+
+  const handleToggleSavePost = (postId) => {
+    setPosts(
+      posts.map((p) => {
+        if (p.id === postId) {
+          return { ...p, isSaved: !p.isSaved };
+        }
+        return p;
+      })
+    );
+  };
+
+  const handleDeletePost = (postId) => {
+    setPosts(posts.filter((p) => p.id !== postId));
+  };
+
+  const handleSharePost = (postId) => {
+    setPosts(
+      posts.map((p) => {
+        if (p.id === postId) {
+          return { ...p, sharesCount: (p.sharesCount || 0) + 1 };
+        }
+        return p;
+      })
+    );
+    alert("Post shared to your feed!");
+  };
+
+  // Friend Request Actions
+  const handleAcceptRequest = (request) => {
+    setFriendRequests(friendRequests.filter((r) => r.id !== request.id));
+    const newFriend = {
+      id: `friend-${Date.now()}`,
+      name: request.name,
+      avatar: request.avatar,
+      online: true,
+      mutualFriends: request.mutualFriends,
+      work: "Kite Friend",
+    };
+    setFriends([newFriend, ...friends]);
+  };
+
+  const handleDeclineRequest = (requestId) => {
+    setFriendRequests(friendRequests.filter((r) => r.id !== requestId));
+  };
+
+  // Messenger & Chat Actions
+  const handleOpenChatWithFriend = (friend) => {
+    if (!activeChats.find((c) => c.id === friend.id)) {
+      setActiveChats([...activeChats, friend]);
+    }
+  };
+
+  const handleOpenChatWithSeller = (sellerName) => {
+    const existing = friends.find((f) => f.name.toLowerCase() === sellerName.toLowerCase());
+    const target = existing || {
+      id: `seller-${Date.now()}`,
+      name: sellerName,
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      online: true,
+    };
+    handleOpenChatWithFriend(target);
+  };
+
+  const handleCloseChat = (friendId) => {
+    setActiveChats(activeChats.filter((c) => c.id !== friendId));
+  };
+
+  const handleSendMessage = (friendId, text) => {
+    const userMsg = {
+      id: `msg-${Date.now()}`,
+      senderId: currentUser.id,
+      text,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setConversations((prev) => ({
+      ...prev,
+      [friendId]: [...(prev[friendId] || []), userMsg],
+    }));
+
+    // Friendly auto-reply simulation
+    setTimeout(() => {
+      const replies = [
+        "That sounds awesome! Let me know when you're free.",
+        "Totally agree with you on this! 👍",
+        "Thanks for reaching out! Really enjoying Kite so far.",
+        "Haha that's great! Let's catch up soon.",
+        "Got it, appreciate the message! ✨",
+      ];
+      const randomReply = replies[Math.floor(Math.random() * replies.length)];
+
+      const friendMsg = {
+        id: `reply-${Date.now()}`,
+        senderId: friendId,
+        text: randomReply,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+
+      setConversations((prev) => ({
+        ...prev,
+        [friendId]: [...(prev[friendId] || []), friendMsg],
+      }));
+    }, 1200);
+  };
+
+  const handleStoryReply = (authorName, text) => {
+    const friend = friends.find((f) => f.name.toLowerCase().includes(authorName.toLowerCase())) || friends[0];
+    handleOpenChatWithFriend(friend);
+    handleSendMessage(friend.id, text);
+    setActiveStory(null);
+  };
+
+  // Notifications
+  const handleMarkAllNotifsRead = () => {
+    setNotifications(notifications.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleSelectNotification = (id) => {
+    setNotifications(
+      notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  };
+
+  // Profile update
+  const handleUpdateProfile = (updatedFields) => {
+    const updated = { ...currentUser, ...updatedFields };
+    handleSetUser(updated);
+  };
+
+  // Filter posts by search query or saved view
+  const displayedPosts = posts.filter((post) => {
+    if (activeTab === "saved" && !post.isSaved) return false;
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    const matchContent = post.content?.toLowerCase().includes(q);
+    const matchAuthor = post.author?.name?.toLowerCase().includes(q);
+    return matchContent || matchAuthor;
+  });
+
+  const unreadNotifsCount = notifications.filter((n) => !n.read).length;
+
   return (
-    <div className="min-h-screen bg-white text-zinc-900 selection:bg-zinc-100 selection:text-black">
-      {/* Background Grid Pattern */}
-      <div className="absolute inset-0 bg-grid-subtle mask-radial pointer-events-none -z-10" />
+    <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#18191a] text-zinc-900 dark:text-[#e4e6eb] flex flex-col font-sans transition-colors duration-200">
+      {/* Facebook Navigation Bar */}
+      <Navbar
+        currentUser={currentUser}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        unreadMessagesCount={activeChats.length > 0 ? 1 : 0}
+        unreadNotifsCount={unreadNotifsCount}
+        onOpenNotifications={() => setIsNotifsOpen(!isNotifsOpen)}
+        isNotifsOpen={isNotifsOpen}
+        onToggleMessenger={() => {
+          if (activeChats.length === 0 && friends.length > 0) {
+            handleOpenChatWithFriend(friends[0]);
+          }
+          setIsMessengerOpen(!isMessengerOpen);
+        }}
+        isMessengerOpen={isMessengerOpen}
+        onOpenCreatePost={() => setIsCreatePostOpen(true)}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        onOpenAuth={handleOpenAuth}
+        onLogout={handleLogout}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+      />
 
-      {/* Minimal Top Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-zinc-200/70 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <div className="flex items-center gap-6">
-            <a href="#" className="flex items-center gap-2.5 group">
-              {/* Kite geometric logo */}
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-white shadow-sm transition-transform duration-200 group-hover:scale-105">
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2L20 10L12 22L4 10L12 2Z" />
-                  <path d="M4 10L20 10" />
-                  <path d="M12 2L12 22" />
-                </svg>
-              </div>
-              <span className="font-semibold text-lg tracking-tight text-zinc-900">
-                Kite
-              </span>
-            </a>
+      {/* Notifications Dropdown Tray */}
+      <NotificationsDropdown
+        isOpen={isNotifsOpen}
+        onClose={() => setIsNotifsOpen(false)}
+        notifications={notifications}
+        onMarkAllRead={handleMarkAllNotifsRead}
+        onSelectNotification={handleSelectNotification}
+      />
 
-            <nav className="hidden md:flex items-center gap-5 text-sm text-zinc-500 font-medium">
-              <a href="#overview" className="transition-colors hover:text-zinc-950">
-                Overview
-              </a>
-              <a href="#architecture" className="transition-colors hover:text-zinc-950">
-                Architecture
-              </a>
-              <a href="#api" className="transition-colors hover:text-zinc-950">
-                API Status
-              </a>
-              <a href="#features" className="transition-colors hover:text-zinc-950">
-                Features
-              </a>
-            </nav>
-          </div>
+      {/* 3-Column Main Social Body */}
+      <div className="flex-1 max-w-[1920px] w-full mx-auto flex justify-between">
+        {/* Left Sidebar */}
+        <LeftSidebar
+          currentUser={currentUser}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onOpenProfile={() => setIsProfileModalOpen(true)}
+          onOpenAuth={handleOpenAuth}
+        />
 
-          <div className="flex items-center gap-3">
-            {/* Live Status Indicator */}
-            <div
-              onClick={() => checkBackendHealth(true)}
-              className="hidden sm:flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50/80 px-3 py-1 text-xs font-medium cursor-pointer transition hover:bg-zinc-100"
-              title="Click to ping backend"
-            >
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  backendStatus.state === "connected"
-                    ? "bg-emerald-500 animate-pulse"
-                    : backendStatus.state === "checking"
-                    ? "bg-amber-400 animate-spin"
-                    : "bg-zinc-400"
-                }`}
-              />
-              <span className="text-zinc-600">
-                {backendStatus.state === "connected"
-                  ? `API Live (${backendStatus.latency}ms)`
-                  : backendStatus.state === "checking"
-                  ? "Checking..."
-                  : "API Standby"}
-              </span>
-            </div>
-
-            <a
-              href="https://github.com/ruhul2003/Kite"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950"
-              aria-label="GitHub Repository"
-            >
-              <GithubIcon className="h-4 w-4" />
-            </a>
-
-            <a
-              href="#api"
-              className="hidden sm:inline-flex items-center justify-center rounded-lg bg-zinc-950 px-3.5 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-zinc-800"
-            >
-              Get Started
-            </a>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="mx-auto max-w-6xl px-6 py-12 md:py-20">
-        {/* Hero Section */}
-        <section id="overview" className="flex flex-col items-center text-center">
-          {/* Release Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200/90 bg-zinc-50/80 px-3.5 py-1 text-xs font-medium text-zinc-700 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mb-8 transition hover:border-zinc-300">
-            <Sparkles className="h-3.5 w-3.5 text-zinc-900" />
-            <span>Kite Monorepo</span>
-            <span className="text-zinc-300">•</span>
-            <span className="text-zinc-500 font-mono text-[11px]">Next.js 16 + Express</span>
-          </div>
-
-          {/* Headline */}
-          <h1 className="max-w-3xl text-4xl sm:text-6xl font-semibold tracking-tight text-zinc-950 leading-[1.12]">
-            Minimal architecture.
-            <br />
-            <span className="text-zinc-400">Maximum engineering velocity.</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="mt-6 max-w-2xl text-base sm:text-lg text-zinc-600 leading-relaxed font-normal">
-            A clean, decoupled fullstack foundation. Built with Next.js 16 and
-            Tailwind CSS v4 on the frontend, paired with an independent Express API backend.
-          </p>
-
-          {/* Actions */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="#api"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800"
-            >
-              Test API Health
-              <ArrowRight className="h-4 w-4" />
-            </a>
-
-            <a
-              href="https://github.com/ruhul2003/Kite"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-5 text-sm font-medium text-zinc-700 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition hover:bg-zinc-50 hover:text-zinc-950"
-            >
-              <GithubIcon className="h-4 w-4" />
-              GitHub
-            </a>
-          </div>
-
-          {/* Quick Copy Command Snippet */}
-          <div className="mt-10 flex items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-zinc-50/70 px-4 py-2.5 text-xs font-mono text-zinc-700 shadow-sm max-w-md w-full">
-            <div className="flex items-center gap-2 truncate">
-              <Terminal className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-              <span className="text-zinc-400 select-none">$</span>
-              <span className="truncate">npm run dev</span>
-              <span className="text-zinc-400 select-none">(frontend & backend)</span>
-            </div>
-            <button
-              onClick={() => copyToClipboard("npm run dev")}
-              className="rounded-md p-1 text-zinc-400 hover:text-zinc-900 transition hover:bg-zinc-200/60"
-              title="Copy command"
-            >
-              {copied ? (
-                <Check className="h-3.5 w-3.5 text-emerald-600" />
-              ) : (
-                <Copy className="h-3.5 w-3.5" />
-              )}
-            </button>
-          </div>
-        </section>
-
-        {/* Live Connectivity & API Explorer Section */}
-        <section id="api" className="mt-20 scroll-mt-24">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+        {/* Central Feed / View Area */}
+        <main className="flex-1 max-w-2xl px-2 sm:px-4 py-4 min-h-[calc(100vh-3.5rem)]">
+          {/* VIEW: MAIN NEWS FEED */}
+          {activeTab === "feed" && (
             <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                <Activity className="h-3.5 w-3.5" />
-                Live Telemetry
-              </div>
-              <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 mt-1">
-                API Status & Explorer
-              </h2>
-            </div>
-            <button
-              onClick={() => checkBackendHealth(true)}
-              className="inline-flex items-center gap-2 self-start rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50"
-            >
-              <RefreshCw
-                className={`h-3 w-3 ${
-                  backendStatus.state === "checking" ? "animate-spin" : ""
-                }`}
+              {/* Stories Tray */}
+              <StoriesTray
+                currentUser={currentUser}
+                stories={stories}
+                onOpenStory={(story) => setActiveStory(story)}
+                onCreateStory={() => setIsCreatePostOpen(true)}
               />
-              Ping Server (:5000)
-            </button>
-          </div>
 
-          {/* White Card Container */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-            {/* Top Stats Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-zinc-100">
-              <div className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-4">
-                <span className="text-xs font-medium text-zinc-500">
-                  Backend Status
-                </span>
-                <div className="mt-1 flex items-center gap-2">
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      backendStatus.state === "connected"
-                        ? "bg-emerald-500"
-                        : backendStatus.state === "checking"
-                        ? "bg-amber-400 animate-spin"
-                        : "bg-zinc-400"
-                    }`}
+              {/* Create Post Box */}
+              <CreatePostBox
+                currentUser={currentUser}
+                onCreatePost={handleCreatePost}
+                isOpen={isCreatePostOpen}
+                setIsOpen={setIsCreatePostOpen}
+              />
+
+              {/* Feed Search Indicator */}
+              {searchQuery && (
+                <div className="mb-4 p-3 bg-white dark:bg-[#242526] rounded-xl shadow-sm text-xs flex items-center justify-between">
+                  <span>
+                    Search results for &ldquo;<strong>{searchQuery}</strong>&rdquo; ({displayedPosts.length} posts found)
+                  </span>
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="text-[#1877f2] font-bold hover:underline"
+                  >
+                    Clear search
+                  </button>
+                </div>
+              )}
+
+              {/* Posts Feed */}
+              {displayedPosts.length === 0 ? (
+                <div className="bg-white dark:bg-[#242526] p-12 rounded-2xl text-center shadow-sm border border-zinc-200 dark:border-zinc-700/60 text-zinc-500">
+                  <Sparkles className="w-12 h-12 mx-auto mb-3 text-zinc-300 dark:text-zinc-600" />
+                  <h3 className="text-base font-bold text-zinc-800 dark:text-zinc-200">
+                    No posts to display
+                  </h3>
+                  <p className="text-xs mt-1 max-w-sm mx-auto">
+                    {searchQuery ? "Try searching for a different keyword." : "Be the first to share something exciting with your community!"}
+                  </p>
+                  <button
+                    onClick={() => setIsCreatePostOpen(true)}
+                    className="mt-4 px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white font-bold text-xs rounded-xl shadow transition"
+                  >
+                    Create a Post
+                  </button>
+                </div>
+              ) : (
+                displayedPosts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    currentUser={currentUser}
+                    onReact={handleReactToPost}
+                    onAddComment={handleAddComment}
+                    onToggleSave={handleToggleSavePost}
+                    onDeletePost={handleDeletePost}
+                    onShare={handleSharePost}
+                    onImageClick={(url) => setLightboxImage(url)}
                   />
-                  <span className="font-semibold text-sm text-zinc-900">
-                    {backendStatus.state === "connected"
-                      ? "Online & Operational"
-                      : backendStatus.state === "checking"
-                      ? "Pinging Backend..."
-                      : "Standby (Offline)"}
-                  </span>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* VIEW: SAVED POSTS */}
+          {activeTab === "saved" && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-[#242526] p-4 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/60 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold tracking-tight">Saved Posts</h2>
+                  <p className="text-xs text-zinc-500">Articles, photos, and updates you saved for later</p>
                 </div>
+                <Bookmark className="w-6 h-6 text-purple-500" />
               </div>
 
-              <div className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-4">
-                <span className="text-xs font-medium text-zinc-500">
-                  Response Latency
-                </span>
-                <div className="mt-1 flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-zinc-700" />
-                  <span className="font-semibold text-sm text-zinc-900">
-                    {backendStatus.latency !== null
-                      ? `${backendStatus.latency} ms`
-                      : "N/A"}
-                  </span>
+              {displayedPosts.length === 0 ? (
+                <div className="bg-white dark:bg-[#242526] p-12 rounded-2xl text-center shadow-sm border border-zinc-200 dark:border-zinc-700/60 text-zinc-400">
+                  <Bookmark className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p className="font-bold text-zinc-700 dark:text-zinc-300">No saved posts</p>
+                  <p className="text-xs mt-1">Save posts by clicking the three dots on any post.</p>
                 </div>
-              </div>
-
-              <div className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-4">
-                <span className="text-xs font-medium text-zinc-500">
-                  Local Endpoint
-                </span>
-                <div className="mt-1 flex items-center gap-1.5 font-mono text-xs text-zinc-700 truncate">
-                  <Server className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                  <span className="truncate">http://localhost:5000</span>
-                </div>
-              </div>
+              ) : (
+                displayedPosts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    currentUser={currentUser}
+                    onReact={handleReactToPost}
+                    onAddComment={handleAddComment}
+                    onToggleSave={handleToggleSavePost}
+                    onDeletePost={handleDeletePost}
+                    onShare={handleSharePost}
+                    onImageClick={(url) => setLightboxImage(url)}
+                  />
+                ))
+              )}
             </div>
+          )}
 
-            {/* Interactive Endpoints Tabs */}
-            <div className="pt-6">
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div className="flex items-center gap-2 rounded-lg border border-zinc-200/80 p-1 bg-zinc-50">
-                  <button
-                    onClick={() => {
-                      setActiveTab("health");
-                      handleTestApi("/api/health");
-                    }}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition ${
-                      activeTab === "health"
-                        ? "bg-white text-zinc-950 shadow-sm"
-                        : "text-zinc-600 hover:text-zinc-950"
-                    }`}
-                  >
-                    GET /api/health
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab("info");
-                      handleTestApi("/api/info");
-                    }}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition ${
-                      activeTab === "info"
-                        ? "bg-white text-zinc-950 shadow-sm"
-                        : "text-zinc-600 hover:text-zinc-950"
-                    }`}
-                  >
-                    GET /api/info
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab("echo");
-                      handleTestApi("/api/echo", "POST", {
-                        client: "Kite Web UI",
-                        ping: "ok",
-                      });
-                    }}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition ${
-                      activeTab === "echo"
-                        ? "bg-white text-zinc-950 shadow-sm"
-                        : "text-zinc-600 hover:text-zinc-950"
-                    }`}
-                  >
-                    POST /api/echo
-                  </button>
-                </div>
+          {/* VIEW: FRIENDS HUB */}
+          {activeTab === "friends" && (
+            <FriendsView
+              friends={friends}
+              friendRequests={friendRequests}
+              onAcceptRequest={handleAcceptRequest}
+              onDeclineRequest={handleDeclineRequest}
+              onOpenChatWithFriend={handleOpenChatWithFriend}
+            />
+          )}
 
-                <button
-                  onClick={() => {
-                    if (activeTab === "health") handleTestApi("/api/health");
-                    if (activeTab === "info") handleTestApi("/api/info");
-                    if (activeTab === "echo")
-                      handleTestApi("/api/echo", "POST", { client: "Kite UI" });
-                  }}
-                  disabled={apiLoading}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-950 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
-                >
-                  <Code2 className="h-3.5 w-3.5" />
-                  {apiLoading ? "Sending..." : "Execute Request"}
-                </button>
-              </div>
+          {/* VIEW: WATCH / REELS */}
+          {activeTab === "watch" && <WatchView />}
 
-              {/* Response Code Box */}
-              <div className="relative rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 font-mono text-xs">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-200/60 text-zinc-400 text-[11px]">
-                  <span>Response Payload (JSON)</span>
-                  <button
-                    onClick={() =>
-                      copyToClipboard(JSON.stringify(apiResponse, null, 2))
-                    }
-                    className="flex items-center gap-1 hover:text-zinc-900 transition"
-                  >
-                    <Copy className="h-3 w-3" />
-                    Copy
-                  </button>
-                </div>
-                <pre className="text-zinc-800 overflow-x-auto leading-relaxed">
-                  {apiResponse
-                    ? JSON.stringify(apiResponse, null, 2)
-                    : "// Press 'Execute Request' to test the endpoint"}
-                </pre>
-              </div>
-            </div>
-          </div>
-        </section>
+          {/* VIEW: MARKETPLACE */}
+          {activeTab === "marketplace" && (
+            <MarketplaceView onOpenChatWithSeller={handleOpenChatWithSeller} />
+          )}
+        </main>
 
-        {/* Architecture Section */}
-        <section id="architecture" className="mt-24 scroll-mt-24">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              <Layers className="h-3.5 w-3.5" />
-              Decoupled Architecture
-            </div>
-            <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 mt-1">
-              Engineered for modularity.
-            </h2>
-            <p className="text-zinc-500 text-sm mt-2">
-              Separation of concerns gives your frontend and backend independent CI/CD, dependencies, and scaling profiles.
-            </p>
-          </div>
+        {/* Right Sidebar */}
+        <RightSidebar
+          friends={friends}
+          friendRequests={friendRequests}
+          onAcceptRequest={handleAcceptRequest}
+          onDeclineRequest={handleDeclineRequest}
+          onOpenChatWithFriend={handleOpenChatWithFriend}
+        />
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Frontend Architecture Card */}
-            <div className="rounded-2xl border border-zinc-200 bg-white p-7 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition hover:shadow-md">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 text-zinc-900">
-                  <Code2 className="h-5 w-5" />
-                </div>
-                <span className="font-mono text-xs font-semibold text-zinc-500 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
-                  frontend/
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold text-zinc-900">
-                Next.js 16 + Tailwind CSS v4
-              </h3>
-              <p className="mt-2 text-sm text-zinc-600 leading-relaxed">
-                App Router with zero-config Tailwind CSS v4 engine, optimized font rendering via Geist, and instant Turbopack builds.
-              </p>
-              <ul className="mt-5 space-y-2 text-xs text-zinc-600 font-mono">
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                  Port: 3000 (dev)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                  Router: App Router (`src/app`)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                  Styling: `@import &quot;tailwindcss&quot;`
-                </li>
-              </ul>
-            </div>
+      {/* Floating Messenger Chat Windows (Bottom Right) */}
+      <FloatingMessenger
+        activeChats={activeChats}
+        conversations={conversations}
+        currentUser={currentUser}
+        onCloseChat={handleCloseChat}
+        onSendMessage={handleSendMessage}
+        onOpenChat={handleOpenChatWithFriend}
+        friends={friends}
+      />
 
-            {/* Backend Architecture Card */}
-            <div className="rounded-2xl border border-zinc-200 bg-white p-7 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition hover:shadow-md">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 text-zinc-900">
-                  <Server className="h-5 w-5" />
-                </div>
-                <span className="font-mono text-xs font-semibold text-zinc-500 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
-                  backend/
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold text-zinc-900">
-                Express API Server
-              </h3>
-              <p className="mt-2 text-sm text-zinc-600 leading-relaxed">
-                Modular Node.js service using native ES modules, configured with CORS middleware, environment orchestration, and hot reload via `node --watch`.
-              </p>
-              <ul className="mt-5 space-y-2 text-xs text-zinc-600 font-mono">
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                  Port: 5000 (configurable via .env)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                  Module System: Native ES Modules (`type: module`)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                  Features: CORS, dotenv, health telemetry
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authModalMode}
+        onLogin={handleLogin}
+        onSignup={handleSignup}
+        onGuestLogin={handleGuestLogin}
+      />
 
-        {/* Feature Highlights Bento Grid */}
-        <section id="features" className="mt-24 scroll-mt-24">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              <Zap className="h-3.5 w-3.5" />
-              Core Capabilities
-            </div>
-            <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 mt-1">
-              Built for speed and clarity.
-            </h2>
-          </div>
+      {/* Fullscreen Story Viewer Modal */}
+      {activeStory && (
+        <StoryViewerModal
+          story={activeStory}
+          stories={stories}
+          onClose={() => setActiveStory(null)}
+          onSelectStory={(s) => setActiveStory(s)}
+          onReply={handleStoryReply}
+        />
+      )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 transition hover:border-zinc-300 hover:shadow-sm">
-              <div className="h-9 w-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 mb-4">
-                <Zap className="h-4 w-4" />
-              </div>
-              <h3 className="text-base font-semibold text-zinc-900">Turbopack Powered</h3>
-              <p className="mt-2 text-xs text-zinc-600 leading-relaxed">
-                Sub-millisecond hot module replacement with Next.js Turbopack engine for frictionless prototyping.
-              </p>
-            </div>
+      {/* Image Lightbox Modal */}
+      <ImageViewerModal
+        imageUrl={lightboxImage}
+        onClose={() => setLightboxImage(null)}
+      />
 
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 transition hover:border-zinc-300 hover:shadow-sm">
-              <div className="h-9 w-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 mb-4">
-                <ShieldCheck className="h-4 w-4" />
-              </div>
-              <h3 className="text-base font-semibold text-zinc-900">Security & CORS</h3>
-              <p className="mt-2 text-xs text-zinc-600 leading-relaxed">
-                Configured with Cross-Origin Resource Sharing and environment encapsulation right out of the box.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 transition hover:border-zinc-300 hover:shadow-sm">
-              <div className="h-9 w-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 mb-4">
-                <Cpu className="h-4 w-4" />
-              </div>
-              <h3 className="text-base font-semibold text-zinc-900">Zero Boilerplate</h3>
-              <p className="mt-2 text-xs text-zinc-600 leading-relaxed">
-                Clean codebase without bloated dependencies. Customize database adapters or ORMs seamlessly.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Tech Stack Banner */}
-        <section className="mt-20 rounded-2xl border border-zinc-200 bg-zinc-50/60 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Stack Specification
-            </span>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-mono text-zinc-700">
-                Next.js 16.4
-              </span>
-              <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-mono text-zinc-700">
-                React 19.3
-              </span>
-              <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-mono text-zinc-700">
-                Tailwind v4
-              </span>
-              <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-mono text-zinc-700">
-                Express 4.21
-              </span>
-              <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-mono text-zinc-700">
-                ES Modules
-              </span>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Minimal Footer */}
-      <footer className="mt-24 border-t border-zinc-200 bg-white py-10">
-        <div className="mx-auto flex max-w-6xl flex-col sm:flex-row items-center justify-between gap-4 px-6 text-xs text-zinc-500">
-          <div className="flex items-center gap-2">
-            <div className="h-5 w-5 rounded-md bg-zinc-950 text-white flex items-center justify-center">
-              <svg
-                className="h-2.5 w-2.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M12 2L20 10L12 22L4 10L12 2Z" />
-              </svg>
-            </div>
-            <span className="font-semibold text-zinc-900">Kite</span>
-            <span>— Minimal White Architecture</span>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <a
-              href="https://github.com/ruhul2003/Kite"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-zinc-950 transition flex items-center gap-1"
-            >
-              GitHub <ExternalLink className="h-3 w-3" />
-            </a>
-            <span className="text-zinc-300">•</span>
-            <span>All systems operational</span>
-          </div>
-        </div>
-      </footer>
+      {/* User Profile Modal */}
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        currentUser={currentUser}
+        userPosts={posts.filter((p) => p.author?.id === currentUser?.id || p.author?.name === currentUser?.name)}
+        onUpdateProfile={handleUpdateProfile}
+        onReact={handleReactToPost}
+        onAddComment={handleAddComment}
+        onToggleSave={handleToggleSavePost}
+        onDeletePost={handleDeletePost}
+        onShare={handleSharePost}
+      />
     </div>
   );
 }

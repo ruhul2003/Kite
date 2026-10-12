@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Kite — Clean & Minimal Next.js + Express Platform",
-  description: "A fast, modern fullstack architecture featuring Next.js 16, Tailwind CSS v4, and Node.js Express backend.",
+  title: "Kite — Connect with Friends and the World",
+  description: "A modern, vibrant social platform like Facebook featuring news feed, stories, real-time reactions, messenger chat, and community marketplace.",
 };
 
 export default function RootLayout({ children }) {
@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-zinc-900 selection:bg-zinc-100 selection:text-zinc-900">
+      <body className="min-h-full flex flex-col bg-[#f0f2f5] dark:bg-[#18191a] text-zinc-900 dark:text-[#e4e6eb] selection:bg-[#1877f2]/20 selection:text-[#1877f2]">
         {children}
       </body>
     </html>
