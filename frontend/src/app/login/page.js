@@ -93,40 +93,59 @@ export default function LoginPage() {
   };
 
   const handleQuickDemoLogin = (type) => {
-    const user =
-      type === "alex"
-        ? {
-            id: "user-alex",
-            name: "Alex Morgan",
-            username: "alexmorgan",
-            email: "alex@example.com",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-            coverPhoto: "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?w=1200&auto=format&fit=crop&q=80",
-            bio: "Fullstack Creator & Tech Enthusiast 💻 Exploring the frontier of web apps and photography 📸",
-            work: "Software Engineer at Horizon Labs",
-            livesIn: "San Francisco, CA",
-            from: "Seattle, WA",
-            joined: "March 2021",
-            followersCount: 1420,
-            friendsCount: 584,
-            isGuest: false,
-          }
-        : {
-            id: "friend-sarah",
-            name: "Sarah Chen",
-            username: "sarahchen",
-            email: "sarah@example.com",
-            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-            coverPhoto: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
-            bio: "UI/UX Designer • Visual Thinker • Coffee Lover ☕",
-            work: "Lead Designer at Studio Pulse",
-            livesIn: "San Francisco, CA",
-            from: "Vancouver, Canada",
-            joined: "July 2022",
-            followersCount: 980,
-            friendsCount: 412,
-            isGuest: false,
-          };
+    let user;
+    if (type === "ruhul") {
+      user = {
+        id: "user-google-ruhul",
+        name: "Ruhul Amin",
+        username: "ruhul941020",
+        email: "ruhul941020@gmail.com",
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+        coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
+        bio: "Signed in with Google Account (ruhul941020@gmail.com) 🌐",
+        work: "Developer on Kite",
+        livesIn: "Bangladesh",
+        from: "Google OAuth",
+        joined: "Today",
+        followersCount: 320,
+        friendsCount: 140,
+        isGuest: false,
+      };
+    } else if (type === "alex") {
+      user = {
+        id: "user-alex",
+        name: "Alex Morgan",
+        username: "alexmorgan",
+        email: "alex@example.com",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        coverPhoto: "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?w=1200&auto=format&fit=crop&q=80",
+        bio: "Fullstack Creator & Tech Enthusiast 💻 Exploring the frontier of web apps and photography 📸",
+        work: "Software Engineer at Horizon Labs",
+        livesIn: "San Francisco, CA",
+        from: "Seattle, WA",
+        joined: "March 2021",
+        followersCount: 1420,
+        friendsCount: 584,
+        isGuest: false,
+      };
+    } else {
+      user = {
+        id: "friend-sarah",
+        name: "Sarah Chen",
+        username: "sarahchen",
+        email: "sarah@example.com",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+        coverPhoto: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
+        bio: "UI/UX Designer • Visual Thinker • Coffee Lover ☕",
+        work: "Lead Designer at Studio Pulse",
+        livesIn: "San Francisco, CA",
+        from: "Vancouver, Canada",
+        joined: "July 2022",
+        followersCount: 980,
+        friendsCount: 412,
+        isGuest: false,
+      };
+    }
 
     try {
       localStorage.setItem("kite_user", JSON.stringify(user));
@@ -174,33 +193,52 @@ export default function LoginPage() {
               <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">
                 Recent Demo Logins
               </p>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => handleQuickDemoLogin("ruhul")}
+                  className="bg-white dark:bg-[#242526] p-2.5 rounded-2xl shadow-sm border border-[#1877f2]/40 hover:border-[#1877f2] hover:shadow-md transition text-left group w-32"
+                >
+                  <div className="relative w-12 h-12 mb-1.5">
+                    <img
+                      src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80"
+                      alt="Ruhul"
+                      className="w-full h-full rounded-xl object-cover group-hover:scale-105 transition"
+                    />
+                    <span className="absolute -bottom-1 -right-1 bg-white dark:bg-[#242526] p-0.5 rounded-full shadow">
+                      <GoogleIcon className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold truncate">Ruhul Amin</p>
+                  <p className="text-[10px] text-zinc-400 truncate">ruhul941020</p>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => handleQuickDemoLogin("alex")}
-                  className="bg-white dark:bg-[#242526] p-3 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/80 hover:shadow-md transition text-left group w-36"
+                  className="bg-white dark:bg-[#242526] p-2.5 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/80 hover:shadow-md transition text-left group w-32"
                 >
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
                     alt="Alex"
-                    className="w-14 h-14 rounded-xl object-cover mb-2 group-hover:scale-105 transition"
+                    className="w-12 h-12 rounded-xl object-cover mb-1.5 group-hover:scale-105 transition"
                   />
                   <p className="text-xs font-bold truncate">Alex Morgan</p>
-                  <p className="text-[10px] text-zinc-400">Software Engineer</p>
+                  <p className="text-[10px] text-zinc-400">Tech Lead</p>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleQuickDemoLogin("sarah")}
-                  className="bg-white dark:bg-[#242526] p-3 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/80 hover:shadow-md transition text-left group w-36"
+                  className="bg-white dark:bg-[#242526] p-2.5 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/80 hover:shadow-md transition text-left group w-32"
                 >
                   <img
                     src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80"
                     alt="Sarah"
-                    className="w-14 h-14 rounded-xl object-cover mb-2 group-hover:scale-105 transition"
+                    className="w-12 h-12 rounded-xl object-cover mb-1.5 group-hover:scale-105 transition"
                   />
                   <p className="text-xs font-bold truncate">Sarah Chen</p>
-                  <p className="text-[10px] text-zinc-400">UI/UX Designer</p>
+                  <p className="text-[10px] text-zinc-400">Designer</p>
                 </button>
               </div>
             </div>
