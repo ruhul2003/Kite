@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { X, UserPlus, LogIn, Sparkles, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react";
+import GoogleIcon from "./GoogleIcon";
 
 const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
@@ -75,6 +77,26 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
     onLogin({
       email: loginEmail.trim(),
       password: loginPassword,
+    });
+    onClose();
+  };
+
+  const handleGoogleAuth = () => {
+    onLogin({
+      id: "user-google-101",
+      name: "Google Explorer",
+      username: "google_user",
+      email: "explorer@gmail.com",
+      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
+      bio: "Signed in with Google Account 🌐",
+      work: "Verified Google Member",
+      livesIn: "California, USA",
+      from: "United States",
+      joined: "Today",
+      followersCount: 210,
+      friendsCount: 65,
+      isGuest: false,
     });
     onClose();
   };
@@ -197,6 +219,31 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
           {error && (
             <div className="p-3 text-xs bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 font-medium">
               {error}
+            </div>
+          )}
+
+          {/* GOOGLE SIGN IN OPTION IN MODAL */}
+          {mode !== "guest" && (
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={handleGoogleAuth}
+                className="w-full py-2.5 px-4 bg-white dark:bg-[#3a3b3c] hover:bg-zinc-50 dark:hover:bg-[#4e4f50] border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-100 font-semibold rounded-xl shadow-sm transition flex items-center justify-center gap-3 text-xs"
+              >
+                <GoogleIcon className="w-4 h-4 shrink-0" />
+                <span>Continue with Google</span>
+              </button>
+
+              <div className="relative my-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-zinc-200 dark:border-zinc-700/60"></div>
+                </div>
+                <div className="relative flex justify-center text-[10px] uppercase">
+                  <span className="bg-white dark:bg-[#242526] px-2 text-zinc-400 font-medium">
+                    Or with email
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -444,7 +491,15 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
 
         {/* Modal Footer */}
         <div className="px-6 py-3 bg-zinc-50 dark:bg-[#18191a] border-t border-zinc-200 dark:border-zinc-700/60 flex items-center justify-between text-xs">
-          <span className="text-zinc-500">Need help?</span>
+          <div className="flex items-center gap-2">
+            <Link href="/login" onClick={onClose} className="text-zinc-500 hover:underline">
+              Full Login Page
+            </Link>
+            <span>•</span>
+            <Link href="/signup" onClick={onClose} className="text-zinc-500 hover:underline">
+              Full Signup Page
+            </Link>
+          </div>
           <div className="flex items-center gap-3">
             {mode !== "guest" && (
               <button
@@ -452,7 +507,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
                 onClick={() => setMode("guest")}
                 className="text-amber-600 dark:text-amber-400 font-semibold hover:underline"
               >
-                Use as Guest instead
+                Guest Mode
               </button>
             )}
             {mode === "signup" && (
