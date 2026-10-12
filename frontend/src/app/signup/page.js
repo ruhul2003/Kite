@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Sparkles, CheckCircle2, UserPlus } from "lucide-react";
 import GoogleIcon from "../../components/GoogleIcon";
 import { GUEST_USER_TEMPLATE } from "../../data/mockData";
+import { triggerGoogleSignIn } from "../../utils/googleAuth";
 
 const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
@@ -82,33 +83,21 @@ export default function SignupPage() {
 
   const handleGoogleSignup = () => {
     setIsLoading(true);
-    const googleUser = {
-      id: `user-google-${Date.now()}`,
-      name: "Google Member",
-      username: "google_member",
-      email: "member@gmail.com",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
-      bio: "Joined Kite via Google 🚀",
-      work: "Google Verified Member",
-      livesIn: "California, USA",
-      from: "United States",
-      joined: "Today",
-      followersCount: 50,
-      friendsCount: 12,
-      isGuest: false,
-    };
-
-    try {
-      localStorage.setItem("kite_user", JSON.stringify(googleUser));
-    } catch {
-      // ignore
-    }
-
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/");
-    }, 400);
+    triggerGoogleSignIn(
+      (googleUser) => {
+        try {
+          localStorage.setItem("kite_user", JSON.stringify(googleUser));
+        } catch {
+          // ignore
+        }
+        setIsLoading(false);
+        router.push("/");
+      },
+      (err) => {
+        setIsLoading(false);
+        setError(err || "Google sign-up could not be completed.");
+      }
+    );
   };
 
   const handleGuestSignup = () => {

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Sparkles, ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
 import GoogleIcon from "../../components/GoogleIcon";
 import { GUEST_USER_TEMPLATE } from "../../data/mockData";
+import { triggerGoogleSignIn } from "../../utils/googleAuth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,33 +56,21 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
-    const googleUser = {
-      id: "user-google-101",
-      name: "Google Explorer",
-      username: "google_user",
-      email: "explorer@gmail.com",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-      coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
-      bio: "Signed in with Google Account 🌐",
-      work: "Verified Google Member",
-      livesIn: "California, USA",
-      from: "United States",
-      joined: "Today",
-      followersCount: 210,
-      friendsCount: 65,
-      isGuest: false,
-    };
-
-    try {
-      localStorage.setItem("kite_user", JSON.stringify(googleUser));
-    } catch {
-      // ignore
-    }
-
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/");
-    }, 400);
+    triggerGoogleSignIn(
+      (googleUser) => {
+        try {
+          localStorage.setItem("kite_user", JSON.stringify(googleUser));
+        } catch {
+          // ignore
+        }
+        setIsLoading(false);
+        router.push("/");
+      },
+      (err) => {
+        setIsLoading(false);
+        setError(err || "Google sign-in could not be completed.");
+      }
+    );
   };
 
   const handleGuestLogin = () => {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { X, UserPlus, LogIn, Sparkles, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
+import { triggerGoogleSignIn } from "../utils/googleAuth";
 
 const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
@@ -82,23 +83,15 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
   };
 
   const handleGoogleAuth = () => {
-    onLogin({
-      id: "user-google-101",
-      name: "Google Explorer",
-      username: "google_user",
-      email: "explorer@gmail.com",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-      coverPhoto: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
-      bio: "Signed in with Google Account 🌐",
-      work: "Verified Google Member",
-      livesIn: "California, USA",
-      from: "United States",
-      joined: "Today",
-      followersCount: 210,
-      friendsCount: 65,
-      isGuest: false,
-    });
-    onClose();
+    triggerGoogleSignIn(
+      (googleUser) => {
+        onLogin(googleUser);
+        onClose();
+      },
+      (err) => {
+        setError(err || "Google authentication failed.");
+      }
+    );
   };
 
   const handleQuickDemoLogin = (type) => {
