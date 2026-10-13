@@ -63,32 +63,7 @@ export default function Navbar({
 
   return (
     <>
-      {/* Optional Guest Announcement Bar */}
-      {currentUser?.isGuest && !hideGuestBanner && (
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 text-white text-xs font-medium px-4 py-1.5 flex items-center justify-between shadow-sm transition">
-          <div className="flex items-center gap-2 mx-auto truncate">
-            <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
-              ✨ Guest Explorer
-            </span>
-            <span className="truncate">
-              Welcome to Kite! Experience Zen Mode, voice sparks, code snippets & ambient audio freely.
-            </span>
-            <button
-              onClick={() => onOpenAuth("signup")}
-              className="underline font-bold hover:text-cyan-100 shrink-0 ml-1"
-            >
-              Claim permanent handle →
-            </button>
-          </div>
-          <button
-            onClick={() => setHideGuestBanner(true)}
-            className="p-1 hover:bg-white/20 rounded-full transition ml-2 shrink-0"
-            title="Dismiss banner"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
+
 
       {/* Main Top Glassmorphic Navigation Header */}
       <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/85 dark:bg-[#0b0f19]/85 border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-6 h-16 flex items-center justify-between select-none transition-colors duration-200">
