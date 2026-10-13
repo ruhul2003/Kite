@@ -36,62 +36,30 @@ export default function LeftSidebar({
   const navigationItems = [
     {
       id: "feed",
-      label: "Sparks Stream",
+      label: "News Feed",
       icon: Zap,
-      badge: "Live",
-      badgeColor: "bg-indigo-500/10 text-indigo-500 dark:text-cyan-400",
-      color: "text-indigo-500",
-      bg: "bg-indigo-500/10",
-    },
-    {
-      id: "audio",
-      label: "Voice & Audio",
-      icon: Mic,
-      badge: "Feature",
-      badgeColor: "bg-rose-500/10 text-rose-500",
-      color: "text-rose-500",
-      bg: "bg-rose-500/10",
-      filterTag: "audio",
-    },
-    {
-      id: "code",
-      label: "Dev & Code",
-      icon: Code,
-      badge: "Feature",
-      badgeColor: "bg-cyan-500/10 text-cyan-500",
-      color: "text-cyan-500",
-      bg: "bg-cyan-500/10",
-      filterTag: "code",
     },
     {
       id: "friends",
-      label: "Circle Network",
+      label: "Friends",
       icon: Users,
-      badge: "3 req",
-      badgeColor: "bg-amber-500/10 text-amber-500",
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
+      badge: "3",
+      badgeColor: "bg-[#1877f2]/10 text-[#1877f2]",
     },
     {
       id: "saved",
-      label: "Stash & Saved",
+      label: "Saved Posts",
       icon: Bookmark,
-      color: "text-purple-500",
-      bg: "bg-purple-500/10",
     },
     {
       id: "watch",
-      label: "Cinema & Reels",
+      label: "Watch Videos",
       icon: Tv,
-      color: "text-pink-500",
-      bg: "bg-pink-500/10",
     },
     {
       id: "marketplace",
-      label: "Kite Bazaar",
+      label: "Marketplace",
       icon: Store,
-      color: "text-emerald-500",
-      bg: "bg-emerald-500/10",
     },
   ];
 
@@ -157,20 +125,22 @@ export default function LeftSidebar({
               }}
               className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition text-left text-xs font-semibold cursor-pointer ${
                 isItemActive
-                  ? "bg-indigo-500/10 text-indigo-600 dark:text-cyan-400 font-bold shadow-sm"
+                  ? "bg-[#1877f2]/10 text-[#1877f2] font-bold shadow-xs"
                   : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60"
               }`}
             >
               <div
-                className={`w-7 h-7 rounded-lg flex items-center justify-center ${item.bg} ${item.color}`}
+                className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                  isItemActive
+                    ? "bg-[#1877f2] text-white"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                }`}
               >
                 <Icon className="w-4 h-4" />
               </div>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeColor}`}
-                >
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#1877f2]/10 text-[#1877f2]">
                   {item.badge}
                 </span>
               )}
