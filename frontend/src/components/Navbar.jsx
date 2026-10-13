@@ -210,7 +210,7 @@ export default function Navbar({
           {/* Notifications Bell */}
           <button
             onClick={onOpenNotifications}
-            className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition"
+            className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition cursor-pointer"
             title="Notifications"
           >
             <Bell className="w-4 h-4" />
@@ -221,17 +221,35 @@ export default function Navbar({
             )}
           </button>
 
+          {/* 1-Click Theme Toggle Button */}
+          <button
+            onClick={() => {
+              const next = !darkMode;
+              setDarkMode(next);
+              localStorage.setItem("kite_theme", next ? "dark" : "light");
+            }}
+            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition cursor-pointer"
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            aria-label="Toggle Theme"
+          >
+            {darkMode ? (
+              <Sun className="w-4 h-4 text-amber-500 hover:rotate-45 transition duration-200" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700 dark:text-slate-300 hover:-rotate-12 transition duration-200" />
+            )}
+          </button>
+
           {/* User Profile Avatar & Menu */}
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-indigo-500/50 transition cursor-pointer"
+              className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[#1877f2]/50 transition cursor-pointer"
             >
               <div className="relative">
                 <img
                   src={currentUser?.avatar}
                   alt={currentUser?.name}
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/30"
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-[#1877f2]/30"
                 />
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0b0f19]"></span>
               </div>
@@ -256,49 +274,46 @@ export default function Navbar({
                     <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                       {currentUser?.name}
                     </p>
-                    <p className="text-[11px] text-indigo-500 font-medium truncate">
-                      {currentUser?.isGuest ? "Guest Access" : "View Sanctuary"}
+                    <p className="text-[11px] text-[#1877f2] font-medium truncate">
+                      {currentUser?.isGuest ? "Guest Access" : "View Profile"}
                     </p>
                   </div>
                 </div>
 
                 <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1"></div>
 
-                {/* Dark Mode Toggle */}
-                <button
+                {/* Dark Mode Switch Toggle */}
+                <div
                   onClick={(e) => {
                     e.stopPropagation();
                     const next = !darkMode;
                     setDarkMode(next);
                     localStorage.setItem("kite_theme", next ? "dark" : "light");
                   }}
-                  className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
-                    <span>{darkMode ? "Light Sanctuary" : "Dark Canvas"}</span>
+                    {darkMode ? (
+                      <Sun className="w-4 h-4 text-amber-500" />
+                    ) : (
+                      <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                    )}
+                    <span>Dark Mode</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    {darkMode ? "Light" : "Dark"}
-                  </span>
-                </button>
 
-                {/* Zen Mode toggle in menu */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setZenMode(!zenMode);
-                  }}
-                  className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Leaf className="w-4 h-4 text-emerald-500" />
-                    <span>Zen Mode</span>
+                  {/* Toggle Pill Switch */}
+                  <div
+                    className={`w-9 h-5 rounded-full p-0.5 transition duration-200 ease-in-out ${
+                      darkMode ? "bg-[#1877f2]" : "bg-slate-300 dark:bg-slate-700"
+                    }`}
+                  >
+                    <div
+                      className={`w-4 h-4 rounded-full bg-white shadow-xs transform transition duration-200 ease-in-out ${
+                        darkMode ? "translate-x-4" : "translate-x-0"
+                      }`}
+                    />
                   </div>
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${zenMode ? "bg-emerald-500/20 text-emerald-500" : "text-slate-400"}`}>
-                    {zenMode ? "ACTIVE" : "OFF"}
-                  </span>
-                </button>
+                </div>
 
                 <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1"></div>
 

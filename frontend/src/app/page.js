@@ -450,6 +450,8 @@ export default function Home() {
           setActiveTab={setActiveTab}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onOpenAuth={handleOpenAuth}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
         />
 
         {/* Central Feed / View Area */}

@@ -15,11 +15,8 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
-  Leaf,
-  Layers,
-  Flame,
-  Radio,
-  Palette,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function LeftSidebar({
@@ -28,9 +25,8 @@ export default function LeftSidebar({
   setActiveTab,
   onOpenProfile,
   onOpenAuth,
-  zenMode,
-  selectedVibeFilter,
-  setSelectedVibeFilter,
+  darkMode,
+  setDarkMode,
 }) {
   const [showMore, setShowMore] = useState(false);
 
@@ -78,27 +74,27 @@ export default function LeftSidebar({
 
   return (
     <aside className="w-[270px] shrink-0 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4 hidden xl:block select-none scrollbar-thin">
-      {/* User Sanctuary Card */}
+      {/* User Card */}
       <button
         onClick={onOpenProfile}
-        className="w-full flex items-center gap-3 p-3 rounded-2xl bg-white/70 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800/80 border border-slate-200/70 dark:border-slate-800/80 shadow-sm transition group text-left cursor-pointer mb-3"
+        className="w-full flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 shadow-sm transition group text-left cursor-pointer mb-3"
       >
         <div className="relative">
           <img
             src={currentUser?.avatar}
             alt={currentUser?.name}
-            className="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-500/30 group-hover:ring-indigo-500/70 transition"
+            className="w-10 h-10 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700 group-hover:ring-[#1877f2] transition"
           />
           <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition">
+          <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-[#1877f2] transition">
             {currentUser?.name}
           </p>
           <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
-            <span>@{currentUser?.username || "creator"}</span>
+            <span>@{currentUser?.username || "user"}</span>
             {currentUser?.isGuest && (
-              <span className="bg-amber-500/20 text-amber-500 text-[8px] font-bold px-1 rounded">
+              <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[8px] font-semibold px-1 rounded border border-slate-200 dark:border-slate-700">
                 Guest
               </span>
             )}
@@ -110,25 +106,12 @@ export default function LeftSidebar({
       <div className="space-y-1">
         {navigationItems.map((item) => {
           const Icon = item.icon;
-          const isItemActive =
-            item.filterTag
-              ? activeTab === "feed" && selectedVibeFilter === item.filterTag
-              : activeTab === item.id && (!selectedVibeFilter || item.id !== "feed");
+          const isItemActive = activeTab === item.id;
 
           return (
             <button
               key={item.id}
-              onClick={() => {
-                if (item.filterTag) {
-                  setActiveTab("feed");
-                  setSelectedVibeFilter?.(item.filterTag);
-                } else {
-                  setActiveTab(item.id);
-                  if (item.id === "feed") {
-                    setSelectedVibeFilter?.("all");
-                  }
-                }
-              }}
+              onClick={() => setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition text-left text-xs font-semibold cursor-pointer ${
                 isItemActive
                   ? "bg-[#1877f2]/10 text-[#1877f2] font-bold shadow-xs"
@@ -186,6 +169,42 @@ export default function LeftSidebar({
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="h-[1px] bg-slate-200/70 dark:bg-slate-800 my-3.5"></div>
+
+      {/* Theme Toggle Button */}
+      <div className="pt-1">
+        <button
+          onClick={() => {
+            const next = !darkMode;
+            setDarkMode?.(next);
+            localStorage.setItem("kite_theme", next ? "dark" : "light");
+          }}
+          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-100/80 hover:bg-slate-200 dark:bg-slate-800/60 dark:hover:bg-slate-800 transition cursor-pointer text-xs font-semibold text-slate-700 dark:text-slate-300"
+          title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          <div className="flex items-center gap-2.5">
+            {darkMode ? (
+              <Sun className="w-4 h-4 text-amber-500" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+            )}
+            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+          </div>
+
+          <div
+            className={`w-8 h-4.5 rounded-full p-0.5 transition duration-200 ease-in-out ${
+              darkMode ? "bg-[#1877f2]" : "bg-slate-300 dark:bg-slate-700"
+            }`}
+          >
+            <div
+              className={`w-3.5 h-3.5 rounded-full bg-white shadow-xs transform transition duration-200 ease-in-out ${
+                darkMode ? "translate-x-3.5" : "translate-x-0"
+              }`}
+            />
+          </div>
+        </button>
       </div>
     </aside>
   );
