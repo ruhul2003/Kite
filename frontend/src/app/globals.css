@@ -5,11 +5,9 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
-  --kite-primary: #6366f1;
-  --kite-primary-hover: #4f46e5;
-  --kite-violet: #8b5cf6;
-  --kite-accent: #06b6d4;
-  --kite-rose: #f43f5e;
+  --kite-primary: #1877f2;
+  --kite-primary-hover: #166fe5;
+  --kite-secondary: #64748b;
   --card-bg: #ffffff;
   --card-border: rgba(226, 232, 240, 0.8);
 }
@@ -17,11 +15,9 @@
 .dark {
   --background: #0b0f19;
   --foreground: #f1f5f9;
-  --kite-primary: #6366f1;
-  --kite-primary-hover: #4f46e5;
-  --kite-violet: #8b5cf6;
-  --kite-accent: #06b6d4;
-  --kite-rose: #f43f5e;
+  --kite-primary: #1877f2;
+  --kite-primary-hover: #166fe5;
+  --kite-secondary: #94a3b8;
   --card-bg: #111827;
   --card-border: rgba(255, 255, 255, 0.08);
 }
@@ -33,10 +29,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Modern minimalist scrollbar */
+/* Minimalist scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -54,61 +50,3 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.45);
 }
-
-/* Kite Spark reaction animation */
-@keyframes sparkPop {
-  0% {
-    transform: scale(0.6) translateY(8px);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.2) translateY(-4px);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
-.spark-dock-anim {
-  animation: sparkPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* Audio wave equalizer animation */
-@keyframes soundWave {
-  0%, 100% {
-    height: 4px;
-  }
-  50% {
-    height: 18px;
-  }
-}
-
-.wave-bar-1 { animation: soundWave 0.8s infinite ease-in-out; }
-.wave-bar-2 { animation: soundWave 0.6s infinite ease-in-out 0.15s; }
-.wave-bar-3 { animation: soundWave 0.9s infinite ease-in-out 0.3s; }
-.wave-bar-4 { animation: soundWave 0.7s infinite ease-in-out 0.1s; }
-.wave-bar-5 { animation: soundWave 1.0s infinite ease-in-out 0.25s; }
-
-/* Subtle pulse glow */
-@keyframes ambientGlow {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-.ambient-glow {
-  animation: ambientGlow 4s infinite ease-in-out;
-}
-
-/* Zen mode calm transitions */
-.zen-active {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
