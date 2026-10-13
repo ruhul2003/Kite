@@ -64,10 +64,10 @@ export default function LeftSidebar({
   ];
 
   const CIRCLE_COMMUNITIES = [
-    { name: "⚡ Indie Creators", members: "1.4k members", icon: "🚀", color: "from-indigo-500 to-purple-600" },
-    { name: "🎨 Generative Design", members: "980 members", icon: "✨", color: "from-pink-500 to-rose-600" },
-    { name: "🌿 Mindful Tech", members: "2.1k members", icon: "🍵", color: "from-emerald-500 to-teal-600" },
-    { name: "🤖 Machine Learning Lab", members: "3.2k members", icon: "💡", color: "from-cyan-500 to-blue-600" },
+    { name: "Indie Developers", members: "1.4k members", icon: "💻" },
+    { name: "Product Design", members: "980 members", icon: "🎨" },
+    { name: "Open Source Hub", members: "2.1k members", icon: "🌐" },
+    { name: "Tech Trends", members: "3.2k members", icon: "💡" },
   ];
 
   return (
@@ -151,13 +151,13 @@ export default function LeftSidebar({
 
       <div className="h-[1px] bg-slate-200/70 dark:border-slate-800/80 my-3.5"></div>
 
-      {/* Featured Circles / Spaces */}
+      {/* Community Groups */}
       <div className="mb-4">
         <div className="flex items-center justify-between px-2 mb-2">
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Active Circles
+            Communities
           </p>
-          <span className="text-[10px] text-indigo-500 font-bold hover:underline cursor-pointer">
+          <span className="text-[10px] text-[#1877f2] font-bold hover:underline cursor-pointer">
             Explore
           </span>
         </div>
@@ -168,13 +168,11 @@ export default function LeftSidebar({
               key={i}
               className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition cursor-pointer group"
             >
-              <div
-                className={`w-7 h-7 rounded-lg bg-gradient-to-tr ${c.color} flex items-center justify-center text-xs text-white shadow-sm shrink-0`}
-              >
+              <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs text-slate-600 dark:text-slate-300 shrink-0">
                 {c.icon}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-indigo-500 dark:group-hover:text-cyan-400 transition">
+                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-[#1877f2] transition">
                   {c.name}
                 </p>
                 <p className="text-[10px] text-slate-400 truncate">{c.members}</p>
@@ -183,19 +181,6 @@ export default function LeftSidebar({
           ))}
         </div>
       </div>
-
-      {/* Zen Mode Sanctuary Banner */}
-      {zenMode && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-800 dark:text-emerald-300 text-xs">
-          <div className="flex items-center gap-1.5 font-bold mb-1">
-            <Leaf className="w-4 h-4 text-emerald-500" />
-            <span>Zen Sanctuary Active</span>
-          </div>
-          <p className="text-[11px] text-emerald-700/80 dark:text-emerald-300/80 leading-relaxed">
-            Vanity numbers and metric counters are softened. Enjoy genuine ideas without algorithmic noise.
-          </p>
-        </div>
-      )}
     </aside>
   );
 }
