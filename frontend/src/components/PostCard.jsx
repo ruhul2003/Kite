@@ -439,147 +439,144 @@ export default function PostCard({
             </div>
           )}
 
-          {/* ZEN MODE: Soften vanity metrics! */}
-          {zenMode ? (
-            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-              <Leaf className="w-3 h-3" />
-              <span>Resonating in the Circle</span>
+          {/* Reaction and Engagement Stats */}
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+            <span className="w-4 h-4 rounded-full bg-[#1877f2] text-white flex items-center justify-center text-[9px]">
+              👍
             </span>
-          ) : (
-            <span>{totalReactions} sparks</span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowComments(!showComments)}
-            className="hover:underline cursor-pointer"
-          >
-            {zenMode ? "Discussion" : `${post.comments?.length || 0} reflections`}
-          </button>
-          {!zenMode && <span>{post.sharesCount || 0} echoes</span>}
-        </div>
-      </div>
-
-      {/* Kite Action Buttons (Spark Reactions, Reply, Echo) */}
-      <div className="relative px-3 py-1.5 grid grid-cols-3 gap-1">
-        {/* Spark Reaction Button with Hover Dock */}
-        <div
-          className="relative"
-          onMouseEnter={handleMouseEnterReact}
-          onMouseLeave={handleMouseLeaveReact}
-        >
-          {showReactionsDock && (
-            <div className="absolute -top-12 left-0 z-40 bg-white dark:bg-slate-850 shadow-2xl rounded-full border border-slate-200 dark:border-slate-700 px-2 py-1 flex items-center gap-2 spark-dock-anim">
-              {KITE_REACTIONS.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => handleReactionClick(r.id)}
-                  className="text-xl transform hover:scale-130 transition duration-150 p-1 hover:-translate-y-1"
-                  title={r.label}
-                >
-                  {r.emoji}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <button
-            onClick={() => handleReactionClick(post.userReaction ? null : "spark")}
-            className={`w-full flex items-center justify-center gap-2 py-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold ${
-              currentReactionObj ? `${currentReactionObj.color} font-bold` : "text-slate-600 dark:text-slate-400"
-            }`}
-          >
-            {currentReactionObj ? (
-              <>
-                <span className="text-base">{currentReactionObj.emoji}</span>
-                <span>{currentReactionObj.label}</span>
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4 text-amber-500" />
-                <span>Spark</span>
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Comment / Reply Button */}
-        <button
-          onClick={() => setShowComments(!showComments)}
-          className="w-full flex items-center justify-center gap-2 py-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 text-xs font-semibold"
-        >
-          <MessageSquare className="w-4 h-4 text-indigo-500" />
-          <span>Reflect</span>
-        </button>
-
-        {/* Share / Echo Button */}
-        <button
-          onClick={() => onShare(post.id)}
-          className="w-full flex items-center justify-center gap-2 py-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 text-xs font-semibold"
-        >
-          <Share2 className="w-4 h-4 text-cyan-500" />
-          <span>Echo</span>
-        </button>
-      </div>
-
-      {/* Expandable Comments Drawer */}
-      {showComments && (
-        <div className="p-4 pt-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 space-y-3">
-          {/* Comments List */}
-          <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
-            {post.comments?.map((comment) => (
-              <div key={comment.id} className="flex gap-2.5 items-start">
-                <img
-                  src={comment.author?.avatar}
-                  alt={comment.author?.name}
-                  className="w-8 h-8 rounded-xl object-cover shrink-0 mt-0.5"
-                />
-                <div className="flex-1">
-                  <div className="bg-white dark:bg-slate-850 px-3.5 py-2 rounded-2xl inline-block max-w-[90%] border border-slate-200/60 dark:border-slate-800">
-                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                      {comment.author?.name}
-                    </p>
-                    <p className="text-xs text-slate-700 dark:text-slate-300 mt-0.5 whitespace-pre-wrap">
-                      {comment.content}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 px-2 mt-1 text-[10px] text-slate-400 font-semibold">
-                    <button className="hover:underline">⚡ Resonate</button>
-                    <button className="hover:underline">Reply</button>
-                    <span>{comment.timestamp}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <span>{totalReactions > 0 ? totalReactions : 1}</span>
           </div>
 
-          {/* Comment Composer Input */}
-          <form onSubmit={handleCommentSubmit} className="flex items-center gap-2 pt-1">
-            <img
-              src={currentUser?.avatar}
-              alt={currentUser?.name}
-              className="w-8 h-8 rounded-xl object-cover shrink-0"
-            />
-            <div className="flex-1 flex items-center bg-white dark:bg-slate-850 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-800 focus-within:border-indigo-500 transition">
-              <input
-                type="text"
-                placeholder={`Share a reflection as ${currentUser?.name?.split(" ")[0]}...`}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="w-full bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
-              />
-              <button
-                type="submit"
-                disabled={!newComment.trim()}
-                className="p-1 text-indigo-600 dark:text-cyan-400 disabled:opacity-30 hover:scale-110 transition"
-              >
-                <Send className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </form>
+          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+            <button
+              onClick={() => setShowComments(!showComments)}
+              className="hover:underline cursor-pointer"
+            >
+              {post.comments?.length || 0} comments
+            </button>
+            <span>{post.sharesCount || 0} shares</span>
+          </div>
         </div>
-      )}
+
+        {/* Action Buttons (Like, Comment, Share) */}
+        <div className="relative px-3 py-1 grid grid-cols-3 gap-1 border-t border-slate-100 dark:border-slate-800">
+          {/* Like Button */}
+          <div
+            className="relative"
+            onMouseEnter={handleMouseEnterReact}
+            onMouseLeave={handleMouseLeaveReact}
+          >
+            {showReactionsDock && (
+              <div className="absolute -top-12 left-0 z-40 bg-white dark:bg-slate-800 shadow-xl rounded-full border border-slate-200 dark:border-slate-700 px-2 py-1 flex items-center gap-2">
+                {KITE_REACTIONS.map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => handleReactionClick(r.id)}
+                    className="text-xl hover:scale-125 transition duration-150 p-1 cursor-pointer"
+                    title={r.label}
+                  >
+                    {r.emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => handleReactionClick(post.userReaction ? null : "spark")}
+              className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold cursor-pointer ${
+                currentReactionObj ? "text-[#1877f2] font-bold" : "text-slate-600 dark:text-slate-400"
+              }`}
+            >
+              {currentReactionObj ? (
+                <>
+                  <span className="text-base">{currentReactionObj.emoji}</span>
+                  <span>{currentReactionObj.label}</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-base">👍</span>
+                  <span>Like</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Comment Button */}
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 text-xs font-semibold cursor-pointer"
+          >
+            <MessageSquare className="w-4 h-4 text-slate-500" />
+            <span>Comment</span>
+          </button>
+
+          {/* Share Button */}
+          <button
+            onClick={() => onShare(post.id)}
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 text-xs font-semibold cursor-pointer"
+          >
+            <Share2 className="w-4 h-4 text-slate-500" />
+            <span>Share</span>
+          </button>
+        </div>
+
+        {/* Expandable Comments Drawer */}
+        {showComments && (
+          <div className="p-4 pt-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 space-y-3">
+            {/* Comments List */}
+            <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+              {post.comments?.map((comment) => (
+                <div key={comment.id} className="flex gap-2.5 items-start">
+                  <img
+                    src={comment.author?.avatar}
+                    alt={comment.author?.name}
+                    className="w-8 h-8 rounded-xl object-cover shrink-0 mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <div className="bg-white dark:bg-slate-850 px-3.5 py-2 rounded-2xl inline-block max-w-[90%] border border-slate-200/60 dark:border-slate-800">
+                      <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                        {comment.author?.name}
+                      </p>
+                      <p className="text-xs text-slate-700 dark:text-slate-300 mt-0.5 whitespace-pre-wrap">
+                        {comment.content}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 px-2 mt-1 text-[10px] text-slate-400 font-semibold">
+                      <button className="hover:underline cursor-pointer">Like</button>
+                      <button className="hover:underline cursor-pointer">Reply</button>
+                      <span>{comment.timestamp}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Comment Composer Input */}
+            <form onSubmit={handleCommentSubmit} className="flex items-center gap-2 pt-1">
+              <img
+                src={currentUser?.avatar}
+                alt={currentUser?.name}
+                className="w-8 h-8 rounded-xl object-cover shrink-0"
+              />
+              <div className="flex-1 flex items-center bg-white dark:bg-slate-850 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-800 focus-within:border-[#1877f2] transition">
+                <input
+                  type="text"
+                  placeholder="Write a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="w-full bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={!newComment.trim()}
+                  className="p-1 text-[#1877f2] disabled:opacity-30 hover:scale-110 transition cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
     </article>
   );
 }
