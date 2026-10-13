@@ -156,10 +156,10 @@ export default function PostCard({
             <img
               src={post.author?.avatar}
               alt={post.author?.name}
-              className="w-10 h-10 rounded-2xl object-cover ring-2 ring-indigo-500/20"
+              className="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-200 dark:ring-slate-700"
             />
             {post.author?.isVerified && (
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[9px] font-bold ring-2 ring-white dark:ring-slate-900">
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#1877f2] text-white flex items-center justify-center text-[9px] font-bold ring-2 ring-white dark:ring-slate-900">
                 ✓
               </span>
             )}
@@ -167,7 +167,7 @@ export default function PostCard({
 
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-cyan-400 cursor-pointer transition">
+              <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100 hover:text-[#1877f2] cursor-pointer transition">
                 {post.author?.name}
               </span>
 
@@ -176,32 +176,17 @@ export default function PostCard({
                   {post.author.role}
                 </span>
               )}
-
-              {post.author?.vibe && (
-                <span className="text-[10px] font-bold text-indigo-500 dark:text-cyan-400">
-                  • {post.author.vibe}
-                </span>
-              )}
             </div>
 
             <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
               <span>{post.timestamp}</span>
               <span>•</span>
               {post.privacy === "public" ? (
-                <span className="flex items-center gap-1"><Globe className="w-3 h-3" /> Public Sanctuary</span>
+                <span className="flex items-center gap-1"><Globe className="w-3 h-3" /> Public</span>
               ) : post.privacy === "friends" ? (
-                <span className="flex items-center gap-1"><Users className="w-3 h-3" /> Circle</span>
+                <span className="flex items-center gap-1"><Users className="w-3 h-3" /> Friends</span>
               ) : (
-                <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Private</span>
-              )}
-
-              {post.vibeTag && (
-                <>
-                  <span>•</span>
-                  <span className="text-[10px] uppercase font-bold text-indigo-500 dark:text-cyan-400">
-                    #{post.vibeTag}
-                  </span>
-                </>
+                <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Only Me</span>
               )}
             </div>
           </div>
@@ -211,7 +196,7 @@ export default function PostCard({
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition"
+            className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
           >
             <MoreHorizontal className="w-4 h-4" />
           </button>
@@ -223,30 +208,30 @@ export default function PostCard({
             >
               <button
                 onClick={() => onToggleSave(post.id)}
-                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200"
+                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer"
               >
-                <Bookmark className="w-4 h-4 text-purple-500" />
-                <span>{post.isSaved ? "Remove from Stash" : "Save to Stash"}</span>
+                <Bookmark className="w-4 h-4 text-[#1877f2]" />
+                <span>{post.isSaved ? "Remove from Saved" : "Save Post"}</span>
               </button>
 
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  alert("Spark URL copied!");
+                  alert("Link copied!");
                 }}
-                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200"
+                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer"
               >
-                <Link className="w-4 h-4 text-cyan-500" />
-                <span>Copy Spark Link</span>
+                <Link className="w-4 h-4 text-slate-500" />
+                <span>Copy Link</span>
               </button>
 
               {post.author?.id === currentUser?.id && (
                 <button
                   onClick={() => onDeletePost(post.id)}
-                  className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-semibold text-rose-600 dark:text-rose-400"
+                  className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-semibold text-rose-600 dark:text-rose-400 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
-                  <span>Delete Spark</span>
+                  <span>Delete Post</span>
                 </button>
               )}
             </div>
@@ -363,12 +348,12 @@ export default function PostCard({
         </div>
       )}
 
-      {/* FEATURE: INTERACTIVE VIBE POLL */}
+      {/* Poll Component */}
       {pollState && (
         <div className="mx-4 my-2.5 p-3.5 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-              <BarChart2 className="w-4 h-4 text-indigo-500" />
+              <BarChart2 className="w-4 h-4 text-[#1877f2]" />
               <span>{pollState.question}</span>
             </span>
             <span className="text-[10px] text-slate-400 font-medium">
@@ -383,20 +368,20 @@ export default function PostCard({
                 <button
                   key={option.id}
                   onClick={() => handleVote(option.id)}
-                  className={`w-full relative overflow-hidden p-2.5 rounded-xl border text-left transition flex items-center justify-between text-xs ${
+                  className={`w-full relative overflow-hidden p-2.5 rounded-xl border text-left transition flex items-center justify-between text-xs cursor-pointer ${
                     isSelected
-                      ? "border-indigo-500 bg-indigo-500/10 font-bold text-indigo-600 dark:text-cyan-400"
+                      ? "border-[#1877f2] bg-[#1877f2]/10 font-bold text-[#1877f2]"
                       : "border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400"
                   }`}
                 >
-                  {/* Animated percentage background fill */}
+                  {/* Percentage background fill */}
                   <div
-                    className="absolute top-0 bottom-0 left-0 bg-indigo-500/15 dark:bg-indigo-500/25 transition-all duration-500"
+                    className="absolute top-0 bottom-0 left-0 bg-[#1877f2]/15 dark:bg-[#1877f2]/25 transition-all duration-300"
                     style={{ width: `${option.percentage}%` }}
                   />
 
                   <div className="relative z-10 flex items-center gap-2">
-                    {isSelected && <Check className="w-3.5 h-3.5 text-indigo-500" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 text-[#1877f2]" />}
                     <span>{option.text}</span>
                   </div>
 
