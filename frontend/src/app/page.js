@@ -17,6 +17,7 @@ import NotificationsDropdown from "../components/NotificationsDropdown";
 import FriendsView from "../components/FriendsView";
 import WatchView from "../components/WatchView";
 import MarketplaceView from "../components/MarketplaceView";
+import JobsView from "../components/JobsView";
 import {
   INITIAL_CURRENT_USER,
   GUEST_USER_TEMPLATE,
@@ -502,6 +503,14 @@ export default function Home() {
           {/* VIEW: MARKETPLACE */}
           {activeTab === "marketplace" && (
             <MarketplaceView onOpenChatWithSeller={handleOpenChatWithSeller} />
+          )}
+
+          {/* VIEW: CAREERS & JOBS */}
+          {activeTab === "jobs" && (
+            <JobsView
+              currentUser={currentUser}
+              onOpenChatWithUser={handleOpenChatWithFriend}
+            />
           )}
         </main>
 

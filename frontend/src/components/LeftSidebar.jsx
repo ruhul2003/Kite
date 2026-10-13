@@ -11,6 +11,7 @@ import {
   Users,
   Tv,
   Store,
+  Briefcase,
   Sparkles,
   ChevronDown,
   ChevronUp,
@@ -60,6 +61,11 @@ export default function LeftSidebar({
       id: "marketplace",
       label: "Marketplace",
       icon: Store,
+    },
+    {
+      id: "jobs",
+      label: "Careers & Jobs",
+      icon: Briefcase,
     },
   ];
 

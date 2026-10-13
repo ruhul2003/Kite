@@ -11,6 +11,7 @@ import {
   Compass,
   Tv,
   Store,
+  Briefcase,
   Bookmark,
   Plus,
   MessageSquare,
@@ -158,7 +159,7 @@ export default function Navbar({
 
           <button
             onClick={() => setActiveTab("marketplace")}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
               activeTab === "marketplace"
                 ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
@@ -166,6 +167,18 @@ export default function Navbar({
           >
             <Store className="w-4 h-4" />
             <span>Marketplace</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("jobs")}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+              activeTab === "jobs"
+                ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            <Briefcase className="w-4 h-4" />
+            <span>Jobs</span>
           </button>
         </nav>
 
