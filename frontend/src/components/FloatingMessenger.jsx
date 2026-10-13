@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Minus, Send, MessageSquare } from "lucide-react";
+import { sendTypingIndicator } from "../utils/socket";
 
 export default function FloatingMessenger({
   activeChats,
@@ -11,6 +12,7 @@ export default function FloatingMessenger({
   onSendMessage,
   onOpenChat,
   friends,
+  typingUsers = {},
 }) {
   const [minimizedChats, setMinimizedChats] = useState({});
   const [inputs, setInputs] = useState({});
@@ -21,6 +23,9 @@ export default function FloatingMessenger({
 
   const handleInputChange = (friendId, val) => {
     setInputs((prev) => ({ ...prev, [friendId]: val }));
+    if (currentUser?.id) {
+      sendTypingIndicator(currentUser.id, friendId, val.trim().length > 0);
+    }
   };
 
   const handleSend = (friendId, e) => {
@@ -28,6 +33,9 @@ export default function FloatingMessenger({
     const text = inputs[friendId];
     if (!text || !text.trim()) return;
 
+    if (currentUser?.id) {
+      sendTypingIndicator(currentUser.id, friendId, false);
+    }
     onSendMessage(friendId, text.trim());
     setInputs((prev) => ({ ...prev, [friendId]: "" }));
   };
@@ -66,7 +74,13 @@ export default function FloatingMessenger({
                     {friend.name}
                   </p>
                   <p className="text-[10px] text-slate-400 truncate">
-                    {friend.online ? "Online" : "Offline"}
+                    {typingUsers[friend.id] ? (
+                      <span className="text-[#1877f2] font-semibold animate-pulse">Typing...</span>
+                    ) : friend.online ? (
+                      "Online"
+                    ) : (
+                      "Offline"
+                    )}
                   </p>
                 </div>
               </div>
@@ -130,6 +144,18 @@ export default function FloatingMessenger({
                         </div>
                       );
                     })
+                  )}
+
+                  {/* Real-time Typing Bubble */}
+                  {typingUsers[friend.id] && (
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 pl-1 py-1">
+                      <div className="flex items-center gap-1 bg-slate-200/70 dark:bg-slate-800 px-2 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                        <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                        <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce"></span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 italic">typing...</span>
+                    </div>
                   )}
                 </div>
 

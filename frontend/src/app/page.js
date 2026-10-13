@@ -19,6 +19,13 @@ import WatchView from "../components/WatchView";
 import MarketplaceView from "../components/MarketplaceView";
 import JobsView from "../components/JobsView";
 import {
+  joinUser,
+  sendRealtimeMessage,
+  onReceiveMessage,
+  onUserTyping,
+  onOnlineUsers,
+} from "../utils/socket";
+import {
   INITIAL_CURRENT_USER,
   GUEST_USER_TEMPLATE,
   INITIAL_POSTS,
@@ -57,6 +64,60 @@ export default function Home() {
   const [isNotifsOpen, setIsNotifsOpen] = useState(false);
   const [isMessengerOpen, setIsMessengerOpen] = useState(false);
   const [activeChats, setActiveChats] = useState([]); // List of friend objects with open chat windows
+  const [typingUsers, setTypingUsers] = useState({}); // friendId -> isTyping
+
+  // Real-time Socket.io lifecycle
+  useEffect(() => {
+    if (!currentUser?.id) return;
+
+    // Join user's personal WebSocket room
+    joinUser(currentUser.id);
+
+    // Listen for incoming messages in real-time
+    const unsubReceive = onReceiveMessage((incomingMsg) => {
+      const partnerId = incomingMsg.senderId === currentUser.id ? incomingMsg.receiverId : incomingMsg.senderId;
+
+      setConversations((prev) => ({
+        ...prev,
+        [partnerId]: [...(prev[partnerId] || []), incomingMsg],
+      }));
+
+      // Automatically open or show friend in active chats if not already open
+      setActiveChats((prev) => {
+        if (!prev.some((c) => c.id === partnerId)) {
+          const friend = friends.find((f) => f.id === partnerId) || {
+            id: partnerId,
+            name: incomingMsg.senderName || "Friend",
+            avatar: incomingMsg.senderAvatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+            online: true,
+          };
+          return [...prev, friend];
+        }
+        return prev;
+      });
+    });
+
+    // Listen for real-time typing indicators
+    const unsubTyping = onUserTyping(({ senderId, isTyping }) => {
+      setTypingUsers((prev) => ({ ...prev, [senderId]: isTyping }));
+    });
+
+    // Listen for real-time online presence
+    const unsubOnline = onOnlineUsers((onlineIds) => {
+      setFriends((prev) =>
+        prev.map((f) => ({
+          ...f,
+          online: onlineIds.includes(f.id) || f.online,
+        }))
+      );
+    });
+
+    return () => {
+      unsubReceive();
+      unsubTyping();
+      unsubOnline();
+    };
+  }, [currentUser?.id, friends]);
 
   // Sync dark mode class with root html
   useEffect(() => {
@@ -253,41 +314,56 @@ export default function Home() {
   };
 
   const handleSendMessage = (friendId, text) => {
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const userMsg = {
       id: `msg-${Date.now()}`,
       senderId: currentUser.id,
+      receiverId: friendId,
       text,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time,
     };
 
+    // 1. Emit via real-time WebSocket to recipient
+    sendRealtimeMessage({
+      senderId: currentUser.id,
+      receiverId: friendId,
+      text,
+      time,
+      senderName: currentUser.name,
+      senderAvatar: currentUser.avatar,
+    });
+
+    // 2. Update local state
     setConversations((prev) => ({
       ...prev,
       [friendId]: [...(prev[friendId] || []), userMsg],
     }));
 
-    // Friendly auto-reply simulation
-    setTimeout(() => {
-      const replies = [
-        "Loved that voice spark you shared earlier! ✨",
-        "Totally agree with you on this! The Zen mode is so peaceful.",
-        "Thanks for the note! Really enjoying the new Kite interface.",
-        "Brilliant idea. Let's collaborate on this circle project soon! 🚀",
-        "Got it, appreciate the message! 🍵",
-      ];
-      const randomReply = replies[Math.floor(Math.random() * replies.length)];
+    // Friendly offline simulated reply if talking to demo account
+    if (friendId.startsWith("friend-") || friendId.startsWith("demo-")) {
+      setTimeout(() => {
+        const replies = [
+          "Sounds great, thanks for reaching out!",
+          "Got it, appreciate the message.",
+          "Thanks for the note, let's catch up soon.",
+          "Awesome, let me know if you need anything else.",
+        ];
+        const randomReply = replies[Math.floor(Math.random() * replies.length)];
 
-      const friendMsg = {
-        id: `reply-${Date.now()}`,
-        senderId: friendId,
-        text: randomReply,
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
+        const friendMsg = {
+          id: `reply-${Date.now()}`,
+          senderId: friendId,
+          receiverId: currentUser.id,
+          text: randomReply,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
 
-      setConversations((prev) => ({
-        ...prev,
-        [friendId]: [...(prev[friendId] || []), friendMsg],
-      }));
-    }, 1200);
+        setConversations((prev) => ({
+          ...prev,
+          [friendId]: [...(prev[friendId] || []), friendMsg],
+        }));
+      }, 1200);
+    }
   };
 
   const handleStoryReply = (authorName, text) => {
@@ -525,7 +601,7 @@ export default function Home() {
         />
       </div>
 
-      {/* Floating Direct Whisper Chat Windows */}
+      {/* Floating Messenger Chat Windows */}
       <FloatingMessenger
         activeChats={activeChats}
         conversations={conversations}
@@ -534,6 +610,7 @@ export default function Home() {
         onSendMessage={handleSendMessage}
         onOpenChat={handleOpenChatWithFriend}
         friends={friends}
+        typingUsers={typingUsers}
       />
 
 
