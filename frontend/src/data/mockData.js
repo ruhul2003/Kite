@@ -180,36 +180,27 @@ export const INITIAL_STORIES = [
 ];
 
 export const KITE_REACTIONS = [
-  { id: "spark", label: "Spark", emoji: "⚡", color: "text-amber-500", bg: "hover:bg-amber-500/10" },
-  { id: "insight", label: "Insight", emoji: "💡", color: "text-cyan-500", bg: "hover:bg-cyan-500/10" },
-  { id: "fire", label: "Fire", emoji: "🔥", color: "text-orange-500", bg: "hover:bg-orange-500/10" },
-  { id: "vibe", label: "Resonance", emoji: "💜", color: "text-violet-500", bg: "hover:bg-violet-500/10" },
-  { id: "liftoff", label: "Lift-off", emoji: "🚀", color: "text-indigo-500", bg: "hover:bg-indigo-500/10" },
-  { id: "zen", label: "Zen", emoji: "🌿", color: "text-emerald-500", bg: "hover:bg-emerald-500/10" },
+  { id: "spark", label: "Like", emoji: "👍", color: "text-[#1877f2]", bg: "hover:bg-[#1877f2]/10" },
+  { id: "insight", label: "Insight", emoji: "💡", color: "text-[#1877f2]", bg: "hover:bg-[#1877f2]/10" },
+  { id: "fire", label: "Celebrate", emoji: "🎉", color: "text-[#1877f2]", bg: "hover:bg-[#1877f2]/10" },
+  { id: "vibe", label: "Love", emoji: "❤️", color: "text-[#1877f2]", bg: "hover:bg-[#1877f2]/10" },
 ];
 
 export const VIBE_STATUSES = [
-  { id: "building", emoji: "⚡", label: "Building something new", color: "text-amber-500" },
-  { id: "focus", emoji: "🎧", label: "Deep Focus mode", color: "text-indigo-500" },
-  { id: "creative", emoji: "🎨", label: "Creative Flow", color: "text-pink-500" },
-  { id: "zen", emoji: "🌿", label: "Mindful Zen", color: "text-emerald-500" },
-  { id: "curious", emoji: "💡", label: "Seeking insights", color: "text-cyan-500" },
+  { id: "building", emoji: "💻", label: "Building", color: "text-slate-600 dark:text-slate-400" },
+  { id: "focus", emoji: "💼", label: "Focused", color: "text-slate-600 dark:text-slate-400" },
+  { id: "available", emoji: "✨", label: "Available", color: "text-slate-600 dark:text-slate-400" },
 ];
 
 export const DAILY_SPARK_PROMPT = {
   id: "daily-spark-today",
-  tag: "⚡ Daily Community Spark",
+  tag: "Discussion of the Day",
   question: "What is one counter-intuitive lesson you learned in your craft this year?",
-  author: "Kite Editorial Circle",
+  author: "Kite Community",
   sparksCount: 42,
 };
 
-export const SOUNDSCAPE_TRACKS = [
-  { id: "rain", name: "Gentle Rain", icon: "🌧️", desc: "Soothing warm rainfall tone" },
-  { id: "lofi", name: "Lo-Fi Beats", icon: "🎧", desc: "Mellow chillhop chord progression" },
-  { id: "coffee", name: "Cozy Coffeehouse", icon: "☕", desc: "Warm ambient resonance" },
-  { id: "cosmic", name: "Cosmic Drone", icon: "🌌", desc: "Harmonic meditation frequency" },
-];
+export const SOUNDSCAPE_TRACKS = [];
 
 export const INITIAL_POSTS = [
   {
@@ -648,9 +639,6 @@ export const FEELING_PRESETS = [
 
 export const COLOR_BACKGROUNDS = [
   { id: "none", name: "Clean Minimal", class: "bg-white text-zinc-900 dark:bg-[#111827] dark:text-[#f1f5f9]" },
-  { id: "bg-aurora", name: "Cyber Aurora", class: "bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-nebula", name: "Cosmic Nebula", class: "bg-gradient-to-tr from-purple-900 via-indigo-900 to-slate-900 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-sunset", name: "Sunset Coral", class: "bg-gradient-to-tr from-rose-500 via-pink-600 to-amber-500 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-emerald", name: "Matcha Zen", class: "bg-gradient-to-tr from-emerald-600 via-teal-700 to-slate-900 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px]" },
-  { id: "bg-obsidian", name: "Obsidian Neon", class: "bg-gradient-to-tr from-slate-950 via-zinc-900 to-indigo-950 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[220px] border border-indigo-500/30" },
+  { id: "bg-primary", name: "Brand Blue", class: "bg-[#1877f2] text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[200px]" },
+  { id: "bg-slate", name: "Slate Dark", class: "bg-slate-900 text-white font-bold text-center text-xl sm:text-2xl p-8 flex items-center justify-center min-h-[200px]" },
 ];
