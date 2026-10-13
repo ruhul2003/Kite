@@ -407,41 +407,25 @@ export default function PostCard({
         </div>
       )}
 
-      {/* Engagement Stats Bar (Honors Zen Mode!) */}
-      <div className="px-4 py-2.5 flex items-center justify-between text-xs text-slate-400 border-b border-slate-100 dark:border-slate-800/80">
-        <div className="flex items-center gap-1.5 cursor-pointer">
-          {totalReactions > 0 && (
-            <div className="flex -space-x-1 items-center">
-              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-[10px] ring-2 ring-white dark:ring-slate-900">
-                ⚡
-              </span>
-              <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-[10px] ring-2 ring-white dark:ring-slate-900">
-                💡
-              </span>
-              <span className="w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center text-[10px] ring-2 ring-white dark:ring-slate-900">
-                💜
-              </span>
-            </div>
-          )}
-
-          {/* Reaction and Engagement Stats */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-            <span className="w-4 h-4 rounded-full bg-[#1877f2] text-white flex items-center justify-center text-[9px]">
-              👍
-            </span>
-            <span>{totalReactions > 0 ? totalReactions : 1}</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-            <button
-              onClick={() => setShowComments(!showComments)}
-              className="hover:underline cursor-pointer"
-            >
-              {post.comments?.length || 0} comments
-            </button>
-            <span>{post.sharesCount || 0} shares</span>
-          </div>
+      {/* Engagement Stats Bar */}
+      <div className="px-4 py-2.5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center gap-1.5">
+          <span className="w-4 h-4 rounded-full bg-[#1877f2] text-white flex items-center justify-center text-[9px]">
+            👍
+          </span>
+          <span>{totalReactions > 0 ? totalReactions : 1}</span>
         </div>
+
+        <div className="flex items-center gap-3 text-xs">
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="hover:underline cursor-pointer"
+          >
+            {post.comments?.length || 0} comments
+          </button>
+          <span>{post.sharesCount || 0} shares</span>
+        </div>
+      </div>
 
         {/* Action Buttons (Like, Comment, Share) */}
         <div className="relative px-3 py-1 grid grid-cols-3 gap-1 border-t border-slate-100 dark:border-slate-800">
