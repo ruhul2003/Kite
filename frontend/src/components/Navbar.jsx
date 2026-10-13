@@ -118,79 +118,77 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Center: Modern Floating Pill Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/50 p-1.5 rounded-full border border-slate-200/70 dark:border-slate-700/50 shadow-inner">
+        {/* Center: Modern Primary Navigation */}
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/60 p-1 rounded-full border border-slate-200/80 dark:border-slate-700/60">
           <button
             onClick={() => setActiveTab("feed")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
               activeTab === "feed"
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Zap className="w-4 h-4" />
-            <span>Sparks</span>
+            <span>Feed</span>
           </button>
 
           <button
             onClick={() => setActiveTab("friends")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
               activeTab === "friends"
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Compass className="w-4 h-4" />
-            <span>Circles</span>
+            <span>Friends</span>
           </button>
 
           <button
             onClick={() => setActiveTab("watch")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
               activeTab === "watch"
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Tv className="w-4 h-4" />
-            <span>Cinema</span>
+            <span>Watch</span>
           </button>
 
           <button
             onClick={() => setActiveTab("marketplace")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition ${
               activeTab === "marketplace"
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Store className="w-4 h-4" />
-            <span>Bazaar</span>
+            <span>Marketplace</span>
           </button>
         </nav>
 
-        {/* Right Section: Zen Mode, Ambient Sound, Vibe Selector, New Spark, User */}
+        {/* Right Section: Post Button, Messages, Notifications, User */}
         <div className="flex items-center gap-2 sm:gap-2.5">
-
-
-          {/* Create New Spark Button */}
+          {/* Create Post Button */}
           <button
             onClick={onOpenCreatePost}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white rounded-full text-xs font-bold shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 transition transform hover:-translate-y-0.5 cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#1877f2] hover:bg-[#166fe5] text-white rounded-full text-xs font-semibold shadow-sm transition cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
-            <span className="hidden sm:inline">Spark</span>
+            <span className="hidden sm:inline">Post</span>
           </button>
 
-          {/* Whisper Chat Drawer Launcher */}
+          {/* Messages Button */}
           <button
             onClick={onToggleMessenger}
             className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition"
-            title="Whisper Direct Sparks"
+            title="Messages"
           >
             <MessageSquare className="w-4 h-4" />
             {unreadMessagesCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#1877f2] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
                 {unreadMessagesCount}
               </span>
             )}
@@ -204,7 +202,7 @@ export default function Navbar({
           >
             <Bell className="w-4 h-4" />
             {unreadNotifsCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#1877f2] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
                 {unreadNotifsCount}
               </span>
             )}
