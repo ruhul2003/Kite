@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Kite — Connect with Friends and the World",
-  description: "A modern, vibrant social platform like Facebook featuring news feed, stories, real-time reactions, messenger chat, and community marketplace.",
+  description: "A clean, modern social platform featuring news feed, stories, real-time reactions, messenger chat, and community marketplace.",
 };
 
 export default function RootLayout({ children }) {
@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f0f2f5] dark:bg-[#18191a] text-zinc-900 dark:text-[#e4e6eb] selection:bg-[#1877f2]/20 selection:text-[#1877f2]">
+      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 selection:bg-[#1877f2]/20 selection:text-[#1877f2]">
         {children}
       </body>
     </html>

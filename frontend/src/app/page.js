@@ -26,11 +26,8 @@ import {
   INITIAL_FRIEND_REQUESTS,
   INITIAL_NOTIFICATIONS,
   INITIAL_CONVERSATIONS,
-  VIBE_STATUSES,
-  SOUNDSCAPE_TRACKS,
 } from "../data/mockData";
-import { playAmbientSound, stopAmbientSound, setAmbientVolume } from "../utils/soundscape";
-import { Bookmark, Sparkles, UserPlus, Zap, Mic, Code, BarChart2, Leaf, Flame } from "lucide-react";
+import { Bookmark } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -560,7 +557,6 @@ export default function Home() {
         onToggleSave={handleToggleSavePost}
         onDeletePost={handleDeletePost}
         onShare={handleSharePost}
-        zenMode={zenMode}
       />
     </div>
   );
