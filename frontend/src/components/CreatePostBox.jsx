@@ -202,35 +202,36 @@ export default function CreatePostBox({
   return (
     <>
       {/* TRIGGER COMPOSER CARD (Feed view) */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 p-4 mb-4 select-none transition">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800 p-4 mb-4 select-none transition">
         <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
           <img
             src={currentUser?.avatar}
             alt={currentUser?.name}
-            className="w-10 h-10 rounded-2xl object-cover ring-2 ring-indigo-500/20"
+            className="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-200 dark:ring-slate-700"
           />
           <button
             onClick={() => {
               setActiveTab("thought");
               setIsOpen(true);
             }}
-            className="flex-1 text-left px-4 py-2.5 bg-slate-100/80 hover:bg-slate-200/60 dark:bg-slate-800/80 dark:hover:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium transition cursor-pointer"
+            className="flex-1 text-left px-4 py-2.5 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800 dark:hover:bg-slate-700/80 rounded-full text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium transition cursor-pointer"
           >
-            Drop a spark or voice note, {currentUser?.name?.split(" ")[0]}...
+            What&apos;s on your mind, {currentUser?.name?.split(" ")[0]}?
           </button>
         </div>
 
-        {/* 4 Feature Composer Buttons (Distinct from Facebook) */}
+        {/* Feature Composer Buttons */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-2.5">
           <button
             onClick={() => {
-              setActiveTab("audio");
+              setActiveTab("thought");
+              setShowImagePicker(true);
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-rose-500 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-[#1877f2] font-semibold text-xs cursor-pointer"
           >
-            <Mic className="w-4 h-4" />
-            <span>Voice Spark</span>
+            <ImageIcon className="w-4 h-4" />
+            <span>Photo / Video</span>
           </button>
 
           <button
@@ -238,7 +239,7 @@ export default function CreatePostBox({
               setActiveTab("code");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-cyan-500 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer"
           >
             <Code className="w-4 h-4" />
             <span>Code Block</span>
@@ -246,25 +247,24 @@ export default function CreatePostBox({
 
           <button
             onClick={() => {
-              setActiveTab("poll");
+              setActiveTab("audio");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-indigo-500 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer"
           >
-            <BarChart2 className="w-4 h-4" />
-            <span>Vibe Poll</span>
+            <Mic className="w-4 h-4" />
+            <span>Voice Note</span>
           </button>
 
           <button
             onClick={() => {
-              setActiveTab("thought");
-              setShowImagePicker(true);
+              setActiveTab("poll");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-emerald-500 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer"
           >
-            <ImageIcon className="w-4 h-4" />
-            <span>Media</span>
+            <BarChart2 className="w-4 h-4" />
+            <span>Poll</span>
           </button>
         </div>
       </div>
@@ -275,15 +275,12 @@ export default function CreatePostBox({
           <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
             {/* Modal Header */}
             <div className="relative px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-                <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
-                  Compose a Kite Spark
-                </h3>
-              </div>
+              <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                Create Post
+              </h3>
               <button
                 onClick={handleClose}
-                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 transition"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -295,7 +292,7 @@ export default function CreatePostBox({
                 <img
                   src={currentUser?.avatar}
                   alt={currentUser?.name}
-                  className="w-10 h-10 rounded-2xl object-cover ring-2 ring-indigo-500/20"
+                  className="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-200 dark:ring-slate-700"
                 />
                 <div>
                   <p className="font-bold text-xs text-slate-900 dark:text-slate-100">
@@ -304,11 +301,11 @@ export default function CreatePostBox({
                   <select
                     value={privacy}
                     onChange={(e) => setPrivacy(e.target.value)}
-                    className="mt-0.5 text-[11px] font-medium bg-slate-100 dark:bg-slate-800 border-none rounded-lg px-2 py-0.5 text-slate-600 dark:text-slate-400 focus:outline-none"
+                    className="mt-0.5 text-[11px] font-medium bg-slate-100 dark:bg-slate-800 border-none rounded-lg px-2 py-0.5 text-slate-600 dark:text-slate-400 focus:outline-none cursor-pointer"
                   >
-                    <option value="public">🌐 Public Sanctuary</option>
-                    <option value="friends">👥 Circle Only</option>
-                    <option value="only_me">🔒 Private Draft</option>
+                    <option value="public">🌐 Public</option>
+                    <option value="friends">👥 Friends</option>
+                    <option value="only_me">🔒 Only Me</option>
                   </select>
                 </div>
               </div>
@@ -318,8 +315,8 @@ export default function CreatePostBox({
                 <button
                   type="button"
                   onClick={() => setActiveTab("thought")}
-                  className={`px-2.5 py-1 rounded-full transition ${
-                    activeTab === "thought" ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-cyan-400 shadow-xs" : "text-slate-500"
+                  className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
+                    activeTab === "thought" ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-xs font-bold" : "text-slate-500"
                   }`}
                 >
                   Text
@@ -327,29 +324,29 @@ export default function CreatePostBox({
                 <button
                   type="button"
                   onClick={() => setActiveTab("audio")}
-                  className={`px-2.5 py-1 rounded-full transition ${
-                    activeTab === "audio" ? "bg-white dark:bg-slate-700 text-rose-500 shadow-xs" : "text-slate-500"
+                  className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
+                    activeTab === "audio" ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-xs font-bold" : "text-slate-500"
                   }`}
                 >
-                  🎙️ Audio
+                  Voice
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("code")}
-                  className={`px-2.5 py-1 rounded-full transition ${
-                    activeTab === "code" ? "bg-white dark:bg-slate-700 text-cyan-500 shadow-xs" : "text-slate-500"
+                  className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
+                    activeTab === "code" ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-xs font-bold" : "text-slate-500"
                   }`}
                 >
-                  💻 Code
+                  Code
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("poll")}
-                  className={`px-2.5 py-1 rounded-full transition ${
-                    activeTab === "poll" ? "bg-white dark:bg-slate-700 text-indigo-500 shadow-xs" : "text-slate-500"
+                  className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
+                    activeTab === "poll" ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-xs font-bold" : "text-slate-500"
                   }`}
                 >
-                  📊 Poll
+                  Poll
                 </button>
               </div>
             </div>
@@ -589,9 +586,9 @@ export default function CreatePostBox({
                   disabled={
                     !content.trim() && !selectedImage && !hasRecordedAudio && !codeContent.trim() && !pollQuestion.trim()
                   }
-                  className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-xs rounded-full shadow-md shadow-indigo-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition transform active:scale-95"
+                  className="px-6 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-xs rounded-full shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
-                  Publish Spark 🚀
+                  Post
                 </button>
               </div>
             </form>
