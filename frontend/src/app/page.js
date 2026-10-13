@@ -43,20 +43,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [darkMode, setDarkMode] = useState(false);
 
-  // FEATURE: ZEN MODE STATE (Hides vanity metrics)
-  const [zenMode, setZenMode] = useState(false);
-
-  // FEATURE: VIBE STATUS
-  const [currentVibe, setCurrentVibe] = useState(VIBE_STATUSES[0]);
-
-  // FEATURE: FEED VIBE FILTER
-  const [selectedVibeFilter, setSelectedVibeFilter] = useState("all"); // 'all' | 'audio' | 'code' | 'poll' | 'zen' | 'creative'
-
-  // FEATURE: AMBIENT SOUNDSCAPE ENGINE
-  const [isAmbientPlaying, setIsAmbientPlaying] = useState(false);
-  const [ambientTrack, setAmbientTrack] = useState(SOUNDSCAPE_TRACKS[0]);
-  const [ambientVolumeLevel, setAmbientVolumeLevel] = useState(0.4);
-
   // Social Data State
   const [posts, setPosts] = useState(INITIAL_POSTS);
   const [stories, setStories] = useState(INITIAL_STORIES);
@@ -83,7 +69,7 @@ export default function Home() {
     }
   }, [darkMode]);
 
-  // Load saved user & zen settings from localStorage
+  // Load saved user settings from localStorage
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem("kite_user");
@@ -94,46 +80,10 @@ export default function Home() {
       if (savedTheme === "dark") {
         setDarkMode(true);
       }
-      const savedZen = localStorage.getItem("kite_zen");
-      if (savedZen === "true") {
-        setZenMode(true);
-      }
     } catch {
       // ignore
     }
   }, []);
-
-  const handleToggleZenMode = (val) => {
-    setZenMode(val);
-    try {
-      localStorage.setItem("kite_zen", val ? "true" : "false");
-    } catch {
-      // ignore
-    }
-  };
-
-  // Ambient sound handlers
-  const handleToggleAmbient = () => {
-    if (isAmbientPlaying) {
-      stopAmbientSound();
-      setIsAmbientPlaying(false);
-    } else {
-      playAmbientSound(ambientTrack?.id || "rain", ambientVolumeLevel);
-      setIsAmbientPlaying(true);
-    }
-  };
-
-  const handleSelectAmbientTrack = (track) => {
-    setAmbientTrack(track);
-    if (isAmbientPlaying) {
-      playAmbientSound(track.id, ambientVolumeLevel);
-    }
-  };
-
-  const handleChangeAmbientVolume = (vol) => {
-    setAmbientVolumeLevel(vol);
-    setAmbientVolume(vol);
-  };
 
   // Save user changes to localStorage
   const handleSetUser = (user) => {
@@ -367,17 +317,9 @@ export default function Home() {
   };
 
   // Filter posts by search query, saved view, and Vibe Filter
+  // Filter posts by search query and saved view
   const displayedPosts = posts.filter((post) => {
     if (activeTab === "saved" && !post.isSaved) return false;
-
-    // Vibe Category Filter
-    if (activeTab === "feed" && selectedVibeFilter !== "all") {
-      if (selectedVibeFilter === "audio" && !post.audioSpark && post.vibeTag !== "audio") return false;
-      if (selectedVibeFilter === "code" && !post.codeSnippet && post.vibeTag !== "code") return false;
-      if (selectedVibeFilter === "poll" && !post.poll && post.vibeTag !== "poll") return false;
-      if (selectedVibeFilter === "zen" && post.vibeTag !== "zen") return false;
-      if (selectedVibeFilter === "creative" && post.vibeTag !== "creative" && !post.bgGradient) return false;
-    }
 
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -388,25 +330,13 @@ export default function Home() {
 
   const unreadNotifsCount = notifications.filter((n) => !n.read).length;
 
-  const VIBE_FILTER_BUTTONS = [
-    { id: "all", label: "✦ All Sparks", icon: Zap },
-    { id: "audio", label: "🎙️ Voice & Audio", icon: Mic },
-    { id: "code", label: "💻 Dev & Code", icon: Code },
-    { id: "poll", label: "📊 Vibe Polls", icon: BarChart2 },
-    { id: "zen", label: "🌿 Mindful & Zen", icon: Leaf },
-    { id: "creative", label: "🎨 Creative Art", icon: Sparkles },
-  ];
-
   return (
-    <div className={`min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-250 ${zenMode ? "zen-active" : ""}`}>
-      {/* Modern Kite Glassmorphic Header */}
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
+      {/* Kite Navigation Header */}
       <Navbar
         currentUser={currentUser}
         activeTab={activeTab}
-        setActiveTab={(tab) => {
-          setActiveTab(tab);
-          if (tab === "feed") setSelectedVibeFilter("all");
-        }}
+        setActiveTab={setActiveTab}
         unreadMessagesCount={activeChats.length > 0 ? 1 : 0}
         unreadNotifsCount={unreadNotifsCount}
         onOpenNotifications={() => setIsNotifsOpen(!isNotifsOpen)}
@@ -426,13 +356,6 @@ export default function Home() {
         setSearchQuery={setSearchQuery}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        zenMode={zenMode}
-        setZenMode={handleToggleZenMode}
-        ambientTrack={ambientTrack}
-        isAmbientPlaying={isAmbientPlaying}
-        onToggleAmbient={handleToggleAmbient}
-        currentVibe={currentVibe}
-        setCurrentVibe={setCurrentVibe}
       />
 
       {/* Notifications Dropdown Tray */}
@@ -444,21 +367,15 @@ export default function Home() {
         onSelectNotification={handleSelectNotification}
       />
 
-      {/* Main Social Sanctuary Layout */}
+      {/* Main Layout */}
       <div className="flex-1 max-w-[1920px] w-full mx-auto flex justify-between">
         {/* Left Navigation Rail */}
         <LeftSidebar
           currentUser={currentUser}
           activeTab={activeTab}
-          setActiveTab={(tab) => {
-            setActiveTab(tab);
-            if (tab === "feed") setSelectedVibeFilter("all");
-          }}
+          setActiveTab={setActiveTab}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onOpenAuth={handleOpenAuth}
-          zenMode={zenMode}
-          selectedVibeFilter={selectedVibeFilter}
-          setSelectedVibeFilter={setSelectedVibeFilter}
         />
 
         {/* Central Feed / View Area */}
@@ -466,7 +383,7 @@ export default function Home() {
           {/* VIEW: MAIN NEWS FEED */}
           {activeTab === "feed" && (
             <div>
-              {/* Visual Drops & Sparks Tray */}
+              {/* Stories Tray */}
               <StoriesTray
                 currentUser={currentUser}
                 stories={stories}
@@ -474,7 +391,7 @@ export default function Home() {
                 onCreateStory={() => setIsCreatePostOpen(true)}
               />
 
-              {/* Rich Creative Composer */}
+              {/* Create Post Box */}
               <CreatePostBox
                 currentUser={currentUser}
                 onCreatePost={handleCreatePost}
@@ -482,35 +399,15 @@ export default function Home() {
                 setIsOpen={setIsCreatePostOpen}
               />
 
-              {/* FEATURE: VIBE FILTER PILLS BAR (Exclusive to Kite!) */}
-              <div className="mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
-                {VIBE_FILTER_BUTTONS.map((filter) => {
-                  const isActive = selectedVibeFilter === filter.id;
-                  return (
-                    <button
-                      key={filter.id}
-                      onClick={() => setSelectedVibeFilter(filter.id)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 transition flex items-center gap-1.5 cursor-pointer ${
-                        isActive
-                          ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25 font-bold"
-                          : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-800"
-                      }`}
-                    >
-                      <span>{filter.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
               {/* Feed Search Indicator */}
               {searchQuery && (
                 <div className="mb-4 p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-xs text-xs flex items-center justify-between border border-slate-200/80 dark:border-slate-800">
                   <span>
-                    Searching sparks for &ldquo;<strong>{searchQuery}</strong>&rdquo; ({displayedPosts.length} results)
+                    Searching posts for &ldquo;<strong>{searchQuery}</strong>&rdquo; ({displayedPosts.length} results)
                   </span>
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="text-indigo-600 dark:text-cyan-400 font-bold hover:underline"
+                    className="text-[#1877f2] font-semibold hover:underline cursor-pointer"
                   >
                     Clear search
                   </button>
@@ -522,20 +419,18 @@ export default function Home() {
                 <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl text-center shadow-xs border border-slate-200/80 dark:border-slate-800 text-slate-400">
                   <Sparkles className="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-700" />
                   <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
-                    No sparks in this stream yet
+                    No posts to display
                   </h3>
                   <p className="text-xs mt-1 max-w-sm mx-auto">
                     {searchQuery
-                      ? "Try searching for a different concept."
-                      : selectedVibeFilter !== "all"
-                      ? `No sparks tagged with "${selectedVibeFilter}". Be the first to drop one!`
-                      : "Be the first to share an insight, voice note, or code snippet with the circle!"}
+                      ? "Try searching for a different keyword."
+                      : "Be the first to share an update or photo with your friends!"}
                   </p>
                   <button
                     onClick={() => setIsCreatePostOpen(true)}
-                    className="mt-4 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-bold text-xs rounded-full shadow transition"
+                    className="mt-4 px-5 py-2.5 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-xs rounded-full shadow-xs transition cursor-pointer"
                   >
-                    Drop a Spark
+                    Create Post
                   </button>
                 </div>
               ) : (
@@ -550,31 +445,30 @@ export default function Home() {
                     onDeletePost={handleDeletePost}
                     onShare={handleSharePost}
                     onImageClick={(url) => setLightboxImage(url)}
-                    zenMode={zenMode}
                   />
                 ))
               )}
             </div>
           )}
 
-          {/* VIEW: STASH / SAVED SPARKS */}
+          {/* VIEW: SAVED POSTS */}
           {activeTab === "saved" && (
             <div className="space-y-4">
               <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                    Your Stash & Bookmarks
+                    Saved Posts
                   </h2>
-                  <p className="text-xs text-slate-400">Curated sparks, code snippets, and audio notes saved for later</p>
+                  <p className="text-xs text-slate-400">Posts and links you saved for later</p>
                 </div>
-                <Bookmark className="w-6 h-6 text-purple-500" />
+                <Bookmark className="w-6 h-6 text-[#1877f2]" />
               </div>
 
               {displayedPosts.length === 0 ? (
                 <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl text-center shadow-xs border border-slate-200/80 dark:border-slate-800 text-slate-400">
                   <Bookmark className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p className="font-bold text-slate-700 dark:text-slate-300">Your stash is currently empty</p>
-                  <p className="text-xs mt-1">Tap the three dots on any spark to stash it here.</p>
+                  <p className="font-bold text-slate-700 dark:text-slate-300">No saved posts yet</p>
+                  <p className="text-xs mt-1">Bookmark posts to find them easily here.</p>
                 </div>
               ) : (
                 displayedPosts.map((post) => (
@@ -588,14 +482,13 @@ export default function Home() {
                     onDeletePost={handleDeletePost}
                     onShare={handleSharePost}
                     onImageClick={(url) => setLightboxImage(url)}
-                    zenMode={zenMode}
                   />
                 ))
               )}
             </div>
           )}
 
-          {/* VIEW: CIRCLE NETWORK (Friends) */}
+          {/* VIEW: FRIENDS */}
           {activeTab === "friends" && (
             <FriendsView
               friends={friends}
@@ -606,28 +499,22 @@ export default function Home() {
             />
           )}
 
-          {/* VIEW: CINEMA (Watch / Reels) */}
+          {/* VIEW: WATCH */}
           {activeTab === "watch" && <WatchView />}
 
-          {/* VIEW: BAZAAR (Marketplace) */}
+          {/* VIEW: MARKETPLACE */}
           {activeTab === "marketplace" && (
             <MarketplaceView onOpenChatWithSeller={handleOpenChatWithSeller} />
           )}
         </main>
 
-        {/* Right Rail: Kite Soundscape & Community Pulse */}
+        {/* Right Rail: Contacts and Friend Requests */}
         <RightSidebar
           friends={friends}
           friendRequests={friendRequests}
           onAcceptRequest={handleAcceptRequest}
           onDeclineRequest={handleDeclineRequest}
           onOpenChatWithFriend={handleOpenChatWithFriend}
-          isAmbientPlaying={isAmbientPlaying}
-          onToggleAmbient={handleToggleAmbient}
-          ambientTrack={ambientTrack}
-          onSelectAmbientTrack={handleSelectAmbientTrack}
-          ambientVolume={ambientVolumeLevel}
-          onChangeAmbientVolume={handleChangeAmbientVolume}
           onOpenCreatePost={() => setIsCreatePostOpen(true)}
         />
       </div>
