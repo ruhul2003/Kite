@@ -42,49 +42,49 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
         onScroll={checkScroll}
         className="flex items-center gap-2.5 overflow-x-auto scrollbar-none py-1 scroll-smooth"
       >
-        {/* CREATE SPARK DROP CARD */}
+        {/* Create Story Card */}
         <div
           onClick={onCreateStory}
-          className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-3xl overflow-hidden shadow-xs bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shrink-0 cursor-pointer group flex flex-col justify-between hover:shadow-md transition transform hover:-translate-y-0.5"
+          className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-2xl overflow-hidden shadow-xs bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shrink-0 cursor-pointer group flex flex-col justify-between hover:shadow-md transition"
         >
           <div className="h-[72%] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
             <img
               src={currentUser?.coverPhoto || currentUser?.avatar}
-              alt="Drop Spark"
+              alt="Create Story"
               className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
             />
           </div>
 
           {/* Plus Button in center */}
-          <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 border-4 border-white dark:border-slate-900 flex items-center justify-center text-white shadow-md group-hover:scale-110 transition">
+          <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#1877f2] hover:bg-[#166fe5] border-4 border-white dark:border-slate-900 flex items-center justify-center text-white shadow-sm transition">
             <Plus className="w-5 h-5 stroke-[2.5]" />
           </div>
 
           <div className="h-[28%] flex items-end justify-center pb-2.5 px-1 text-center bg-white dark:bg-slate-900">
-            <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate flex items-center gap-1">
-              <span>Drop Spark</span>
+            <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+              Create Story
             </span>
           </div>
         </div>
 
-        {/* CIRCLE STORIES / VISUAL DROPS */}
+        {/* Stories List */}
         {stories.map((story) => (
           <div
             key={story.id}
             onClick={() => onOpenStory(story)}
-            className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-3xl overflow-hidden shadow-xs shrink-0 cursor-pointer group hover:shadow-md transition transform hover:-translate-y-0.5"
+            className="relative w-28 sm:w-32 h-48 sm:h-52 rounded-2xl overflow-hidden shadow-xs shrink-0 cursor-pointer group hover:shadow-md transition"
           >
             <img
               src={story.storyMedia}
               alt={story.authorName}
-              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 group-hover:from-black/50 group-hover:to-black/90 transition" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80" />
 
-            {/* Author Avatar with glowing gradient border */}
+            {/* Author Avatar with clean primary border */}
             <div className="absolute top-3 left-3">
-              <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 shadow-md">
+              <div className="w-9 h-9 rounded-full ring-2 ring-[#1877f2] p-0.5 bg-white dark:bg-slate-900">
                 <img
                   src={story.authorAvatar}
                   alt={story.authorName}
@@ -95,7 +95,7 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
 
             {/* Caption Preview & Author Name */}
             <div className="absolute bottom-3 left-3 right-3 text-white">
-              <p className="text-xs font-bold truncate drop-shadow-md">
+              <p className="text-xs font-semibold truncate drop-shadow-sm">
                 {story.authorName}
               </p>
             </div>
