@@ -35,40 +35,14 @@ export default function RightSidebar({
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
   const TRENDING_TOPICS = [
-    { tag: "#buildinpublic", sparks: "1.4k sparks", category: "Craft & Code" },
-    { tag: "#generativeAI", sparks: "980 sparks", category: "Technology" },
-    { tag: "#mindfultech", sparks: "720 sparks", category: "Well-being" },
-    { tag: "#audiosparks", sparks: "430 sparks", category: "Voice" },
+    { tag: "#webdevelopment", posts: "1.4k posts", category: "Technology" },
+    { tag: "#productdesign", posts: "980 posts", category: "Design" },
+    { tag: "#reactjs", posts: "720 posts", category: "Frameworks" },
+    { tag: "#career", posts: "430 posts", category: "Community" },
   ];
 
   return (
     <aside className="w-[300px] shrink-0 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4 hidden lg:block select-none scrollbar-thin">
-
-
-      {/* FEATURE: DAILY COMMUNITY SPARK */}
-      <div className="mb-4 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm transition">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-cyan-400 flex items-center gap-1">
-            <Zap className="w-3 h-3" />
-            <span>Daily Spark</span>
-          </span>
-          <span className="text-[10px] text-slate-400 font-medium">
-            {DAILY_SPARK_PROMPT.sparksCount} replies
-          </span>
-        </div>
-
-        <h5 className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-snug mb-2.5">
-          &ldquo;{DAILY_SPARK_PROMPT.question}&rdquo;
-        </h5>
-
-        <button
-          onClick={onOpenCreatePost}
-          className="w-full py-1.5 px-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-cyan-400 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Drop your Spark</span>
-        </button>
-      </div>
 
       {/* Incoming Connection Requests */}
       {friendRequests && friendRequests.length > 0 && (
