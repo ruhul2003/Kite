@@ -73,41 +73,32 @@ export default function Navbar({
             onClick={() => setActiveTab("feed")}
             className="flex items-center gap-2.5 group cursor-pointer"
           >
-            {/* Aerodynamic Geometric Kite Emblem */}
-            <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 p-[1.5px] shadow-md shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition duration-300 transform group-hover:scale-105">
-              <div className="w-full h-full bg-white dark:bg-[#0b0f19] rounded-[14px] flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-indigo-600 dark:text-cyan-400 transform -rotate-12 group-hover:rotate-0 transition duration-300"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M12 2L21 9L12 22L3 9L12 2Z" fillOpacity="0.25" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                  <path d="M12 2L12 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <path d="M3 9L21 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <circle cx="12" cy="11" r="2" fill="currentColor" />
-                </svg>
-              </div>
+            {/* Primary Kite Brand Emblem */}
+            <div className="w-9 h-9 rounded-xl bg-[#1877f2] flex items-center justify-center text-white shadow-sm transition hover:bg-[#166fe5]">
+              <svg
+                className="w-5 h-5 text-white"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2L21 9L12 22L3 9L12 2Z" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                <path d="M12 2L12 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M3 9L21 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </div>
 
             <div className="flex flex-col text-left">
-              <div className="flex items-center gap-1">
-                <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
-                  kite
-                </span>
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              </div>
-              <span className="hidden sm:inline text-[9px] font-semibold uppercase tracking-widest text-slate-400 -mt-1">
-                Sparks & Circles
+              <span className="font-bold text-2xl tracking-tight text-[#1877f2]">
+                kite
               </span>
             </div>
           </button>
 
-          {/* Search Bar with Hotkey Badge */}
-          <div className="relative flex-1 max-w-[230px] hidden md:block">
+          {/* Search Bar */}
+          <div className="relative flex-1 max-w-[240px] hidden md:block">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Discover sparks, code, audio..."
+              placeholder="Search Kite..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-8 py-2 text-xs bg-slate-100/90 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 rounded-full border border-slate-200/60 dark:border-slate-700/60 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition"
