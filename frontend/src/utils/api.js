@@ -257,3 +257,19 @@ export async function apiTogglePinNote(noteId) {
   }
 }
 
+export async function apiToggleChecklistItem(noteId, itemId, completed) {
+  try {
+    const res = await fetch(`${API_BASE}/notes/${noteId}/checklist/${itemId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ completed }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to toggle checklist item");
+    return data.note;
+  } catch (err) {
+    console.warn("Backend toggle checklist error:", err.message);
+    return null;
+  }
+}
+
