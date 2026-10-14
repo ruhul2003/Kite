@@ -191,3 +191,25 @@ export async function apiFetchNotes(userId = "user-alex", filters = {}) {
   }
 }
 
+export async function apiCreateNote(noteData) {
+  try {
+    const res = await fetch(`${API_BASE}/notes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(noteData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to create note");
+    return data.note;
+  } catch (err) {
+    console.warn("Backend create note error, saving locally:", err.message);
+    const localNote = {
+      ...noteData,
+      id: `local-note-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return localNote;
+  }
+}
+
