@@ -16,7 +16,11 @@ export default function NotesView({
   onOpenCreatePost,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [selectedTag, setSelectedTag] = useState(null);
   const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'list'
+
+  const CATEGORIES = ["All", "Work", "Personal", "Ideas", "Code", "Todo"];
 
   return (
     <div className="w-full max-w-4xl mx-auto pb-16 animate-fade-in">
@@ -75,6 +79,41 @@ export default function NotesView({
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#1877f2] shadow-2xs backdrop-blur-sm transition"
           />
+        </div>
+
+        {/* Category Pills & Active Tag Filter */}
+        <div className="flex items-center gap-2 mt-4 overflow-x-auto pb-1 scrollbar-none">
+          {CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setSelectedTag(null);
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                  isActive
+                    ? "bg-[#1877f2] text-white shadow-xs font-bold"
+                    : "bg-white/80 dark:bg-slate-900/80 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
+
+          {selectedTag && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 text-xs font-bold whitespace-nowrap">
+              <span>#{selectedTag}</span>
+              <button
+                onClick={() => setSelectedTag(null)}
+                className="hover:text-purple-800 dark:hover:text-purple-200 cursor-pointer"
+              >
+                ×
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
