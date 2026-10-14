@@ -104,4 +104,55 @@ router.get('/', async (req, res) => {
   }
 });
 
+// POST /api/notes - Create a new user note
+router.post('/', async (req, res) => {
+  try {
+    const {
+      userId = 'user-alex',
+      title,
+      content = '',
+      color = 'slate',
+      category = 'General',
+      tags = [],
+      isPinned = false,
+      checklist = [],
+    } = req.body;
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({ success: false, error: 'Note title is required' });
+    }
+
+    // Format checklist items with stable unique ids
+    const sanitizedChecklist = Array.isArray(checklist)
+      ? checklist
+          .filter((item) => item && item.text && item.text.trim())
+          .map((item, index) => ({
+            id: item.id || `chk-${Date.now()}-${index}`,
+            text: item.text.trim(),
+            completed: Boolean(item.completed),
+          }))
+      : [];
+
+    const newNote = await Note.create({
+      userId,
+      title: title.trim(),
+      content: content.trim(),
+      color,
+      category,
+      tags: Array.isArray(tags) ? tags.map((t) => t.trim()).filter(Boolean) : [],
+      isPinned: Boolean(isPinned),
+      checklist: sanitizedChecklist,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Note created successfully',
+      note: newNote,
+    });
+  } catch (err) {
+    console.error('Error creating note:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to create note' });
+  }
+});
+
 export default router;
