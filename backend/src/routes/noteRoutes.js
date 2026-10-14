@@ -155,4 +155,46 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT /api/notes/:id - Update an existing note
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, color, category, tags, isPinned, checklist } = req.body;
+
+    const existingNote = await Note.findById(id);
+    if (!existingNote) {
+      return res.status(404).json({ success: false, error: 'Note not found' });
+    }
+
+    if (title !== undefined) existingNote.title = title.trim();
+    if (content !== undefined) existingNote.content = content.trim();
+    if (color !== undefined) existingNote.color = color;
+    if (category !== undefined) existingNote.category = category;
+    if (isPinned !== undefined) existingNote.isPinned = Boolean(isPinned);
+    if (Array.isArray(tags)) {
+      existingNote.tags = tags.map((t) => t.trim()).filter(Boolean);
+    }
+    if (Array.isArray(checklist)) {
+      existingNote.checklist = checklist
+        .filter((item) => item && item.text && item.text.trim())
+        .map((item, index) => ({
+          id: item.id || `chk-${Date.now()}-${index}`,
+          text: item.text.trim(),
+          completed: Boolean(item.completed),
+        }));
+    }
+
+    const updatedNote = await existingNote.save();
+
+    res.json({
+      success: true,
+      message: 'Note updated successfully',
+      note: updatedNote,
+    });
+  } catch (err) {
+    console.error('Error updating note:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to update note' });
+  }
+});
+
 export default router;
