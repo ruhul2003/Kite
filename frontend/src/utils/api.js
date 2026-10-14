@@ -154,3 +154,40 @@ export async function apiDeleteJob(jobId) {
   }
 }
 
+// ==========================================
+// KITE USER NOTES API
+// ==========================================
+
+export async function apiFetchNotes(userId = "user-alex", filters = {}) {
+  try {
+    const query = new URLSearchParams();
+    query.append("userId", userId);
+    if (filters.category && filters.category !== "All") query.append("category", filters.category);
+    if (filters.search) query.append("search", filters.search);
+    if (filters.tag) query.append("tag", filters.tag);
+
+    const res = await fetch(`${API_BASE}/notes?${query.toString()}`);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Failed to fetch notes");
+
+    // Cache locally for offline/guest resilience
+    if (typeof window !== "undefined" && data.notes) {
+      localStorage.setItem("kite_notes_cache", JSON.stringify(data.notes));
+    }
+
+    return data.notes || [];
+  } catch (err) {
+    console.warn("Backend fetch notes error, falling back to cached/local storage:", err.message);
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("kite_notes_cache");
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (_) {}
+      }
+    }
+    return [];
+  }
+}
+
