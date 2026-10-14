@@ -65,6 +65,11 @@ export const NOTE_THEMES = {
 export default function NotesView({
   currentUser,
   notes = [],
+  onCreateNote,
+  onUpdateNote,
+  onDeleteNote,
+  onTogglePin,
+  onToggleChecklistItem,
   onOpenCreatePost,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,6 +102,77 @@ export default function NotesView({
 
   const handleRemoveChecklistItem = (id) => {
     setChecklistItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  // Filter notes according to search, category, and selected tag
+  const filteredNotes = notes.filter((note) => {
+    if (activeCategory !== "All" && note.category !== activeCategory) {
+      return false;
+    }
+
+    if (selectedTag && (!note.tags || !note.tags.includes(selectedTag))) {
+      return false;
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const inTitle = note.title?.toLowerCase().includes(q);
+      const inContent = note.content?.toLowerCase().includes(q);
+      const inTags = note.tags?.some((t) => t.toLowerCase().includes(q));
+      const inChecklist = note.checklist?.some((c) => c.text.toLowerCase().includes(q));
+      if (!inTitle && !inContent && !inTags && !inChecklist) return false;
+    }
+
+    return true;
+  });
+
+  const pinnedNotes = filteredNotes.filter((n) => n.isPinned);
+  const otherNotes = filteredNotes.filter((n) => !n.isPinned);
+
+  const renderNoteCard = (note) => {
+    const theme = NOTE_THEMES[note.color] || NOTE_THEMES.slate;
+
+    return (
+      <div
+        key={note.id || note._id}
+        className={`group relative p-4 sm:p-5 rounded-3xl transition-all duration-200 border shadow-xs hover:shadow-md flex flex-col justify-between ${theme.bg} ${theme.border}`}
+      >
+        <div>
+          {/* Card Top Row: Category badge & Pin Toggle */}
+          <div className="flex items-center justify-between gap-2 mb-2.5">
+            <span
+              className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${theme.accent}`}
+            >
+              {note.category || "General"}
+            </span>
+
+            <button
+              onClick={() => onTogglePin?.(note.id || note._id)}
+              className={`p-1.5 rounded-xl transition cursor-pointer ${
+                note.isPinned
+                  ? "bg-[#1877f2] text-white shadow-xs"
+                  : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 opacity-0 group-hover:opacity-100"
+              }`}
+              title={note.isPinned ? "Unpin note" : "Pin note to top"}
+            >
+              <Pin className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug mb-1.5">
+            {note.title}
+          </h3>
+
+          {/* Content */}
+          {note.content && (
+            <p className="text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed line-clamp-4 mb-3">
+              {note.content}
+            </p>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -379,6 +455,33 @@ export default function NotesView({
                 </button>
               )}
               <button
+                onClick={() => {
+                  if (!newTitle.trim()) return;
+                  const tags = newTagsString
+                    .split(",")
+                    .map((t) => t.trim().replace(/^#/, ""))
+                    .filter(Boolean);
+
+                  if (onCreateNote) {
+                    onCreateNote({
+                      title: newTitle.trim(),
+                      content: newContent.trim(),
+                      color: newColor,
+                      category: newCategory,
+                      isPinned: newIsPinned,
+                      tags,
+                      checklist: checklistItems,
+                    });
+                  }
+
+                  // Reset form
+                  setNewTitle("");
+                  setNewContent("");
+                  setNewTagsString("");
+                  setChecklistItems([]);
+                  setChecklistMode(false);
+                  setIsFormExpanded(false);
+                }}
                 className="px-4 py-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-bold shadow-xs transition cursor-pointer flex items-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
@@ -388,6 +491,71 @@ export default function NotesView({
           </div>
         </div>
       </div>
+
+      {/* Filtered Notes Sections */}
+      {filteredNotes.length === 0 ? (
+        <div className="text-center py-16 px-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-[#1877f2]/10 text-[#1877f2] flex items-center justify-center mx-auto mb-3">
+            <StickyNote className="w-7 h-7" />
+          </div>
+          <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">
+            No notes found
+          </h3>
+          <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+            {searchQuery || activeCategory !== "All" || selectedTag
+              ? "Try adjusting your search terms or clearing the active category filters."
+              : "Capture your first quick thought, coding snippet, or sprint checklist above!"}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {/* Pinned Notes Section */}
+          {pinnedNotes.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3 px-1">
+                <Pin className="w-3.5 h-3.5 text-[#1877f2]" />
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Pinned Notes ({pinnedNotes.length})
+                </h2>
+              </div>
+
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    : "space-y-3"
+                }
+              >
+                {pinnedNotes.map((note) => renderNoteCard(note))}
+              </div>
+            </div>
+          )}
+
+          {/* Other Notes Section */}
+          {otherNotes.length > 0 && (
+            <div>
+              {pinnedNotes.length > 0 && (
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <StickyNote className="w-3.5 h-3.5 text-slate-400" />
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Other Notes ({otherNotes.length})
+                  </h2>
+                </div>
+              )}
+
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    : "space-y-3"
+                }
+              >
+                {otherNotes.map((note) => renderNoteCard(note))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
