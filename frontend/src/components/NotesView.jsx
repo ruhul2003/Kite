@@ -8,7 +8,59 @@ import {
   List,
   Sparkles,
   StickyNote,
+  Pin,
+  CheckSquare,
+  Palette,
+  Tag,
+  Trash2,
+  X,
+  Check,
 } from "lucide-react";
+
+export const NOTE_THEMES = {
+  slate: {
+    bg: "bg-white dark:bg-slate-900",
+    border: "border-slate-200/80 dark:border-slate-800",
+    accent: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
+    name: "Clean Slate",
+    dot: "bg-slate-400",
+  },
+  amber: {
+    bg: "bg-amber-50/70 dark:bg-amber-950/20",
+    border: "border-amber-200/80 dark:border-amber-900/50",
+    accent: "bg-amber-100/80 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300",
+    name: "Amber Warm",
+    dot: "bg-amber-500",
+  },
+  emerald: {
+    bg: "bg-emerald-50/70 dark:bg-emerald-950/20",
+    border: "border-emerald-200/80 dark:border-emerald-900/50",
+    accent: "bg-emerald-100/80 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300",
+    name: "Emerald Mint",
+    dot: "bg-emerald-500",
+  },
+  sky: {
+    bg: "bg-sky-50/70 dark:bg-sky-950/20",
+    border: "border-sky-200/80 dark:border-sky-900/50",
+    accent: "bg-sky-100/80 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300",
+    name: "Sky Breeze",
+    dot: "bg-sky-500",
+  },
+  purple: {
+    bg: "bg-purple-50/70 dark:bg-purple-950/20",
+    border: "border-purple-200/80 dark:border-purple-900/50",
+    accent: "bg-purple-100/80 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300",
+    name: "Orchid Purple",
+    dot: "bg-purple-500",
+  },
+  rose: {
+    bg: "bg-rose-50/70 dark:bg-rose-950/20",
+    border: "border-rose-200/80 dark:border-rose-900/50",
+    accent: "bg-rose-100/80 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300",
+    name: "Rose Blush",
+    dot: "bg-rose-500",
+  },
+};
 
 export default function NotesView({
   currentUser,
@@ -20,7 +72,32 @@ export default function NotesView({
   const [selectedTag, setSelectedTag] = useState(null);
   const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'list'
 
+  // New Note Builder Form State
+  const [isFormExpanded, setIsFormExpanded] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const [newColor, setNewColor] = useState("slate");
+  const [newCategory, setNewCategory] = useState("General");
+  const [newIsPinned, setNewIsPinned] = useState(false);
+  const [newTagsString, setNewTagsString] = useState("");
+  const [checklistMode, setChecklistMode] = useState(false);
+  const [checklistItems, setChecklistItems] = useState([]);
+  const [newChecklistInput, setNewChecklistInput] = useState("");
+
   const CATEGORIES = ["All", "Work", "Personal", "Ideas", "Code", "Todo"];
+
+  const handleAddChecklistItem = () => {
+    if (!newChecklistInput.trim()) return;
+    setChecklistItems((prev) => [
+      ...prev,
+      { id: `item-${Date.now()}-${prev.length}`, text: newChecklistInput.trim(), completed: false },
+    ]);
+    setNewChecklistInput("");
+  };
+
+  const handleRemoveChecklistItem = (id) => {
+    setChecklistItems((prev) => prev.filter((item) => item.id !== id));
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto pb-16 animate-fade-in">
@@ -118,30 +195,196 @@ export default function NotesView({
       </div>
 
       {/* Quick Note Creator Card */}
-      <div className="mb-8 p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm transition">
+      <div
+        className={`mb-8 p-4 sm:p-5 rounded-3xl transition-all duration-200 border shadow-sm ${
+          NOTE_THEMES[newColor].bg
+        } ${NOTE_THEMES[newColor].border}`}
+      >
         <div className="space-y-3">
-          <input
-            type="text"
-            placeholder="Note title (e.g., Sprint Launch Checklist, Project Idea)..."
-            className="w-full text-sm sm:text-base font-bold text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent focus:outline-hidden"
-          />
+          <div className="flex items-center justify-between gap-3">
+            <input
+              type="text"
+              placeholder="Note title (e.g., Sprint Launch Checklist, Project Idea)..."
+              value={newTitle}
+              onChange={(e) => {
+                setNewTitle(e.target.value);
+                if (!isFormExpanded) setIsFormExpanded(true);
+              }}
+              onFocus={() => setIsFormExpanded(true)}
+              className="w-full text-sm sm:text-base font-bold text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent focus:outline-hidden"
+            />
+
+            <button
+              onClick={() => setNewIsPinned(!newIsPinned)}
+              className={`p-2 rounded-xl transition cursor-pointer shrink-0 ${
+                newIsPinned
+                  ? "bg-[#1877f2] text-white shadow-xs"
+                  : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5"
+              }`}
+              title={newIsPinned ? "Pinned to top" : "Pin note to top"}
+            >
+              <Pin className="w-4 h-4" />
+            </button>
+          </div>
 
           <textarea
             placeholder="Jot down details, thoughts, code snippets, or markdown..."
-            rows={2}
+            value={newContent}
+            onChange={(e) => setNewContent(e.target.value)}
+            onFocus={() => setIsFormExpanded(true)}
+            rows={isFormExpanded ? 3 : 2}
             className="w-full text-xs sm:text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 bg-transparent focus:outline-hidden resize-none scrollbar-thin"
           />
 
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80">
+          {/* Interactive Checklist Mode */}
+          {checklistMode && (
+            <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/60 space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <CheckSquare className="w-3.5 h-3.5 text-[#1877f2]" />
+                <span>Todo Checklist ({checklistItems.length})</span>
+              </p>
+
+              <div className="space-y-1.5 max-h-40 overflow-y-auto scrollbar-thin">
+                {checklistItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-white/70 dark:bg-slate-900/70 border border-slate-200/50 dark:border-slate-800/50 text-xs"
+                  >
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="w-3.5 h-3.5 rounded-sm border border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0">
+                        {item.completed && <Check className="w-2.5 h-2.5 text-[#1877f2]" />}
+                      </span>
+                      <span className={`truncate text-slate-800 dark:text-slate-200 ${item.completed ? "line-through text-slate-400" : ""}`}>
+                        {item.text}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveChecklistItem(item.id)}
+                      className="text-slate-400 hover:text-rose-500 transition p-1 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Add a checklist item (press Enter)..."
+                  value={newChecklistInput}
+                  onChange={(e) => setNewChecklistInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddChecklistItem();
+                    }
+                  }}
+                  className="flex-1 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-hidden"
+                />
+                <button
+                  onClick={handleAddChecklistItem}
+                  className="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-[#1877f2] hover:text-white text-xs font-semibold text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Expandable Tools (Color Palette, Category, Tags, Checklist Toggle) */}
+          {isFormExpanded && (
+            <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800/60 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                {/* Color Palette Picker */}
+                <div className="flex items-center gap-1.5">
+                  <Palette className="w-3.5 h-3.5 text-slate-400 mr-1" />
+                  {Object.keys(NOTE_THEMES).map((themeKey) => (
+                    <button
+                      key={themeKey}
+                      onClick={() => setNewColor(themeKey)}
+                      className={`w-6 h-6 rounded-full transition cursor-pointer flex items-center justify-center ${
+                        NOTE_THEMES[themeKey].dot
+                      } ${
+                        newColor === themeKey
+                          ? "ring-2 ring-offset-2 ring-[#1877f2] scale-110"
+                          : "opacity-75 hover:opacity-100"
+                      }`}
+                      title={NOTE_THEMES[themeKey].name}
+                    />
+                  ))}
+                </div>
+
+                {/* Category Selector & Checklist Toggle */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setChecklistMode(!checklistMode)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
+                      checklistMode
+                        ? "bg-[#1877f2]/10 text-[#1877f2] font-bold"
+                        : "bg-white/60 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    <CheckSquare className="w-3.5 h-3.5" />
+                    <span>Checklist</span>
+                  </button>
+
+                  <select
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    className="px-2.5 py-1.5 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-hidden cursor-pointer"
+                  >
+                    <option value="General">General</option>
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Ideas">Ideas</option>
+                    <option value="Code">Code</option>
+                    <option value="Todo">Todo</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Tags Input */}
+              <div className="flex items-center gap-2">
+                <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Tags (comma separated, e.g. Design, NextJS, Sprint)..."
+                  value={newTagsString}
+                  onChange={(e) => setNewTagsString(e.target.value)}
+                  className="w-full text-xs text-slate-700 dark:text-slate-300 placeholder:text-slate-400 bg-transparent focus:outline-hidden"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Action Row */}
+          <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
             <span className="text-[11px] text-slate-400 font-medium">
-              Click options to customize color, category, and checklist
+              {newIsPinned ? "📌 Will be pinned to top" : "Personal & private to you"}
             </span>
-            <button
-              className="px-4 py-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-bold shadow-xs transition cursor-pointer flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Save Note</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {isFormExpanded && (
+                <button
+                  onClick={() => {
+                    setIsFormExpanded(false);
+                    setNewTitle("");
+                    setNewContent("");
+                    setChecklistItems([]);
+                    setChecklistMode(false);
+                  }}
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                className="px-4 py-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-bold shadow-xs transition cursor-pointer flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Save Note</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
