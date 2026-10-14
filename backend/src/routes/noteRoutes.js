@@ -221,4 +221,34 @@ router.patch('/:id/pin', async (req, res) => {
   }
 });
 
+// PATCH /api/notes/:id/checklist/:itemId - Toggle a single checklist item
+router.patch('/:id/checklist/:itemId', async (req, res) => {
+  try {
+    const { id, itemId } = req.params;
+    const { completed } = req.body;
+
+    const note = await Note.findById(id);
+    if (!note) {
+      return res.status(404).json({ success: false, error: 'Note not found' });
+    }
+
+    const item = note.checklist.find((c) => c.id === itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Checklist item not found' });
+    }
+
+    item.completed = completed !== undefined ? Boolean(completed) : !item.completed;
+    await note.save();
+
+    res.json({
+      success: true,
+      message: 'Checklist item updated',
+      note,
+    });
+  } catch (err) {
+    console.error('Error toggling checklist item:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to update checklist item' });
+  }
+});
+
 export default router;
