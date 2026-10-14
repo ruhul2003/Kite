@@ -29,4 +29,9 @@ const NoteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Compound indexes for fast filtered lookups by user and pin status
+NoteSchema.index({ userId: 1, isPinned: -1, createdAt: -1 });
+NoteSchema.index({ userId: 1, category: 1 });
+NoteSchema.index({ tags: 1 });
+
 export default mongoose.models.Note || mongoose.model('Note', NoteSchema);
