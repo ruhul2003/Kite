@@ -13,6 +13,7 @@ import {
   Store,
   Briefcase,
   Sparkles,
+  StickyNote,
   ChevronDown,
   ChevronUp,
   Sun,
@@ -27,6 +28,7 @@ export default function LeftSidebar({
   onOpenAuth,
   darkMode,
   setDarkMode,
+  notesCount = 5,
 }) {
   const [showMore, setShowMore] = useState(false);
 
@@ -42,6 +44,13 @@ export default function LeftSidebar({
       icon: Users,
       badge: "3",
       badgeColor: "bg-[#1877f2]/10 text-[#1877f2]",
+    },
+    {
+      id: "notes",
+      label: "My Notes & Ideas",
+      icon: StickyNote,
+      badge: notesCount > 0 ? String(notesCount) : null,
+      badgeColor: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
     },
     {
       id: "saved",
