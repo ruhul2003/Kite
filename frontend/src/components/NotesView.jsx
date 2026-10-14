@@ -116,6 +116,35 @@ export default function NotesView({
           )}
         </div>
       </div>
+
+      {/* Quick Note Creator Card */}
+      <div className="mb-8 p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm transition">
+        <div className="space-y-3">
+          <input
+            type="text"
+            placeholder="Note title (e.g., Sprint Launch Checklist, Project Idea)..."
+            className="w-full text-sm sm:text-base font-bold text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent focus:outline-hidden"
+          />
+
+          <textarea
+            placeholder="Jot down details, thoughts, code snippets, or markdown..."
+            rows={2}
+            className="w-full text-xs sm:text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 bg-transparent focus:outline-hidden resize-none scrollbar-thin"
+          />
+
+          <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span className="text-[11px] text-slate-400 font-medium">
+              Click options to customize color, category, and checklist
+            </span>
+            <button
+              className="px-4 py-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-bold shadow-xs transition cursor-pointer flex items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Save Note</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
