@@ -15,6 +15,9 @@ import {
   Trash2,
   X,
   Check,
+  Copy,
+  Share2,
+  Edit3,
 } from "lucide-react";
 
 export const NOTE_THEMES = {
@@ -88,6 +91,10 @@ export default function NotesView({
   const [checklistMode, setChecklistMode] = useState(false);
   const [checklistItems, setChecklistItems] = useState([]);
   const [newChecklistInput, setNewChecklistInput] = useState("");
+
+  // Edit Note Modal & Copy Feedback State
+  const [editingNote, setEditingNote] = useState(null);
+  const [copiedNoteId, setCopiedNoteId] = useState(null);
 
   const CATEGORIES = ["All", "Work", "Personal", "Ideas", "Code", "Todo"];
 
@@ -228,13 +235,83 @@ export default function NotesView({
           )}
         </div>
 
-        {/* Card Footer Timestamp */}
+        {/* Card Footer Actions & Timestamp */}
         <div className="pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[10px] text-slate-400">
           <span>
             {note.updatedAt
               ? new Date(note.updatedAt).toLocaleDateString([], { month: "short", day: "numeric" })
               : "Recent"}
           </span>
+
+          <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition">
+            {/* Copy Note to Clipboard */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const noteId = note.id || note._id;
+                let textToCopy = `${note.title}\n\n${note.content || ""}`;
+                if (note.checklist && note.checklist.length > 0) {
+                  textToCopy += "\n\nChecklist:\n" + note.checklist.map((c) => `[${c.completed ? "x" : " "}] ${c.text}`).join("\n");
+                }
+                navigator.clipboard?.writeText(textToCopy);
+                setCopiedNoteId(noteId);
+                setTimeout(() => setCopiedNoteId(null), 2000);
+              }}
+              className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
+              title="Copy note text to clipboard"
+            >
+              {copiedNoteId === (note.id || note._id) ? (
+                <Check className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            {/* Convert Note to Feed Post */}
+            {onOpenCreatePost && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  let postText = `📌 [Note: ${note.title}]\n\n${note.content || ""}`;
+                  if (note.tags && note.tags.length > 0) {
+                    postText += "\n\n" + note.tags.map((t) => `#${t}`).join(" ");
+                  }
+                  onOpenCreatePost({ initialText: postText });
+                }}
+                className="p-1.5 rounded-lg hover:bg-[#1877f2]/10 text-slate-400 hover:text-[#1877f2] transition cursor-pointer"
+                title="Convert note into a Kite feed post"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+
+            {/* Edit Note */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditingNote({
+                  ...note,
+                  tagsString: note.tags?.join(", ") || "",
+                });
+              }}
+              className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
+              title="Edit note"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Delete Note */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteNote?.(note.id || note._id);
+              }}
+              className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition cursor-pointer"
+              title="Delete note"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -619,6 +696,145 @@ export default function NotesView({
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Edit Note Modal */}
+      {editingNote && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+          <div
+            className={`w-full max-w-lg rounded-3xl p-6 shadow-2xl border ${
+              NOTE_THEMES[editingNote.color || "slate"].bg
+            } ${NOTE_THEMES[editingNote.color || "slate"].border}`}
+          >
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-black/10 dark:border-white/10">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#1877f2]" />
+                <span>Edit Note</span>
+              </h3>
+              <button
+                onClick={() => setEditingNote(null)}
+                className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3.5">
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={editingNote.title}
+                  onChange={(e) =>
+                    setEditingNote({ ...editingNote, title: e.target.value })
+                  }
+                  className="w-full px-3.5 py-2 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#1877f2]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">
+                  Content
+                </label>
+                <textarea
+                  rows={4}
+                  value={editingNote.content || ""}
+                  onChange={(e) =>
+                    setEditingNote({ ...editingNote, content: e.target.value })
+                  }
+                  className="w-full px-3.5 py-2 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#1877f2] resize-none"
+                />
+              </div>
+
+              {/* Color & Category */}
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <div className="flex items-center gap-1.5">
+                  {Object.keys(NOTE_THEMES).map((themeKey) => (
+                    <button
+                      key={themeKey}
+                      onClick={() =>
+                        setEditingNote({ ...editingNote, color: themeKey })
+                      }
+                      className={`w-6 h-6 rounded-full transition cursor-pointer ${
+                        NOTE_THEMES[themeKey].dot
+                      } ${
+                        editingNote.color === themeKey
+                          ? "ring-2 ring-offset-2 ring-[#1877f2] scale-110"
+                          : "opacity-75 hover:opacity-100"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <select
+                  value={editingNote.category || "General"}
+                  onChange={(e) =>
+                    setEditingNote({ ...editingNote, category: e.target.value })
+                  }
+                  className="px-2.5 py-1.5 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-hidden cursor-pointer"
+                >
+                  <option value="General">General</option>
+                  <option value="Work">Work</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Ideas">Ideas</option>
+                  <option value="Code">Code</option>
+                  <option value="Todo">Todo</option>
+                </select>
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">
+                  Tags (comma separated)
+                </label>
+                <input
+                  type="text"
+                  value={editingNote.tagsString || ""}
+                  onChange={(e) =>
+                    setEditingNote({
+                      ...editingNote,
+                      tagsString: e.target.value,
+                    })
+                  }
+                  className="w-full px-3.5 py-2 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden"
+                />
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="flex items-center justify-end gap-2.5 pt-4 mt-4 border-t border-black/10 dark:border-white/10">
+              <button
+                onClick={() => setEditingNote(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const tags = (editingNote.tagsString || "")
+                    .split(",")
+                    .map((t) => t.trim().replace(/^#/, ""))
+                    .filter(Boolean);
+
+                  onUpdateNote?.(editingNote.id || editingNote._id, {
+                    title: editingNote.title.trim(),
+                    content: editingNote.content.trim(),
+                    color: editingNote.color,
+                    category: editingNote.category,
+                    tags,
+                  });
+
+                  setEditingNote(null);
+                }}
+                className="px-5 py-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-bold shadow-xs transition cursor-pointer"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
