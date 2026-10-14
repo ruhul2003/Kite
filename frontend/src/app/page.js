@@ -8,7 +8,15 @@ import StoriesTray from "../components/StoriesTray";
 import CreatePostBox from "../components/CreatePostBox";
 import PostCard from "../components/PostCard";
 import { useRouter } from "next/navigation";
-import { apiCreatePost } from "../utils/api";
+import {
+  apiCreatePost,
+  apiFetchNotes,
+  apiCreateNote,
+  apiUpdateNote,
+  apiDeleteNote,
+  apiTogglePinNote,
+  apiToggleChecklistItem,
+} from "../utils/api";
 import StoryViewerModal from "../components/StoryViewerModal";
 import ProfileModal from "../components/ProfileModal";
 import ImageViewerModal from "../components/ImageViewerModal";
@@ -18,6 +26,7 @@ import FriendsView from "../components/FriendsView";
 import WatchView from "../components/WatchView";
 import MarketplaceView from "../components/MarketplaceView";
 import JobsView from "../components/JobsView";
+import NotesView from "../components/NotesView";
 import {
   joinUser,
   sendRealtimeMessage,
@@ -34,6 +43,7 @@ import {
   INITIAL_FRIEND_REQUESTS,
   INITIAL_NOTIFICATIONS,
   INITIAL_CONVERSATIONS,
+  INITIAL_NOTES,
 } from "../data/mockData";
 import { Bookmark } from "lucide-react";
 
@@ -55,6 +65,7 @@ export default function Home() {
   const [friendRequests, setFriendRequests] = useState(INITIAL_FRIEND_REQUESTS);
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const [conversations, setConversations] = useState(INITIAL_CONVERSATIONS);
+  const [notes, setNotes] = useState(INITIAL_NOTES);
 
   // Modals & Panels State
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
@@ -143,6 +154,82 @@ export default function Home() {
       // ignore
     }
   }, []);
+
+  // Fetch user notes from backend with fallback
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    apiFetchNotes(currentUser.id)
+      .then((fetchedNotes) => {
+        if (fetchedNotes && fetchedNotes.length > 0) {
+          setNotes(fetchedNotes);
+        }
+      })
+      .catch((err) => console.warn("Failed to load notes:", err.message));
+  }, [currentUser?.id]);
+
+  // Note operation handlers
+  const handleCreateNote = async (noteData) => {
+    const payload = {
+      ...noteData,
+      userId: currentUser?.id || "user-alex",
+    };
+    try {
+      const created = await apiCreateNote(payload);
+      setNotes((prev) => [created, ...prev]);
+    } catch (err) {
+      console.warn("Error creating note:", err.message);
+    }
+  };
+
+  const handleUpdateNote = async (noteId, updates) => {
+    try {
+      await apiUpdateNote(noteId, updates);
+      setNotes((prev) =>
+        prev.map((n) => ((n.id || n._id) === noteId ? { ...n, ...updates } : n))
+      );
+    } catch (err) {
+      console.warn("Error updating note:", err.message);
+    }
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    try {
+      await apiDeleteNote(noteId);
+      setNotes((prev) => prev.filter((n) => (n.id || n._id) !== noteId));
+    } catch (err) {
+      console.warn("Error deleting note:", err.message);
+    }
+  };
+
+  const handleTogglePinNote = async (noteId) => {
+    try {
+      setNotes((prev) =>
+        prev.map((n) => ((n.id || n._id) === noteId ? { ...n, isPinned: !n.isPinned } : n))
+      );
+      await apiTogglePinNote(noteId);
+    } catch (err) {
+      console.warn("Error toggling pin note:", err.message);
+    }
+  };
+
+  const handleToggleChecklistItem = async (noteId, itemId, completed) => {
+    setNotes((prev) =>
+      prev.map((n) => {
+        if ((n.id || n._id) !== noteId) return n;
+        return {
+          ...n,
+          checklist: (n.checklist || []).map((c) =>
+            c.id === itemId ? { ...c, completed } : c
+          ),
+        };
+      })
+    );
+    try {
+      await apiToggleChecklistItem(noteId, itemId, completed);
+    } catch (err) {
+      console.warn("Error toggling checklist item:", err.message);
+    }
+  };
 
   // Save user changes to localStorage
   const handleSetUser = (user) => {
@@ -452,6 +539,7 @@ export default function Home() {
           onOpenAuth={handleOpenAuth}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
+          notesCount={notes.length}
         />
 
         {/* Central Feed / View Area */}
@@ -588,6 +676,20 @@ export default function Home() {
             <JobsView
               currentUser={currentUser}
               onOpenChatWithUser={handleOpenChatWithFriend}
+            />
+          )}
+
+          {/* VIEW: NOTES & SCRATCHPAD */}
+          {activeTab === "notes" && (
+            <NotesView
+              currentUser={currentUser}
+              notes={notes}
+              onCreateNote={handleCreateNote}
+              onUpdateNote={handleUpdateNote}
+              onDeleteNote={handleDeleteNote}
+              onTogglePin={handleTogglePinNote}
+              onToggleChecklistItem={handleToggleChecklistItem}
+              onOpenCreatePost={() => setIsCreatePostOpen(true)}
             />
           )}
         </main>
