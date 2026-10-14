@@ -10,6 +10,7 @@ import postRoutes from './routes/postRoutes.js';
 import friendRoutes from './routes/friendRoutes.js';
 import storyRoutes from './routes/storyRoutes.js';
 import jobRoutes from './routes/jobRoutes.js';
+import noteRoutes from './routes/noteRoutes.js';
 
 dotenv.config();
 
@@ -26,7 +27,7 @@ connectDB();
 app.use(
   cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   })
 );
 app.use(express.json());
@@ -37,6 +38,7 @@ app.use('/api/posts', postRoutes);
 app.use('/api/friends', friendRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/notes', noteRoutes);
 
 // Conversation history between two users
 app.get('/api/messages/:userId1/:userId2', async (req, res) => {
