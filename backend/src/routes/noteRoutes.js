@@ -197,4 +197,28 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// PATCH /api/notes/:id/pin - Toggle pin status
+router.patch('/:id/pin', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const note = await Note.findById(id);
+
+    if (!note) {
+      return res.status(404).json({ success: false, error: 'Note not found' });
+    }
+
+    note.isPinned = !note.isPinned;
+    await note.save();
+
+    res.json({
+      success: true,
+      message: note.isPinned ? 'Note pinned to top' : 'Note unpinned',
+      note,
+    });
+  } catch (err) {
+    console.error('Error toggling pin:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to toggle pin status' });
+  }
+});
+
 export default router;
