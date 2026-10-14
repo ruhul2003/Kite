@@ -170,6 +170,71 @@ export default function NotesView({
               {note.content}
             </p>
           )}
+
+          {/* Interactive Checklist on Card */}
+          {note.checklist && note.checklist.length > 0 && (
+            <div className="space-y-1.5 mb-3 pt-2 border-t border-black/5 dark:border-white/5">
+              {note.checklist.slice(0, 5).map((item) => (
+                <div
+                  key={item.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleChecklistItem?.(note.id || note._id, item.id, !item.completed);
+                  }}
+                  className="flex items-center gap-2 text-xs group/item cursor-pointer select-none"
+                >
+                  <span
+                    className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition shrink-0 ${
+                      item.completed
+                        ? "bg-[#1877f2] border-[#1877f2] text-white"
+                        : "border-slate-300 dark:border-slate-600 group-hover/item:border-[#1877f2]"
+                    }`}
+                  >
+                    {item.completed && <Check className="w-2.5 h-2.5" />}
+                  </span>
+                  <span
+                    className={`truncate transition text-slate-700 dark:text-slate-300 ${
+                      item.completed ? "line-through text-slate-400 dark:text-slate-500" : ""
+                    }`}
+                  >
+                    {item.text}
+                  </span>
+                </div>
+              ))}
+              {note.checklist.length > 5 && (
+                <p className="text-[10px] text-slate-400 pl-5">
+                  +{note.checklist.length - 5} more checklist items
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Tag Chips */}
+          {note.tags && note.tags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 mb-3">
+              {note.tags.map((tag, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTag(tag);
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[10px] font-semibold text-slate-600 dark:text-slate-400 transition cursor-pointer"
+                >
+                  #{tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Card Footer Timestamp */}
+        <div className="pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[10px] text-slate-400">
+          <span>
+            {note.updatedAt
+              ? new Date(note.updatedAt).toLocaleDateString([], { month: "short", day: "numeric" })
+              : "Recent"}
+          </span>
         </div>
       </div>
     );
