@@ -57,4 +57,51 @@ export const SEED_NOTES = [
   },
 ];
 
+// GET /api/notes - Retrieve notes with optional search, category, and pin filtering
+router.get('/', async (req, res) => {
+  try {
+    const { userId = 'user-alex', category, search, tag } = req.query;
+
+    const query = { userId, isArchived: false };
+
+    if (category && category !== 'All') {
+      query.category = category;
+    }
+
+    if (tag) {
+      query.tags = tag;
+    }
+
+    if (search && search.trim()) {
+      const searchRegex = new RegExp(search.trim(), 'i');
+      query.$or = [
+        { title: searchRegex },
+        { content: searchRegex },
+        { tags: searchRegex },
+        { 'checklist.text': searchRegex },
+      ];
+    }
+
+    let notes = await Note.find(query).sort({ isPinned: -1, createdAt: -1 });
+
+    // Seed notes automatically if database has no notes for user yet
+    if (notes.length === 0 && !search && (!category || category === 'All') && !tag) {
+      const existingCount = await Note.countDocuments({ userId });
+      if (existingCount === 0) {
+        await Note.insertMany(SEED_NOTES.map((n) => ({ ...n, userId })));
+        notes = await Note.find(query).sort({ isPinned: -1, createdAt: -1 });
+      }
+    }
+
+    res.json({
+      success: true,
+      count: notes.length,
+      notes,
+    });
+  } catch (err) {
+    console.error('Error fetching notes:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to retrieve notes' });
+  }
+});
+
 export default router;
