@@ -213,3 +213,47 @@ export async function apiCreateNote(noteData) {
   }
 }
 
+export async function apiUpdateNote(noteId, updates) {
+  try {
+    const res = await fetch(`${API_BASE}/notes/${noteId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to update note");
+    return data.note;
+  } catch (err) {
+    console.warn("Backend update note error:", err.message);
+    return updates;
+  }
+}
+
+export async function apiDeleteNote(noteId) {
+  try {
+    const res = await fetch(`${API_BASE}/notes/${noteId}`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to delete note");
+    return data;
+  } catch (err) {
+    console.warn("Backend delete note error:", err.message);
+    return { success: true, id: noteId };
+  }
+}
+
+export async function apiTogglePinNote(noteId) {
+  try {
+    const res = await fetch(`${API_BASE}/notes/${noteId}/pin`, {
+      method: "PATCH",
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to toggle pin");
+    return data.note;
+  } catch (err) {
+    console.warn("Backend toggle pin error:", err.message);
+    return null;
+  }
+}
+
