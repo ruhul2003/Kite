@@ -251,4 +251,25 @@ router.patch('/:id/checklist/:itemId', async (req, res) => {
   }
 });
 
+// DELETE /api/notes/:id - Delete a note
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedNote = await Note.findByIdAndDelete(id);
+
+    if (!deletedNote) {
+      return res.status(404).json({ success: false, error: 'Note not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Note deleted successfully',
+      id,
+    });
+  } catch (err) {
+    console.error('Error deleting note:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to delete note' });
+  }
+});
+
 export default router;
