@@ -24,6 +24,14 @@ Kite is a full-featured, responsive social platform inspired by Facebook, built 
   - Friends hub with incoming friend requests (Accept/Decline) and all friends grid
   - Watch hub with trending video reels and previews
   - Marketplace with categories and item listings
+  - Careers & Jobs hub with job postings, applicant tracking, and direct application workflow
+  - **My Notes & Scratchpad**:
+    - Fullstack personal note-taking hub with MongoDB persistence and offline fallback
+    - Rich pastel and dark-mode color themes (Slate, Amber, Emerald, Sky, Purple, Rose)
+    - Interactive todo checklists with real-time checkbox toggles and completion indicators
+    - Category filtering (All, Work, Personal, Ideas, Code, Todo) and tag search
+    - Pinned notes organization keeping priority items anchored to the top
+    - 1-Click "Convert Note to Feed Post" and clipboard copy tools
 - **Modern UI & Aesthetics**:
   - Facebook-inspired responsive 3-column desktop and mobile-friendly design
   - Dark Mode & Light Mode toggle
