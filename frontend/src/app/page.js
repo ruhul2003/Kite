@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import LeftSidebar from "../components/LeftSidebar";
 import RightSidebar from "../components/RightSidebar";
@@ -27,6 +27,7 @@ import WatchView from "../components/WatchView";
 import MarketplaceView from "../components/MarketplaceView";
 import JobsView from "../components/JobsView";
 import NotesView from "../components/NotesView";
+import MessagesView from "../components/MessagesView";
 import {
   joinUser,
   sendRealtimeMessage,
@@ -75,6 +76,7 @@ export default function Home() {
   const [isNotifsOpen, setIsNotifsOpen] = useState(false);
   const [isMessengerOpen, setIsMessengerOpen] = useState(false);
   const [activeChats, setActiveChats] = useState([]); // List of friend objects with open chat windows
+  const [selectedChatFriendId, setSelectedChatFriendId] = useState(null);
   const [typingUsers, setTypingUsers] = useState({}); // friendId -> isTyping
 
   // Real-time Socket.io lifecycle
@@ -380,9 +382,22 @@ export default function Home() {
 
   // Messenger & Chat Actions
   const handleOpenChatWithFriend = (friend) => {
+    if (friend?.id) {
+      setSelectedChatFriendId(friend.id);
+    }
+    if (activeTab === "messages") {
+      return;
+    }
     if (!activeChats.find((c) => c.id === friend.id)) {
       setActiveChats([...activeChats, friend]);
     }
+  };
+
+  const handleOpenFullMessages = (friend) => {
+    if (friend?.id) {
+      setSelectedChatFriendId(friend.id);
+    }
+    setActiveTab("messages");
   };
 
   const handleOpenChatWithSeller = (sellerName) => {
@@ -393,7 +408,7 @@ export default function Home() {
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
       online: true,
     };
-    handleOpenChatWithFriend(target);
+    handleOpenFullMessages(target);
   };
 
   const handleCloseChat = (friendId) => {
@@ -491,6 +506,15 @@ export default function Home() {
 
   const unreadNotifsCount = notifications.filter((n) => !n.read).length;
 
+  // Unread messages count across all conversations
+  const unreadMessagesCount = useMemo(() => {
+    let count = 0;
+    Object.entries(conversations).forEach(([partnerId, msgs]) => {
+      count += (msgs || []).filter((m) => m.senderId === partnerId && !m.read).length;
+    });
+    return count > 0 ? count : (activeChats.length > 0 ? 1 : 0);
+  }, [conversations, activeChats.length]);
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
       {/* Kite Navigation Header */}
@@ -498,15 +522,19 @@ export default function Home() {
         currentUser={currentUser}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        unreadMessagesCount={activeChats.length > 0 ? 1 : 0}
+        unreadMessagesCount={unreadMessagesCount}
         unreadNotifsCount={unreadNotifsCount}
         onOpenNotifications={() => setIsNotifsOpen(!isNotifsOpen)}
         isNotifsOpen={isNotifsOpen}
         onToggleMessenger={() => {
-          if (activeChats.length === 0 && friends.length > 0) {
-            handleOpenChatWithFriend(friends[0]);
+          if (activeTab === "messages") {
+            setActiveTab("feed");
+          } else {
+            if (!selectedChatFriendId && friends.length > 0) {
+              setSelectedChatFriendId(friends[0].id);
+            }
+            setActiveTab("messages");
           }
-          setIsMessengerOpen(!isMessengerOpen);
         }}
         isMessengerOpen={isMessengerOpen}
         onOpenCreatePost={() => setIsCreatePostOpen(true)}
@@ -529,7 +557,13 @@ export default function Home() {
       />
 
       {/* Main Layout */}
-      <div className="flex-1 max-w-[1920px] w-full mx-auto flex justify-between">
+      <div
+        className={`flex-1 w-full mx-auto flex justify-between ${
+          activeTab === "messages"
+            ? "max-w-none px-1 sm:px-4"
+            : "max-w-[1920px]"
+        }`}
+      >
         {/* Left Navigation Rail */}
         <LeftSidebar
           currentUser={currentUser}
@@ -540,10 +574,17 @@ export default function Home() {
           darkMode={darkMode}
           setDarkMode={setDarkMode}
           notesCount={notes.length}
+          unreadMessagesCount={unreadMessagesCount}
         />
 
         {/* Central Feed / View Area */}
-        <main className="flex-1 max-w-2xl px-2 sm:px-4 py-4 min-h-[calc(100vh-4rem)]">
+        <main
+          className={`flex-1 min-h-[calc(100vh-4rem)] ${
+            activeTab === "messages"
+              ? "w-full max-w-none px-0 sm:px-2 py-2"
+              : "max-w-2xl px-2 sm:px-4 py-4"
+          }`}
+        >
           {/* VIEW: MAIN NEWS FEED */}
           {activeTab === "feed" && (
             <div>
@@ -692,30 +733,49 @@ export default function Home() {
               onOpenCreatePost={() => setIsCreatePostOpen(true)}
             />
           )}
+
+          {/* VIEW: MESSAGES FULL PAGE */}
+          {activeTab === "messages" && (
+            <MessagesView
+              currentUser={currentUser}
+              friends={friends}
+              conversations={conversations}
+              selectedFriendId={selectedChatFriendId || (friends.length > 0 ? friends[0].id : null)}
+              onSelectFriend={(friend) => setSelectedChatFriendId(friend?.id || null)}
+              onSendMessage={handleSendMessage}
+              typingUsers={typingUsers}
+              onOpenProfile={() => setIsProfileModalOpen(true)}
+            />
+          )}
         </main>
 
-        {/* Right Rail: Contacts and Friend Requests */}
-        <RightSidebar
-          friends={friends}
-          friendRequests={friendRequests}
-          onAcceptRequest={handleAcceptRequest}
-          onDeclineRequest={handleDeclineRequest}
-          onOpenChatWithFriend={handleOpenChatWithFriend}
-          onOpenCreatePost={() => setIsCreatePostOpen(true)}
-        />
+        {/* Right Rail: Contacts and Friend Requests (Hidden on messages tab for full-screen layout) */}
+        {activeTab !== "messages" && (
+          <RightSidebar
+            friends={friends}
+            friendRequests={friendRequests}
+            onAcceptRequest={handleAcceptRequest}
+            onDeclineRequest={handleDeclineRequest}
+            onOpenChatWithFriend={handleOpenChatWithFriend}
+            onOpenFullMessages={handleOpenFullMessages}
+            onOpenCreatePost={() => setIsCreatePostOpen(true)}
+          />
+        )}
       </div>
 
-      {/* Floating Messenger Chat Windows */}
-      <FloatingMessenger
-        activeChats={activeChats}
-        conversations={conversations}
-        currentUser={currentUser}
-        onCloseChat={handleCloseChat}
-        onSendMessage={handleSendMessage}
-        onOpenChat={handleOpenChatWithFriend}
-        friends={friends}
-        typingUsers={typingUsers}
-      />
+      {/* Floating Messenger Chat Windows (Hidden on messages tab to avoid duplicate chat windows) */}
+      {activeTab !== "messages" && (
+        <FloatingMessenger
+          activeChats={activeChats}
+          conversations={conversations}
+          currentUser={currentUser}
+          onCloseChat={handleCloseChat}
+          onSendMessage={handleSendMessage}
+          onOpenChat={handleOpenChatWithFriend}
+          friends={friends}
+          typingUsers={typingUsers}
+        />
+      )}
 
 
       {/* Fullscreen Story Viewer Modal */}
