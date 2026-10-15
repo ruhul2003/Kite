@@ -14,6 +14,7 @@ import {
   Briefcase,
   Sparkles,
   StickyNote,
+  MessageSquare,
   ChevronDown,
   ChevronUp,
   Sun,
@@ -29,6 +30,7 @@ export default function LeftSidebar({
   darkMode,
   setDarkMode,
   notesCount = 5,
+  unreadMessagesCount = 0,
 }) {
   const [showMore, setShowMore] = useState(false);
 
@@ -37,6 +39,13 @@ export default function LeftSidebar({
       id: "feed",
       label: "News Feed",
       icon: Zap,
+    },
+    {
+      id: "messages",
+      label: "Messages",
+      icon: MessageSquare,
+      badge: unreadMessagesCount > 0 ? String(unreadMessagesCount) : null,
+      badgeColor: "bg-[#1877f2] text-white",
     },
     {
       id: "friends",

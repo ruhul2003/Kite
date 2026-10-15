@@ -700,7 +700,7 @@ export default function Home() {
               friendRequests={friendRequests}
               onAcceptRequest={handleAcceptRequest}
               onDeclineRequest={handleDeclineRequest}
-              onOpenChatWithFriend={handleOpenChatWithFriend}
+              onOpenChatWithFriend={handleOpenFullMessages}
             />
           )}
 

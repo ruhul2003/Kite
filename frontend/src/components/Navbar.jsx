@@ -180,6 +180,21 @@ export default function Navbar({
             <Briefcase className="w-4 h-4" />
             <span>Jobs</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+              activeTab === "messages"
+                ? "bg-white dark:bg-slate-700 text-[#1877f2] shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Messages</span>
+            {unreadMessagesCount > 0 && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            )}
+          </button>
         </nav>
 
         {/* Right Section: Post Button, Messages, Notifications, User */}
@@ -196,12 +211,20 @@ export default function Navbar({
           {/* Messages Button */}
           <button
             onClick={onToggleMessenger}
-            className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition"
+            className={`relative w-9 h-9 rounded-full flex items-center justify-center transition cursor-pointer ${
+              activeTab === "messages"
+                ? "bg-[#1877f2] text-white shadow-sm ring-2 ring-[#1877f2]/30"
+                : "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
+            }`}
             title="Messages"
           >
             <MessageSquare className="w-4 h-4" />
             {unreadMessagesCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#1877f2] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19]">
+              <span
+                className={`absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0b0f19] ${
+                  activeTab === "messages" ? "bg-emerald-500" : "bg-[#1877f2]"
+                }`}
+              >
                 {unreadMessagesCount}
               </span>
             )}

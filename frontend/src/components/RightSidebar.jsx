@@ -24,6 +24,7 @@ export default function RightSidebar({
   onAcceptRequest,
   onDeclineRequest,
   onOpenChatWithFriend,
+  onOpenFullMessages,
   isAmbientPlaying,
   onToggleAmbient,
   ambientTrack,
@@ -136,7 +137,11 @@ export default function RightSidebar({
           {friends.slice(0, 6).map((friend) => (
             <button
               key={friend.id}
-              onClick={() => onOpenChatWithFriend(friend)}
+              onClick={() =>
+                onOpenFullMessages
+                  ? onOpenFullMessages(friend)
+                  : onOpenChatWithFriend(friend)
+              }
               className="w-full flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left cursor-pointer group"
             >
               <div className="flex items-center gap-2 min-w-0">
@@ -166,6 +171,15 @@ export default function RightSidebar({
             </button>
           ))}
         </div>
+
+        {onOpenFullMessages && (
+          <button
+            onClick={() => onOpenFullMessages()}
+            className="w-full mt-2.5 py-1.5 text-center text-[11px] font-semibold text-[#1877f2] hover:bg-[#1877f2]/10 rounded-xl transition cursor-pointer"
+          >
+            Open Full Messenger
+          </button>
+        )}
       </div>
     </aside>
   );
