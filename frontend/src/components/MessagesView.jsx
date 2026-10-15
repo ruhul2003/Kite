@@ -35,6 +35,10 @@ import {
   Trash2,
   Shield,
   ExternalLink,
+  Bell,
+  BellOff,
+  UserCheck,
+  Share2,
 } from "lucide-react";
 
 const EMOJI_LIST = [
@@ -61,6 +65,15 @@ const SAMPLE_ATTACHMENTS = [
   },
 ];
 
+const SHARED_MEDIA_GALLERY = [
+  "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=400&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&auto=format&fit=crop&q=80",
+];
+
 export default function MessagesView({
   currentUser,
   friends = [],
@@ -70,15 +83,15 @@ export default function MessagesView({
   onSendMessage,
   typingUsers = {},
   onOpenProfile,
-  onToggleDetails,
-  showDetailsPanel = false,
-  onOpenNewChat,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterTab, setFilterTab] = useState("all"); // 'all' | 'unread' | 'online'
   const [messageText, setMessageText] = useState("");
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false);
+  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
+  const [newChatSearch, setNewChatSearch] = useState("");
   const [activeCallType, setActiveCallType] = useState(null); // 'voice' | 'video' | null
   const [callDuration, setCallDuration] = useState(0);
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -89,6 +102,8 @@ export default function MessagesView({
   const [imageLightbox, setImageLightbox] = useState(null);
   const [searchInChat, setSearchInChat] = useState("");
   const [isChatSearchOpen, setIsChatSearchOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -224,11 +239,22 @@ export default function MessagesView({
     setIsRecordingVoice(false);
   };
 
+  // Filter friends for New Message Modal
+  const modalFriendsList = useMemo(() => {
+    if (!newChatSearch.trim()) return friends;
+    const q = newChatSearch.toLowerCase();
+    return friends.filter(
+      (f) =>
+        f.name?.toLowerCase().includes(q) ||
+        f.work?.toLowerCase().includes(q)
+    );
+  }, [friends, newChatSearch]);
+
   return (
-    <div className="w-full h-[calc(100vh-4.25rem)] flex bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+    <div className="w-full h-[calc(100vh-4.25rem)] flex bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden transition-colors relative">
       {/* LEFT PANE: Conversations Sidebar */}
       <aside
-        className={`w-full md:w-80 lg:w-96 shrink-0 flex flex-col border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 ${
+        className={`w-full md:w-80 lg:w-92 shrink-0 flex flex-col border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 ${
           activeFriend ? "hidden md:flex" : "flex"
         }`}
       >
@@ -250,7 +276,7 @@ export default function MessagesView({
             </div>
 
             <button
-              onClick={onOpenNewChat}
+              onClick={() => setIsNewChatModalOpen(true)}
               className="p-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white shadow-xs transition cursor-pointer"
               title="New Message"
             >
@@ -418,7 +444,7 @@ export default function MessagesView({
               Choose someone from your contact list or start a new chat with your circle.
             </p>
             <button
-              onClick={onOpenNewChat}
+              onClick={() => setIsNewChatModalOpen(true)}
               className="mt-4 px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-semibold rounded-full shadow-xs transition cursor-pointer"
             >
               Start New Chat
@@ -500,7 +526,7 @@ export default function MessagesView({
                 </button>
 
                 <button
-                  onClick={onToggleDetails}
+                  onClick={() => setShowDetailsPanel(!showDetailsPanel)}
                   className={`p-2 rounded-xl transition cursor-pointer ${
                     showDetailsPanel
                       ? "bg-[#1877f2]/10 text-[#1877f2]"
@@ -818,128 +844,250 @@ export default function MessagesView({
             </footer>
           </div>
         )}
+      </section>
 
-        {/* SIMULATED VOICE CALL MODAL */}
-        {activeCallType === "voice" && activeFriend && (
-          <div className="absolute inset-0 z-40 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-between p-8 text-white animate-in fade-in duration-200">
-            <div className="text-center pt-8">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                Kite Voice Spark
-              </span>
-              <h2 className="text-2xl font-bold mt-4">{activeFriend.name}</h2>
-              <p className="text-sm font-mono text-slate-400 mt-1">
-                Connected · {formatTimer(callDuration)}
-              </p>
-            </div>
+      {/* RIGHT PANE: Collapsible Conversation Details Panel */}
+      {showDetailsPanel && activeFriend && (
+        <aside className="w-72 lg:w-80 shrink-0 border-l border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col h-full overflow-y-auto p-4 space-y-5 animate-in slide-in-from-right-2 duration-200 scrollbar-thin">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Details
+            </h3>
+            <button
+              onClick={() => setShowDetailsPanel(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-            {/* Pulsing Avatar */}
-            <div className="relative">
-              <div className="w-28 h-28 rounded-full bg-[#1877f2]/30 absolute -inset-2 animate-ping opacity-50"></div>
+          {/* Profile Card */}
+          <div className="text-center">
+            <div className="relative inline-block mx-auto mb-2.5">
               <img
                 src={activeFriend.avatar}
                 alt={activeFriend.name}
-                className="w-28 h-28 rounded-full object-cover ring-4 ring-[#1877f2] shadow-2xl relative z-10"
+                className="w-20 h-20 rounded-3xl object-cover ring-2 ring-slate-200 dark:ring-slate-700 shadow-sm mx-auto"
               />
+              {activeFriend.online && (
+                <span className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
+              )}
             </div>
 
-            {/* Call Controls */}
-            <div className="flex items-center gap-4 pb-8">
-              <button
-                onClick={() => setIsMicMuted(!isMicMuted)}
-                className={`p-3.5 rounded-full transition cursor-pointer ${
-                  isMicMuted ? "bg-rose-500 text-white" : "bg-white/20 hover:bg-white/30 text-white"
-                }`}
-                title={isMicMuted ? "Unmute" : "Mute"}
-              >
-                {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </button>
+            <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+              {activeFriend.name}
+            </h4>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              {activeFriend.work || "Kite Circle Member"}
+            </p>
+            {activeFriend.bio && (
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 px-2 leading-relaxed">
+                {activeFriend.bio}
+              </p>
+            )}
 
-              <button
-                onClick={() => setActiveCallType(null)}
-                className="p-4 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg transition cursor-pointer"
-                title="End Call"
-              >
-                <PhoneOff className="w-6 h-6" />
-              </button>
-            </div>
+            <button
+              onClick={() => onOpenProfile?.(activeFriend)}
+              className="mt-3 w-full py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <Users className="w-3.5 h-3.5 text-[#1877f2]" />
+              View Profile
+            </button>
           </div>
-        )}
 
-        {/* SIMULATED VIDEO CALL MODAL */}
-        {activeCallType === "video" && activeFriend && (
-          <div className="absolute inset-0 z-40 bg-slate-950 flex flex-col justify-between p-4 text-white animate-in fade-in duration-200">
-            {/* Top Bar */}
-            <div className="flex items-center justify-between z-10">
-              <div className="flex items-center gap-3">
-                <img
-                  src={activeFriend.avatar}
-                  alt=""
-                  className="w-9 h-9 rounded-full object-cover ring-1 ring-white"
-                />
-                <div>
-                  <h3 className="text-sm font-bold">{activeFriend.name}</h3>
-                  <p className="text-[10px] font-mono text-emerald-400">
-                    HD Video · {formatTimer(callDuration)}
-                  </p>
-                </div>
+          {/* Chat Quick Preferences */}
+          <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                {isMuted ? (
+                  <BellOff className="w-4 h-4 text-rose-500" />
+                ) : (
+                  <Bell className="w-4 h-4 text-slate-400" />
+                )}
+                <span>Mute Notifications</span>
               </div>
-              <span className="px-2.5 py-1 bg-black/40 backdrop-blur rounded-full text-[10px] font-semibold text-slate-300">
-                Encrypted Connection
+              <span className="text-[10px] font-semibold text-slate-400">
+                {isMuted ? "Muted" : "On"}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setIsPinned(!isPinned)}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <Pin className={`w-4 h-4 ${isPinned ? "text-[#1877f2]" : "text-slate-400"}`} />
+                <span>Pin Conversation</span>
+              </div>
+              <span className="text-[10px] font-semibold text-slate-400">
+                {isPinned ? "Pinned" : "Off"}
+              </span>
+            </button>
+          </div>
+
+          {/* Shared Media Section */}
+          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <div className="flex items-center justify-between">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Shared Media
+              </h5>
+              <span className="text-[10px] text-[#1877f2] font-semibold cursor-pointer hover:underline">
+                View All
               </span>
             </div>
+            <div className="grid grid-cols-3 gap-2">
+              {SHARED_MEDIA_GALLERY.map((img, i) => (
+                <div
+                  key={i}
+                  onClick={() => setImageLightbox(img)}
+                  className="aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 hover:opacity-90 transition cursor-pointer border border-slate-200/50 dark:border-slate-700/50"
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
 
-            {/* Simulated Video Streams */}
-            <div className="relative flex-1 rounded-2xl overflow-hidden my-3 bg-slate-900 flex items-center justify-center">
-              <img
-                src={activeFriend.coverPhoto || activeFriend.avatar}
-                alt=""
-                className="w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+          {/* Mutual Friends */}
+          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Mutual Circle Members ({activeFriend.mutualFriends || 8})
+            </h5>
+            <div className="space-y-2">
+              {friends.slice(0, 3).map((f) => (
+                <div key={f.id} className="flex items-center gap-2.5 text-xs">
+                  <img
+                    src={f.avatar}
+                    alt={f.name}
+                    className="w-7 h-7 rounded-xl object-cover"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">
+                      {f.name}
+                    </p>
+                    <p className="text-[10px] text-slate-400 truncate">
+                      {f.online ? "Online" : "Offline"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-              {/* Picture in picture self view */}
-              <div className="absolute bottom-4 right-4 w-28 h-36 bg-slate-800 rounded-xl overflow-hidden border-2 border-white/40 shadow-xl">
-                <img
-                  src={currentUser?.avatar}
-                  alt="You"
-                  className="w-full h-full object-cover"
+          {/* Privacy & Actions */}
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-1">
+            <button
+              onClick={() => alert(`Cleared message history for ${activeFriend.name}.`)}
+              className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear Chat History</span>
+            </button>
+            <button
+              onClick={() => alert(`Reported conversation with ${activeFriend.name}.`)}
+              className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>Block & Report</span>
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* NEW MESSAGE / CHAT MODAL */}
+      {isNewChatModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-[#1877f2]" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                  New Message
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsNewChatModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-3 border-b border-slate-200/60 dark:border-slate-800">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search contacts..."
+                  value={newChatSearch}
+                  onChange={(e) => setNewChatSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/20"
+                  autoFocus
                 />
-                <span className="absolute bottom-1 left-2 text-[9px] font-bold bg-black/60 px-1 rounded text-white">
-                  You
-                </span>
               </div>
             </div>
 
-            {/* Bottom Controls */}
-            <div className="flex items-center justify-center gap-4 py-2 z-10">
-              <button
-                onClick={() => setIsMicMuted(!isMicMuted)}
-                className={`p-3 rounded-full transition cursor-pointer ${
-                  isMicMuted ? "bg-rose-500 text-white" : "bg-white/20 hover:bg-white/30 text-white"
-                }`}
-              >
-                {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </button>
-
-              <button
-                onClick={() => setIsVideoMuted(!isVideoMuted)}
-                className={`p-3 rounded-full transition cursor-pointer ${
-                  isVideoMuted ? "bg-rose-500 text-white" : "bg-white/20 hover:bg-white/30 text-white"
-                }`}
-              >
-                {isVideoMuted ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
-              </button>
-
-              <button
-                onClick={() => setActiveCallType(null)}
-                className="p-3.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg transition cursor-pointer"
-              >
-                <PhoneOff className="w-6 h-6" />
-              </button>
+            <div className="max-h-80 overflow-y-auto p-2 space-y-1 divide-y divide-slate-100 dark:divide-slate-800/40">
+              {modalFriendsList.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => {
+                    onSelectFriend(f);
+                    setIsNewChatModalOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition text-left cursor-pointer"
+                >
+                  <div className="relative">
+                    <img
+                      src={f.avatar}
+                      alt={f.name}
+                      className="w-10 h-10 rounded-2xl object-cover"
+                    />
+                    {f.online && (
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+                      {f.name}
+                    </p>
+                    <p className="text-[10px] text-slate-400 truncate">
+                      {f.work || "Circle Member"}
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-bold text-[#1877f2] bg-[#1877f2]/10 px-2 py-1 rounded-lg">
+                    Chat
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
-        )}
-      </section>
+        </div>
+      )}
+
+      {/* IMAGE LIGHTBOX */}
+      {imageLightbox && (
+        <div
+          onClick={() => setImageLightbox(null)}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer animate-in fade-in"
+        >
+          <button
+            onClick={() => setImageLightbox(null)}
+            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white bg-black/40 rounded-full"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <img
+            src={imageLightbox}
+            alt="Shared Media"
+            className="max-w-3xl max-h-[85vh] rounded-2xl object-contain shadow-2xl"
+          />
+        </div>
+      )}
     </div>
   );
 }
