@@ -18,10 +18,10 @@ export default function NotificationsDropdown({
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
-        <h3 className="font-bold text-base text-slate-900 dark:text-white">Notifications</h3>
+        <h3 className="font-bold text-lg text-slate-900 dark:text-white">Notifications</h3>
         <button
           onClick={onMarkAllRead}
-          className="text-xs text-[#1877f2] font-semibold hover:underline cursor-pointer"
+          className="text-sm text-[#1877f2] font-semibold hover:underline cursor-pointer"
         >
           Mark all as read
         </button>
@@ -32,7 +32,7 @@ export default function NotificationsDropdown({
         {notifications.length === 0 ? (
           <div className="text-center py-8 text-slate-400">
             <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p className="text-xs">No notifications yet.</p>
+            <p className="text-sm">No notifications yet.</p>
           </div>
         ) : (
           notifications.map((notif) => (
@@ -63,10 +63,10 @@ export default function NotificationsDropdown({
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-slate-800 dark:text-slate-200 leading-snug">
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-snug">
                   <span className="font-bold">{notif.author?.name}</span> {notif.text}
                 </p>
-                <p className="text-[10px] text-slate-400 mt-0.5">{notif.timestamp}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{notif.timestamp}</p>
               </div>
 
               {!notif.read && (
