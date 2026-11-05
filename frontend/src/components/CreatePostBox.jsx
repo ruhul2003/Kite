@@ -214,7 +214,7 @@ export default function CreatePostBox({
               setActiveTab("thought");
               setIsOpen(true);
             }}
-            className="flex-1 text-left px-4 py-2.5 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800 dark:hover:bg-slate-700/80 rounded-full text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium transition cursor-pointer"
+            className="flex-1 text-left px-4 py-2.5 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800 dark:hover:bg-slate-700/80 rounded-full text-slate-500 dark:text-slate-400 text-sm sm:text-base font-medium transition cursor-pointer"
           >
             What&apos;s on your mind, {currentUser?.name?.split(" ")[0]}?
           </button>
@@ -228,7 +228,7 @@ export default function CreatePostBox({
               setShowImagePicker(true);
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-[#1877f2] font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-[#1877f2] font-semibold text-sm cursor-pointer"
           >
             <ImageIcon className="w-4 h-4" />
             <span>Photo / Video</span>
@@ -239,7 +239,7 @@ export default function CreatePostBox({
               setActiveTab("code");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-sm cursor-pointer"
           >
             <Code className="w-4 h-4" />
             <span>Code Block</span>
@@ -250,7 +250,7 @@ export default function CreatePostBox({
               setActiveTab("audio");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-sm cursor-pointer"
           >
             <Mic className="w-4 h-4" />
             <span>Voice Note</span>
@@ -261,7 +261,7 @@ export default function CreatePostBox({
               setActiveTab("poll");
               setIsOpen(true);
             }}
-            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer"
+            className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300 font-semibold text-sm cursor-pointer"
           >
             <BarChart2 className="w-4 h-4" />
             <span>Poll</span>
