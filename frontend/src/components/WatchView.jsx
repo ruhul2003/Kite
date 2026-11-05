@@ -16,8 +16,8 @@ export default function WatchView() {
     <div className="max-w-3xl mx-auto py-2 space-y-5">
       <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Watch</h2>
-          <p className="text-xs text-slate-500">Trending video reels and creators</p>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Watch</h2>
+          <p className="text-sm text-slate-500">Trending video reels and creators</p>
         </div>
       </div>
 
@@ -34,10 +34,10 @@ export default function WatchView() {
                   {video.channel[0]}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  <p className="text-base font-bold text-slate-900 dark:text-slate-100">
                     {video.channel}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm text-slate-400">
                     {video.timestamp} · {video.views}
                   </p>
                 </div>
@@ -48,7 +48,7 @@ export default function WatchView() {
             </div>
 
             {/* Video Title */}
-            <p className="px-4 pb-2.5 text-sm font-medium text-slate-800 dark:text-slate-200">
+            <p className="px-4 pb-2.5 text-base font-medium text-slate-800 dark:text-slate-200">
               {video.title}
             </p>
 
@@ -73,7 +73,7 @@ export default function WatchView() {
             </div>
 
             {/* Interaction Bar */}
-            <div className="grid grid-cols-3 gap-1 p-1 border-t border-slate-100 dark:border-slate-800 text-xs font-medium">
+            <div className="grid grid-cols-3 gap-1 p-1 border-t border-slate-100 dark:border-slate-800 text-sm font-semibold">
               <button
                 onClick={() => toggleLike(video.id)}
                 className={`flex items-center justify-center gap-2 py-2 rounded-xl transition cursor-pointer ${
