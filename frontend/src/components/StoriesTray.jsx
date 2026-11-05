@@ -61,7 +61,7 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
           </div>
 
           <div className="h-[28%] flex items-end justify-center pb-2.5 px-1 text-center bg-white dark:bg-slate-900">
-            <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+            <span className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
               Create Story
             </span>
           </div>
@@ -95,7 +95,7 @@ export default function StoriesTray({ currentUser, stories, onOpenStory, onCreat
 
             {/* Caption Preview & Author Name */}
             <div className="absolute bottom-3 left-3 right-3 text-white">
-              <p className="text-xs font-semibold truncate drop-shadow-sm">
+              <p className="text-sm font-semibold truncate drop-shadow-sm">
                 {story.authorName}
               </p>
             </div>
