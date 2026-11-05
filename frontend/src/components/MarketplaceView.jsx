@@ -21,10 +21,10 @@ export default function MarketplaceView({ onOpenChatWithSeller }) {
       {/* Marketplace Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#242526] p-4 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700/60">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+          <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
             Marketplace
           </h2>
-          <p className="text-xs text-zinc-500">Discover buy & sell listings in your community</p>
+          <p className="text-sm text-zinc-500">Discover buy & sell listings in your community</p>
         </div>
 
         {/* Search */}
@@ -35,7 +35,7 @@ export default function MarketplaceView({ onOpenChatWithSeller }) {
             placeholder="Search Marketplace..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-zinc-100 dark:bg-[#3a3b3c] rounded-full text-xs text-zinc-900 dark:text-white focus:outline-none"
+            className="w-full pl-9 pr-3 py-2 bg-zinc-100 dark:bg-[#3a3b3c] rounded-full text-sm text-zinc-900 dark:text-white focus:outline-none"
           />
         </div>
       </div>
@@ -46,7 +46,7 @@ export default function MarketplaceView({ onOpenChatWithSeller }) {
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition shrink-0 ${
+            className={`px-4 py-2 rounded-full text-sm font-bold transition shrink-0 ${
               selectedCategory === cat
                 ? "bg-[#1877f2] text-white shadow-sm"
                 : "bg-white dark:bg-[#242526] border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-[#3a3b3c]"
