@@ -254,7 +254,7 @@ export default function MessagesView({
     <div className="w-full h-[calc(100vh-4.25rem)] flex bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden transition-colors relative">
       {/* LEFT PANE: Conversations Sidebar */}
       <aside
-        className={`w-full md:w-80 lg:w-92 shrink-0 flex flex-col border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 ${
+        className={`w-full md:w-84 lg:w-96 shrink-0 flex flex-col border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 ${
           activeFriend ? "hidden md:flex" : "flex"
         }`}
       >
@@ -262,14 +262,14 @@ export default function MessagesView({
         <div className="p-4 border-b border-slate-200/80 dark:border-slate-800">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#1877f2]/10 text-[#1877f2] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-[#1877f2]/10 text-[#1877f2] flex items-center justify-center">
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                   Messages
                 </h1>
-                <p className="text-[11px] text-slate-400 font-medium">
+                <p className="text-xs text-slate-400 font-medium">
                   {friends.filter((f) => f.online).length} friends online now
                 </p>
               </div>
@@ -277,38 +277,38 @@ export default function MessagesView({
 
             <button
               onClick={() => setIsNewChatModalOpen(true)}
-              className="p-2 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white shadow-xs transition cursor-pointer"
+              className="p-2.5 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white shadow-xs transition cursor-pointer"
               title="New Message"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 stroke-[2.5]" />
             </button>
           </div>
 
           {/* Search Box */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Search conversations & friends..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 bg-slate-100 dark:bg-slate-800/80 text-xs rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/30 focus:border-[#1877f2] transition"
+              className="w-full pl-10 pr-9 py-2.5 bg-slate-100 dark:bg-slate-800/80 text-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/30 focus:border-[#1877f2] transition"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 mt-3">
+          <div className="flex items-center gap-2 mt-3">
             <button
               onClick={() => setFilterTab("all")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
                 filterTab === "all"
                   ? "bg-[#1877f2] text-white shadow-xs"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
@@ -318,7 +318,7 @@ export default function MessagesView({
             </button>
             <button
               onClick={() => setFilterTab("online")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                 filterTab === "online"
                   ? "bg-emerald-500 text-white shadow-xs"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
@@ -329,7 +329,7 @@ export default function MessagesView({
             </button>
             <button
               onClick={() => setFilterTab("unread")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
                 filterTab === "unread"
                   ? "bg-[#1877f2] text-white shadow-xs"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
@@ -344,11 +344,11 @@ export default function MessagesView({
         <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 scrollbar-thin">
           {filteredConversations.length === 0 ? (
             <div className="p-8 text-center text-slate-400">
-              <MessageSquare className="w-10 h-10 mx-auto mb-2 text-slate-300 dark:text-slate-700" />
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <MessageSquare className="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                 No conversations found
               </p>
-              <p className="text-[11px] mt-1">
+              <p className="text-xs mt-1">
                 {searchQuery ? "Try a different search query." : "Start a new chat with your friends."}
               </p>
             </div>
@@ -360,7 +360,7 @@ export default function MessagesView({
                 <button
                   key={friend.id}
                   onClick={() => onSelectFriend(friend)}
-                  className={`w-full flex items-center gap-3 p-3.5 text-left transition cursor-pointer ${
+                  className={`w-full flex items-center gap-3.5 p-3.5 text-left transition cursor-pointer ${
                     isSelected
                       ? "bg-[#1877f2]/10 dark:bg-[#1877f2]/20 border-l-4 border-[#1877f2]"
                       : "hover:bg-slate-50 dark:hover:bg-slate-800/60"
@@ -371,7 +371,7 @@ export default function MessagesView({
                     <img
                       src={friend.avatar}
                       alt={friend.name}
-                      className="w-12 h-12 rounded-2xl object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+                      className="w-13 h-13 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-slate-700"
                     />
                     {isOnline && (
                       <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
@@ -380,9 +380,9 @@ export default function MessagesView({
 
                   {/* Conversation Snippet */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-0.5">
+                    <div className="flex items-center justify-between mb-1">
                       <p
-                        className={`text-xs font-bold truncate ${
+                        className={`text-sm sm:text-base font-bold truncate ${
                           isSelected
                             ? "text-[#1877f2] dark:text-[#3b82f6]"
                             : "text-slate-900 dark:text-slate-100"
@@ -391,13 +391,13 @@ export default function MessagesView({
                         {friend.name}
                       </p>
                       {lastMsg && (
-                        <span className="text-[10px] text-slate-400 shrink-0 font-medium ml-1">
+                        <span className="text-xs text-slate-400 shrink-0 font-medium ml-1">
                           {lastMsg.time}
                         </span>
                       )}
                     </div>
 
-                    <p className="text-[11px] truncate flex items-center gap-1">
+                    <p className="text-xs sm:text-sm truncate flex items-center gap-1">
                       {isTyping ? (
                         <span className="text-[#1877f2] font-semibold animate-pulse">
                           typing...
@@ -421,7 +421,7 @@ export default function MessagesView({
 
                   {/* Badges */}
                   {hasUnread && (
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#1877f2] shrink-0"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#1877f2] shrink-0"></span>
                   )}
                 </button>
               );
@@ -434,18 +434,18 @@ export default function MessagesView({
       <section className="flex-1 flex flex-col min-w-0 bg-slate-50/50 dark:bg-slate-950/40 relative">
         {!activeFriend ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400">
-            <div className="w-16 h-16 rounded-3xl bg-[#1877f2]/10 flex items-center justify-center text-[#1877f2] mb-4">
-              <MessageSquare className="w-8 h-8" />
+            <div className="w-18 h-18 rounded-3xl bg-[#1877f2]/10 flex items-center justify-center text-[#1877f2] mb-4">
+              <MessageSquare className="w-9 h-9" />
             </div>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">
               Select a Conversation
             </h2>
-            <p className="text-xs text-slate-400 max-w-sm mt-1">
+            <p className="text-sm text-slate-400 max-w-sm mt-1.5">
               Choose someone from your contact list or start a new chat with your circle.
             </p>
             <button
               onClick={() => setIsNewChatModalOpen(true)}
-              className="mt-4 px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-semibold rounded-full shadow-xs transition cursor-pointer"
+              className="mt-5 px-5 py-2.5 bg-[#1877f2] hover:bg-[#166fe5] text-white text-sm font-semibold rounded-full shadow-xs transition cursor-pointer"
             >
               Start New Chat
             </button>
@@ -453,11 +453,11 @@ export default function MessagesView({
         ) : (
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             {/* Active Chat Header */}
-            <header className="px-4 py-3 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between shrink-0 shadow-xs z-10">
-              <div className="flex items-center gap-3 min-w-0">
+            <header className="px-5 py-3.5 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between shrink-0 shadow-xs z-10">
+              <div className="flex items-center gap-3.5 min-w-0">
                 <button
                   onClick={() => onSelectFriend(null)}
-                  className="md:hidden p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+                  className="md:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -468,20 +468,20 @@ export default function MessagesView({
                   <img
                     src={activeFriend.avatar}
                     alt={activeFriend.name}
-                    className="w-10 h-10 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-slate-700 group-hover:ring-[#1877f2] transition"
+                    className="w-11 h-11 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-slate-700 group-hover:ring-[#1877f2] transition"
                   />
                   {activeFriend.online && (
-                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
                   )}
                 </div>
                 <div className="min-w-0">
                   <h2
-                    className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate cursor-pointer hover:text-[#1877f2] transition"
+                    className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 truncate cursor-pointer hover:text-[#1877f2] transition"
                     onClick={() => onOpenProfile?.(activeFriend)}
                   >
                     {activeFriend.name}
                   </h2>
-                  <p className="text-[11px] text-slate-400 truncate flex items-center gap-1.5">
+                  <p className="text-xs sm:text-sm text-slate-400 truncate flex items-center gap-1.5 mt-0.5">
                     {typingUsers[activeFriend.id] ? (
                       <span className="text-[#1877f2] font-semibold animate-pulse">
                         typing a message...
@@ -496,64 +496,64 @@ export default function MessagesView({
               </div>
 
               {/* Chat Header Actions */}
-              <div className="flex items-center gap-1 sm:gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() => setActiveCallType("voice")}
-                  className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="p-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Start Voice Call"
                 >
-                  <Phone className="w-4 h-4" />
+                  <Phone className="w-5 h-5" />
                 </button>
 
                 <button
                   onClick={() => setActiveCallType("video")}
-                  className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="p-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Start Video Call"
                 >
-                  <Video className="w-4 h-4" />
+                  <Video className="w-5 h-5" />
                 </button>
 
                 <button
                   onClick={() => setIsChatSearchOpen(!isChatSearchOpen)}
-                  className={`p-2 rounded-xl transition cursor-pointer ${
+                  className={`p-2.5 rounded-xl transition cursor-pointer ${
                     isChatSearchOpen
                       ? "bg-[#1877f2]/10 text-[#1877f2]"
                       : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                   title="Search in conversation"
                 >
-                  <Search className="w-4 h-4" />
+                  <Search className="w-5 h-5" />
                 </button>
 
                 <button
                   onClick={() => setShowDetailsPanel(!showDetailsPanel)}
-                  className={`p-2 rounded-xl transition cursor-pointer ${
+                  className={`p-2.5 rounded-xl transition cursor-pointer ${
                     showDetailsPanel
                       ? "bg-[#1877f2]/10 text-[#1877f2]"
                       : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                   title="Conversation Details"
                 >
-                  <Info className="w-4 h-4" />
+                  <Info className="w-5 h-5" />
                 </button>
               </div>
             </header>
 
             {/* In-Chat Search Bar Toggle */}
             {isChatSearchOpen && (
-              <div className="px-4 py-2 bg-slate-100/90 dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs animate-in slide-in-from-top-2">
-                <div className="flex items-center gap-2 flex-1 max-w-md">
-                  <Search className="w-3.5 h-3.5 text-slate-400" />
+              <div className="px-4 py-2.5 bg-slate-100/90 dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-sm animate-in slide-in-from-top-2">
+                <div className="flex items-center gap-2.5 flex-1 max-w-md">
+                  <Search className="w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     placeholder="Find in conversation..."
                     value={searchInChat}
                     onChange={(e) => setSearchInChat(e.target.value)}
-                    className="w-full bg-transparent border-none text-xs text-slate-800 dark:text-slate-200 focus:outline-none"
+                    className="w-full bg-transparent border-none text-sm text-slate-800 dark:text-slate-200 focus:outline-none"
                     autoFocus
                   />
                 </div>
-                <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
                   <span>{currentMessages.length} results</span>
                   <button
                     onClick={() => {
@@ -562,17 +562,17 @@ export default function MessagesView({
                     }}
                     className="p-1 hover:text-slate-700 dark:hover:text-slate-200"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             )}
 
             {/* Message Thread Scroll Area */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-3.5 scrollbar-thin">
+            <div className="flex-1 p-5 overflow-y-auto space-y-4 scrollbar-thin">
               {/* Date Divider */}
               <div className="flex items-center justify-center my-2">
-                <span className="px-3 py-1 bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 text-[10px] font-semibold rounded-full uppercase tracking-wider">
+                <span className="px-3.5 py-1 bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold rounded-full uppercase tracking-wider">
                   Today
                 </span>
               </div>
@@ -582,12 +582,12 @@ export default function MessagesView({
                   <img
                     src={activeFriend.avatar}
                     alt=""
-                    className="w-16 h-16 rounded-3xl object-cover mx-auto mb-3 shadow-sm ring-2 ring-[#1877f2]/20"
+                    className="w-20 h-20 rounded-3xl object-cover mx-auto mb-3.5 shadow-sm ring-4 ring-[#1877f2]/20"
                   />
-                  <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm">
+                  <h3 className="font-bold text-slate-700 dark:text-slate-200 text-base">
                     {activeFriend.name}
                   </h3>
-                  <p className="text-xs max-w-xs mx-auto mt-1 text-slate-400">
+                  <p className="text-sm max-w-xs mx-auto mt-1.5 text-slate-400">
                     {activeFriend.bio || "Connected on Kite. Say hello or send an audio spark!"}
                   </p>
                 </div>
@@ -599,7 +599,7 @@ export default function MessagesView({
                   return (
                     <div
                       key={msg.id}
-                      className={`flex items-end gap-2 group ${
+                      className={`flex items-end gap-2.5 group ${
                         isMe ? "justify-end" : "justify-start"
                       }`}
                     >
@@ -607,26 +607,26 @@ export default function MessagesView({
                         <img
                           src={activeFriend.avatar}
                           alt=""
-                          className="w-7 h-7 rounded-full object-cover shrink-0 mb-1"
+                          className="w-8 h-8 rounded-full object-cover shrink-0 mb-1"
                         />
                       )}
 
-                      <div className="relative max-w-[78%] sm:max-w-[70%]">
+                      <div className="relative max-w-[82%] sm:max-w-[72%]">
                         {/* Audio Spark Bubble */}
                         {isAudioSpark ? (
                           <div
-                            className={`p-3 rounded-2xl ${
+                            className={`p-3.5 rounded-2xl ${
                               isMe
                                 ? "bg-[#1877f2] text-white rounded-br-xs shadow-xs"
                                 : "bg-white dark:bg-slate-850 text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800 rounded-bl-xs"
                             }`}
                           >
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3.5">
                               <button
                                 onClick={() =>
                                   setPlayingAudioId(playingAudioId === msg.id ? null : msg.id)
                                 }
-                                className={`w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer ${
+                                className={`w-9 h-9 rounded-full flex items-center justify-center transition cursor-pointer ${
                                   isMe
                                     ? "bg-white/20 hover:bg-white/30 text-white"
                                     : "bg-[#1877f2] hover:bg-[#166fe5] text-white"
@@ -639,12 +639,12 @@ export default function MessagesView({
                                 )}
                               </button>
 
-                              <div className="flex-1 min-w-[120px]">
-                                <p className="text-xs font-bold leading-tight">
+                              <div className="flex-1 min-w-[140px]">
+                                <p className="text-sm font-bold leading-tight">
                                   Audio Spark Note
                                 </p>
                                 {/* Soundwave Simulation */}
-                                <div className="flex items-center gap-1 h-4 mt-1">
+                                <div className="flex items-center gap-1 h-5 mt-1.5">
                                   {[35, 60, 90, 45, 80, 100, 70, 50, 85, 40, 65, 30].map(
                                     (val, idx) => (
                                       <span
@@ -665,23 +665,23 @@ export default function MessagesView({
                                 </div>
                               </div>
                             </div>
-                            <span className="block text-[9px] opacity-75 mt-1 text-right font-mono">
+                            <span className="block text-xs opacity-80 mt-1.5 text-right font-mono">
                               {msg.time}
                             </span>
                           </div>
                         ) : (
                           /* Regular Text Bubble */
                           <div
-                            className={`px-4 py-2.5 rounded-2xl text-xs ${
+                            className={`px-4.5 py-3 rounded-2xl text-sm sm:text-[15px] ${
                               isMe
                                 ? "bg-[#1877f2] text-white rounded-br-xs shadow-xs"
                                 : "bg-white dark:bg-slate-850 text-slate-900 dark:text-slate-100 border border-slate-200/70 dark:border-slate-800 rounded-bl-xs"
                             }`}
                           >
                             <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-                            <div className="flex items-center justify-end gap-1 mt-1 text-[9px] opacity-75 font-mono">
+                            <div className="flex items-center justify-end gap-1.5 mt-1.5 text-xs opacity-80 font-mono">
                               <span>{msg.time}</span>
-                              {isMe && <CheckCheck className="w-3 h-3 stroke-[2.5]" />}
+                              {isMe && <CheckCheck className="w-3.5 h-3.5 stroke-[2.5]" />}
                             </div>
                           </div>
                         )}
@@ -693,16 +693,17 @@ export default function MessagesView({
 
               {/* Typing indicator bubble */}
               {typingUsers[activeFriend.id] && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <img
                     src={activeFriend.avatar}
                     alt=""
-                    className="w-7 h-7 rounded-full object-cover shrink-0"
+                    className="w-8 h-8 rounded-full object-cover shrink-0"
                   />
-                  <div className="bg-white dark:bg-slate-850 px-3.5 py-2 rounded-2xl rounded-bl-xs border border-slate-200/70 dark:border-slate-800 flex items-center gap-1.5 shadow-xs">
-                    <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                    <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                    <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce"></span>
+                  <div className="bg-white dark:bg-slate-850 px-4 py-2.5 rounded-2xl rounded-bl-xs border border-slate-200/70 dark:border-slate-800 flex items-center gap-2 shadow-xs">
+                    <span className="w-2 h-2 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-2 h-2 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-2 h-2 bg-[#1877f2] rounded-full animate-bounce"></span>
+                    <span className="text-xs text-slate-400 font-medium ml-1">typing...</span>
                   </div>
                 </div>
               )}
@@ -712,28 +713,28 @@ export default function MessagesView({
 
             {/* Recording Voice Note Banner */}
             {isRecordingVoice && (
-              <div className="px-4 py-3 bg-rose-50 dark:bg-rose-950/40 border-t border-rose-200 dark:border-rose-900/40 flex items-center justify-between text-xs animate-in slide-in-from-bottom-2">
+              <div className="px-5 py-3.5 bg-rose-50 dark:bg-rose-950/40 border-t border-rose-200 dark:border-rose-900/40 flex items-center justify-between text-sm animate-in slide-in-from-bottom-2">
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 rounded-full bg-rose-500 animate-ping"></span>
                   <span className="font-bold text-rose-600 dark:text-rose-400">
                     Recording Audio Spark...
                   </span>
-                  <span className="font-mono text-xs font-semibold text-rose-700 dark:text-rose-300">
+                  <span className="font-mono text-sm font-semibold text-rose-700 dark:text-rose-300">
                     {formatTimer(voiceTimer)}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => setIsRecordingVoice(false)}
-                    className="px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-300 cursor-pointer"
+                    className="px-3.5 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-300 cursor-pointer text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleFinishVoiceNote}
-                    className="px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg flex items-center gap-1 cursor-pointer"
+                    className="px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer text-xs"
                   >
-                    <Send className="w-3 h-3" />
+                    <Send className="w-3.5 h-3.5" />
                     Send Note
                   </button>
                 </div>
@@ -742,15 +743,15 @@ export default function MessagesView({
 
             {/* Attachments Dropdown Menu */}
             {isAttachMenuOpen && (
-              <div className="absolute bottom-16 left-4 z-30 p-2 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 space-y-1 w-64 animate-in fade-in zoom-in-95">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-1">
+              <div className="absolute bottom-18 left-4 z-30 p-2.5 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 space-y-1 w-72 animate-in fade-in zoom-in-95">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 py-1">
                   Send Sample Media
                 </p>
                 {SAMPLE_ATTACHMENTS.map((s, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendAttachment(s)}
-                    className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left cursor-pointer text-xs text-slate-700 dark:text-slate-300"
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left cursor-pointer text-xs sm:text-sm text-slate-700 dark:text-slate-300"
                   >
                     <ImageIcon className="w-4 h-4 text-[#1877f2] shrink-0" />
                     <span className="truncate flex-1 font-medium">{s.name}</span>
@@ -761,13 +762,13 @@ export default function MessagesView({
 
             {/* Emoji Picker Popover */}
             {isEmojiPickerOpen && (
-              <div className="absolute bottom-16 left-12 z-30 p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 w-64 animate-in fade-in zoom-in-95">
-                <div className="grid grid-cols-6 gap-1.5 text-lg">
+              <div className="absolute bottom-18 left-14 z-30 p-3.5 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 w-72 animate-in fade-in zoom-in-95">
+                <div className="grid grid-cols-6 gap-2 text-xl">
                   {EMOJI_LIST.map((emoji, i) => (
                     <button
                       key={i}
                       onClick={() => setMessageText((prev) => prev + emoji)}
-                      className="p-1 hover:scale-125 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition text-center cursor-pointer"
+                      className="p-1.5 hover:scale-125 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition text-center cursor-pointer"
                     >
                       {emoji}
                     </button>
@@ -777,40 +778,40 @@ export default function MessagesView({
             )}
 
             {/* Bottom Message Composer Input Bar */}
-            <footer className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 shrink-0">
-              <form onSubmit={handleSend} className="flex items-center gap-2">
+            <footer className="p-3.5 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 shrink-0">
+              <form onSubmit={handleSend} className="flex items-center gap-2.5">
                 {/* Media Attachment Button */}
                 <button
                   type="button"
                   onClick={() => setIsAttachMenuOpen(!isAttachMenuOpen)}
-                  className="p-2 rounded-xl text-slate-500 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="p-2.5 rounded-xl text-slate-500 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Attach Media"
                 >
-                  <Paperclip className="w-4 h-4" />
+                  <Paperclip className="w-5 h-5" />
                 </button>
 
                 {/* Emoji Picker Button */}
                 <button
                   type="button"
                   onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
-                  className="p-2 rounded-xl text-slate-500 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="p-2.5 rounded-xl text-slate-500 hover:text-[#1877f2] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Insert Emoji"
                 >
-                  <Smile className="w-4 h-4" />
+                  <Smile className="w-5 h-5" />
                 </button>
 
                 {/* Voice Note Recording Button */}
                 <button
                   type="button"
                   onClick={() => setIsRecordingVoice(!isRecordingVoice)}
-                  className={`p-2 rounded-xl transition cursor-pointer ${
+                  className={`p-2.5 rounded-xl transition cursor-pointer ${
                     isRecordingVoice
                       ? "bg-rose-500 text-white"
                       : "text-slate-500 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                   title="Record Voice Note"
                 >
-                  <Mic className="w-4 h-4" />
+                  <Mic className="w-5 h-5" />
                 </button>
 
                 {/* Text Input */}
@@ -819,25 +820,25 @@ export default function MessagesView({
                   placeholder={`Message ${activeFriend.name}...`}
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800/80 rounded-2xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/20 focus:border-[#1877f2] border border-slate-200/60 dark:border-slate-700/60 transition"
+                  className="flex-1 px-4.5 py-2.5 bg-slate-100 dark:bg-slate-800/80 rounded-2xl text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/20 focus:border-[#1877f2] border border-slate-200/60 dark:border-slate-700/60 transition"
                 />
 
                 {/* Send or Quick Thumbs-up */}
                 {messageText.trim() ? (
                   <button
                     type="submit"
-                    className="p-2.5 bg-[#1877f2] hover:bg-[#166fe5] text-white rounded-xl shadow-xs transition cursor-pointer"
+                    className="p-3 bg-[#1877f2] hover:bg-[#166fe5] text-white rounded-xl shadow-xs transition cursor-pointer"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-4.5 h-4.5" />
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={handleQuickLike}
-                    className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-[#1877f2] transition cursor-pointer"
+                    className="p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-[#1877f2] transition cursor-pointer"
                     title="Send Like"
                   >
-                    <ThumbsUp className="w-4 h-4 fill-current" />
+                    <ThumbsUp className="w-5 h-5 fill-current" />
                   </button>
                 )}
               </form>
@@ -848,7 +849,7 @@ export default function MessagesView({
 
       {/* RIGHT PANE: Collapsible Conversation Details Panel */}
       {showDetailsPanel && activeFriend && (
-        <aside className="w-72 lg:w-80 shrink-0 border-l border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col h-full overflow-y-auto p-4 space-y-5 animate-in slide-in-from-right-2 duration-200 scrollbar-thin">
+        <aside className="w-76 lg:w-84 shrink-0 border-l border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col h-full overflow-y-auto p-4.5 space-y-5 animate-in slide-in-from-right-2 duration-200 scrollbar-thin">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -864,34 +865,34 @@ export default function MessagesView({
 
           {/* Profile Card */}
           <div className="text-center">
-            <div className="relative inline-block mx-auto mb-2.5">
+            <div className="relative inline-block mx-auto mb-3">
               <img
                 src={activeFriend.avatar}
                 alt={activeFriend.name}
-                className="w-20 h-20 rounded-3xl object-cover ring-2 ring-slate-200 dark:ring-slate-700 shadow-sm mx-auto"
+                className="w-22 h-22 rounded-3xl object-cover ring-2 ring-slate-200 dark:ring-slate-700 shadow-sm mx-auto"
               />
               {activeFriend.online && (
-                <span className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
+                <span className="absolute bottom-0 right-0 w-4.5 h-4.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
               )}
             </div>
 
-            <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+            <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">
               {activeFriend.name}
             </h4>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
               {activeFriend.work || "Kite Circle Member"}
             </p>
             {activeFriend.bio && (
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 px-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 px-2 leading-relaxed">
                 {activeFriend.bio}
               </p>
             )}
 
             <button
               onClick={() => onOpenProfile?.(activeFriend)}
-              className="mt-3 w-full py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5"
+              className="mt-3.5 w-full py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer flex items-center justify-center gap-2"
             >
-              <Users className="w-3.5 h-3.5 text-[#1877f2]" />
+              <Users className="w-4 h-4 text-[#1877f2]" />
               View Profile
             </button>
           </div>
@@ -900,7 +901,7 @@ export default function MessagesView({
           <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs sm:text-sm text-slate-700 dark:text-slate-300 cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
                 {isMuted ? (
@@ -910,32 +911,32 @@ export default function MessagesView({
                 )}
                 <span>Mute Notifications</span>
               </div>
-              <span className="text-[10px] font-semibold text-slate-400">
+              <span className="text-xs font-semibold text-slate-400">
                 {isMuted ? "Muted" : "On"}
               </span>
             </button>
 
             <button
               onClick={() => setIsPinned(!isPinned)}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs sm:text-sm text-slate-700 dark:text-slate-300 cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
                 <Pin className={`w-4 h-4 ${isPinned ? "text-[#1877f2]" : "text-slate-400"}`} />
                 <span>Pin Conversation</span>
               </div>
-              <span className="text-[10px] font-semibold text-slate-400">
+              <span className="text-xs font-semibold text-slate-400">
                 {isPinned ? "Pinned" : "Off"}
               </span>
             </button>
           </div>
 
           {/* Shared Media Section */}
-          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
             <div className="flex items-center justify-between">
-              <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Shared Media
               </h5>
-              <span className="text-[10px] text-[#1877f2] font-semibold cursor-pointer hover:underline">
+              <span className="text-xs text-[#1877f2] font-semibold cursor-pointer hover:underline">
                 View All
               </span>
             </div>
@@ -953,23 +954,23 @@ export default function MessagesView({
           </div>
 
           {/* Mutual Friends */}
-          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-            <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Mutual Circle Members ({activeFriend.mutualFriends || 8})
             </h5>
             <div className="space-y-2">
               {friends.slice(0, 3).map((f) => (
-                <div key={f.id} className="flex items-center gap-2.5 text-xs">
+                <div key={f.id} className="flex items-center gap-2.5 text-xs sm:text-sm">
                   <img
                     src={f.avatar}
                     alt={f.name}
-                    className="w-7 h-7 rounded-xl object-cover"
+                    className="w-8 h-8 rounded-xl object-cover"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                       {f.name}
                     </p>
-                    <p className="text-[10px] text-slate-400 truncate">
+                    <p className="text-xs text-slate-400 truncate">
                       {f.online ? "Online" : "Offline"}
                     </p>
                   </div>
@@ -982,16 +983,16 @@ export default function MessagesView({
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-1">
             <button
               onClick={() => alert(`Cleared message history for ${activeFriend.name}.`)}
-              className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+              className="w-full flex items-center gap-2 p-2.5 rounded-xl text-xs sm:text-sm text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-4 h-4" />
               <span>Clear Chat History</span>
             </button>
             <button
               onClick={() => alert(`Reported conversation with ${activeFriend.name}.`)}
-              className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+              className="w-full flex items-center gap-2 p-2.5 rounded-xl text-xs sm:text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
             >
-              <Shield className="w-3.5 h-3.5" />
+              <Shield className="w-4 h-4" />
               <span>Block & Report</span>
             </button>
           </div>
@@ -1004,34 +1005,34 @@ export default function MessagesView({
           <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-[#1877f2]" />
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                <MessageSquare className="w-5 h-5 text-[#1877f2]" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
                   New Message
                 </h3>
               </div>
               <button
                 onClick={() => setIsNewChatModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-3 border-b border-slate-200/60 dark:border-slate-800">
+            <div className="p-3.5 border-b border-slate-200/60 dark:border-slate-800">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search contacts..."
                   value={newChatSearch}
                   onChange={(e) => setNewChatSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/20"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#1877f2]/20"
                   autoFocus
                 />
               </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto p-2 space-y-1 divide-y divide-slate-100 dark:divide-slate-800/40">
+            <div className="max-h-80 overflow-y-auto p-2.5 space-y-1 divide-y divide-slate-100 dark:divide-slate-800/40">
               {modalFriendsList.map((f) => (
                 <button
                   key={f.id}
@@ -1039,32 +1040,153 @@ export default function MessagesView({
                     onSelectFriend(f);
                     setIsNewChatModalOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition text-left cursor-pointer"
+                  className="w-full flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition text-left cursor-pointer"
                 >
                   <div className="relative">
                     <img
                       src={f.avatar}
                       alt={f.name}
-                      className="w-10 h-10 rounded-2xl object-cover"
+                      className="w-11 h-11 rounded-2xl object-cover"
                     />
                     {f.online && (
                       <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
                       {f.name}
                     </p>
-                    <p className="text-[10px] text-slate-400 truncate">
+                    <p className="text-xs text-slate-400 truncate mt-0.5">
                       {f.work || "Circle Member"}
                     </p>
                   </div>
-                  <span className="text-[10px] font-bold text-[#1877f2] bg-[#1877f2]/10 px-2 py-1 rounded-lg">
+                  <span className="text-xs font-bold text-[#1877f2] bg-[#1877f2]/10 px-2.5 py-1 rounded-lg">
                     Chat
                   </span>
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* SIMULATED VOICE CALL MODAL */}
+      {activeCallType === "voice" && activeFriend && (
+        <div className="absolute inset-0 z-40 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-between p-8 text-white animate-in fade-in duration-200">
+          <div className="text-center pt-8">
+            <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-semibold">
+              Kite Voice Spark
+            </span>
+            <h2 className="text-3xl font-bold mt-4">{activeFriend.name}</h2>
+            <p className="text-base font-mono text-slate-400 mt-1.5">
+              Connected · {formatTimer(callDuration)}
+            </p>
+          </div>
+
+          {/* Pulsing Avatar */}
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full bg-[#1877f2]/30 absolute -inset-2 animate-ping opacity-50"></div>
+            <img
+              src={activeFriend.avatar}
+              alt={activeFriend.name}
+              className="w-32 h-32 rounded-full object-cover ring-4 ring-[#1877f2] shadow-2xl relative z-10"
+            />
+          </div>
+
+          {/* Call Controls */}
+          <div className="flex items-center gap-4 pb-8">
+            <button
+              onClick={() => setIsMicMuted(!isMicMuted)}
+              className={`p-4 rounded-full transition cursor-pointer ${
+                isMicMuted ? "bg-rose-500 text-white" : "bg-white/20 hover:bg-white/30 text-white"
+              }`}
+              title={isMicMuted ? "Unmute" : "Mute"}
+            >
+              {isMicMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+            </button>
+
+            <button
+              onClick={() => setActiveCallType(null)}
+              className="p-4.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg transition cursor-pointer"
+              title="End Call"
+            >
+              <PhoneOff className="w-7 h-7" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* SIMULATED VIDEO CALL MODAL */}
+      {activeCallType === "video" && activeFriend && (
+        <div className="absolute inset-0 z-40 bg-slate-950 flex flex-col justify-between p-5 text-white animate-in fade-in duration-200">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between z-10">
+            <div className="flex items-center gap-3.5">
+              <img
+                src={activeFriend.avatar}
+                alt=""
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-white"
+              />
+              <div>
+                <h3 className="text-base font-bold">{activeFriend.name}</h3>
+                <p className="text-xs font-mono text-emerald-400">
+                  HD Video · {formatTimer(callDuration)}
+                </p>
+              </div>
+            </div>
+            <span className="px-3 py-1 bg-black/40 backdrop-blur rounded-full text-xs font-semibold text-slate-300">
+              Encrypted Connection
+            </span>
+          </div>
+
+          {/* Simulated Video Streams */}
+          <div className="relative flex-1 rounded-2xl overflow-hidden my-3 bg-slate-900 flex items-center justify-center">
+            <img
+              src={activeFriend.coverPhoto || activeFriend.avatar}
+              alt=""
+              className="w-full h-full object-cover opacity-80"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+
+            {/* Picture in picture self view */}
+            <div className="absolute bottom-4 right-4 w-32 h-40 bg-slate-800 rounded-xl overflow-hidden border-2 border-white/40 shadow-xl">
+              <img
+                src={currentUser?.avatar}
+                alt="You"
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute bottom-1.5 left-2 text-xs font-bold bg-black/60 px-1.5 rounded text-white">
+                You
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom Controls */}
+          <div className="flex items-center justify-center gap-4 py-2 z-10">
+            <button
+              onClick={() => setIsMicMuted(!isMicMuted)}
+              className={`p-3.5 rounded-full transition cursor-pointer ${
+                isMicMuted ? "bg-rose-500 text-white" : "bg-white/20 hover:bg-white/30 text-white"
+              }`}
+            >
+              {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+            </button>
+
+            <button
+              onClick={() => setIsVideoMuted(!isVideoMuted)}
+              className={`p-3.5 rounded-full transition cursor-pointer ${
+                isVideoMuted ? "bg-rose-500 text-white" : "bg-white/20 hover:bg-white/30 text-white"
+              }`}
+            >
+              {isVideoMuted ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+            </button>
+
+            <button
+              onClick={() => setActiveCallType(null)}
+              className="p-4 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg transition cursor-pointer"
+            >
+              <PhoneOff className="w-6 h-6" />
+            </button>
           </div>
         </div>
       )}
