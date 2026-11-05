@@ -167,18 +167,18 @@ export default function PostCard({
 
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100 hover:text-[#1877f2] cursor-pointer transition">
+              <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-slate-100 hover:text-[#1877f2] cursor-pointer transition">
                 {post.author?.name}
               </span>
 
               {post.author?.role && (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   {post.author.role}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
               <span>{post.timestamp}</span>
               <span>•</span>
               {post.privacy === "public" ? (
@@ -208,7 +208,7 @@ export default function PostCard({
             >
               <button
                 onClick={() => onToggleSave(post.id)}
-                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer"
+                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-semibold text-slate-800 dark:text-slate-200 cursor-pointer"
               >
                 <Bookmark className="w-4 h-4 text-[#1877f2]" />
                 <span>{post.isSaved ? "Remove from Saved" : "Save Post"}</span>
@@ -219,7 +219,7 @@ export default function PostCard({
                   navigator.clipboard.writeText(window.location.href);
                   alert("Link copied!");
                 }}
-                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer"
+                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-semibold text-slate-800 dark:text-slate-200 cursor-pointer"
               >
                 <Link className="w-4 h-4 text-slate-500" />
                 <span>Copy Link</span>
