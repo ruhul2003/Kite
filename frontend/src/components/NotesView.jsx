@@ -167,13 +167,13 @@ export default function NotesView({
           </div>
 
           {/* Title */}
-          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug mb-1.5">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug mb-1.5">
             {note.title}
           </h3>
 
           {/* Content */}
           {note.content && (
-            <p className="text-xs text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed line-clamp-4 mb-3">
+            <p className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed line-clamp-4 mb-3">
               {note.content}
             </p>
           )}
@@ -188,7 +188,7 @@ export default function NotesView({
                     e.stopPropagation();
                     onToggleChecklistItem?.(note.id || note._id, item.id, !item.completed);
                   }}
-                  className="flex items-center gap-2 text-xs group/item cursor-pointer select-none"
+                  className="flex items-center gap-2 text-sm group/item cursor-pointer select-none"
                 >
                   <span
                     className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition shrink-0 ${
@@ -209,7 +209,7 @@ export default function NotesView({
                 </div>
               ))}
               {note.checklist.length > 5 && (
-                <p className="text-[10px] text-slate-400 pl-5">
+                <p className="text-xs text-slate-400 pl-5">
                   +{note.checklist.length - 5} more checklist items
                 </p>
               )}
@@ -226,7 +226,7 @@ export default function NotesView({
                     e.stopPropagation();
                     setSelectedTag(tag);
                   }}
-                  className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[10px] font-semibold text-slate-600 dark:text-slate-400 transition cursor-pointer"
+                  className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-slate-400 transition cursor-pointer"
                 >
                   #{tag}
                 </button>
@@ -236,7 +236,7 @@ export default function NotesView({
         </div>
 
         {/* Card Footer Actions & Timestamp */}
-        <div className="pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[10px] text-slate-400">
+        <div className="pt-2.5 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs text-slate-400">
           <span>
             {note.updatedAt
               ? new Date(note.updatedAt).toLocaleDateString([], { month: "short", day: "numeric" })
