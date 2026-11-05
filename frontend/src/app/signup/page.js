@@ -147,10 +147,10 @@ export default function SignupPage() {
         <div className="w-full max-w-lg bg-white dark:bg-[#242526] rounded-2xl shadow-xl border border-zinc-200/90 dark:border-zinc-700/80 overflow-hidden">
           {/* Header */}
           <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700/60">
-            <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
               Create a new account
             </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
               It&apos;s quick and easy. All accounts are saved to MongoDB Atlas (Kite.users).
             </p>
           </div>
@@ -172,7 +172,7 @@ export default function SignupPage() {
                   placeholder="First name"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
+                  className="w-full px-4 py-3 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
                 />
                 <input
                   type="text"
@@ -180,7 +180,7 @@ export default function SignupPage() {
                   placeholder="Surname"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
+                  className="w-full px-4 py-3 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
                 />
               </div>
 
@@ -192,7 +192,7 @@ export default function SignupPage() {
                   placeholder="Email address"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
+                  className="w-full px-4 py-3 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition"
                 />
               </div>
 
@@ -204,7 +204,7 @@ export default function SignupPage() {
                   placeholder="New password (min 6 characters)"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition pr-10"
+                  className="w-full px-4 py-3 bg-zinc-50 dark:bg-[#3a3b3c] border border-zinc-200 dark:border-zinc-700 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-[#1877f2] focus:bg-white dark:focus:bg-[#242526] transition pr-10"
                 />
                 <button
                   type="button"
@@ -217,7 +217,7 @@ export default function SignupPage() {
 
               {/* Date of Birth */}
               <div>
-                <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1">
+                <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-1">
                   Date of birth
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -253,7 +253,7 @@ export default function SignupPage() {
 
               {/* Gender */}
               <div>
-                <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1">
+                <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-1">
                   Gender
                 </label>
                 <div className="grid grid-cols-3 gap-2 text-xs">
@@ -292,7 +292,7 @@ export default function SignupPage() {
 
               {/* Avatar Preset Choice */}
               <div>
-                <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-1.5">
                   Select Profile Avatar
                 </label>
                 <div className="flex items-center gap-2 overflow-x-auto py-1">
