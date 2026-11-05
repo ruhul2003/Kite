@@ -141,10 +141,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
               K
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight">
+              <h2 className="text-2xl font-bold tracking-tight">
                 {mode === "signup" ? "Create a Kite Account" : mode === "login" ? "Log Into Kite" : "Guest Access"}
               </h2>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {mode === "signup" ? "It's quick and easy." : mode === "login" ? "Welcome back! Good to see you." : "Explore without signing up"}
               </p>
             </div>
@@ -162,7 +162,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
           <button
             type="button"
             onClick={() => { setMode("signup"); setError(""); }}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
               mode === "signup"
                 ? "bg-white dark:bg-[#242526] text-[#1877f2] shadow-sm"
                 : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
@@ -174,7 +174,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
           <button
             type="button"
             onClick={() => { setMode("login"); setError(""); }}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
               mode === "login"
                 ? "bg-white dark:bg-[#242526] text-[#1877f2] shadow-sm"
                 : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
@@ -186,7 +186,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onL
           <button
             type="button"
             onClick={() => { setMode("guest"); setError(""); }}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
               mode === "guest"
                 ? "bg-white dark:bg-[#242526] text-amber-500 shadow-sm"
                 : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
