@@ -266,7 +266,7 @@ export default function PostCard({
                 {isPlayingAudio ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5 fill-current" />}
               </button>
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
                   {post.audioSpark.title}
                 </p>
                 <p className="text-[10px] text-slate-400">
@@ -503,14 +503,14 @@ export default function PostCard({
                   />
                   <div className="flex-1">
                     <div className="bg-white dark:bg-slate-850 px-3.5 py-2 rounded-2xl inline-block max-w-[90%] border border-slate-200/60 dark:border-slate-800">
-                      <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
                         {comment.author?.name}
                       </p>
-                      <p className="text-xs text-slate-700 dark:text-slate-300 mt-0.5 whitespace-pre-wrap">
+                      <p className="text-sm text-slate-700 dark:text-slate-300 mt-0.5 whitespace-pre-wrap">
                         {comment.content}
                       </p>
                     </div>
-                    <div className="flex items-center gap-3 px-2 mt-1 text-[10px] text-slate-400 font-semibold">
+                    <div className="flex items-center gap-3 px-2 mt-1 text-xs text-slate-400 font-semibold">
                       <button className="hover:underline cursor-pointer">Like</button>
                       <button className="hover:underline cursor-pointer">Reply</button>
                       <span>{comment.timestamp}</span>
@@ -533,7 +533,7 @@ export default function PostCard({
                   placeholder="Write a comment..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="w-full bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
                 />
                 <button
                   type="submit"
