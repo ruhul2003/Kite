@@ -70,10 +70,10 @@ export default function FloatingMessenger({
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+                  <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
                     {friend.name}
                   </p>
-                  <p className="text-[10px] text-slate-400 truncate">
+                  <p className="text-xs text-slate-400 truncate">
                     {typingUsers[friend.id] ? (
                       <span className="text-[#1877f2] font-semibold animate-pulse">Typing...</span>
                     ) : friend.online ? (
@@ -107,12 +107,12 @@ export default function FloatingMessenger({
             {/* Chat Body & Input */}
             {!isMinimized && (
               <>
-                <div className="flex-1 p-3 overflow-y-auto space-y-2 text-xs bg-slate-50/40 dark:bg-slate-950/40 scrollbar-thin">
+                <div className="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-sm bg-slate-50/40 dark:bg-slate-950/40 scrollbar-thin">
                   {messages.length === 0 ? (
                     <div className="text-center py-8 text-slate-400">
-                      <MessageSquare className="w-8 h-8 mx-auto mb-2 text-slate-400 opacity-60" />
-                      <p className="font-semibold text-slate-700 dark:text-slate-300">{friend.name}</p>
-                      <p className="text-[11px] mt-1">Send a message to start the conversation.</p>
+                      <MessageSquare className="w-9 h-9 mx-auto mb-2 text-slate-400 opacity-60" />
+                      <p className="font-semibold text-slate-700 dark:text-slate-300 text-sm">{friend.name}</p>
+                      <p className="text-xs mt-1">Send a message to start the conversation.</p>
                     </div>
                   ) : (
                     messages.map((m) => {
@@ -120,24 +120,24 @@ export default function FloatingMessenger({
                       return (
                         <div
                           key={m.id}
-                          className={`flex items-end gap-1.5 ${isMe ? "justify-end" : "justify-start"}`}
+                          className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"}`}
                         >
                           {!isMe && (
                             <img
                               src={friend.avatar}
                               alt=""
-                              className="w-6 h-6 rounded-full object-cover shrink-0 mb-0.5"
+                              className="w-7 h-7 rounded-full object-cover shrink-0 mb-0.5"
                             />
                           )}
                           <div
-                            className={`px-3 py-2 rounded-2xl max-w-[75%] break-words ${
+                            className={`px-3.5 py-2.5 rounded-2xl max-w-[78%] break-words text-sm ${
                               isMe
                                 ? "bg-[#1877f2] text-white rounded-br-xs shadow-xs"
                                 : "bg-white dark:bg-slate-850 text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/60 dark:border-slate-700/60"
                             }`}
                           >
                             <p className="leading-snug">{m.text}</p>
-                            <span className="block text-[9px] opacity-75 mt-0.5 text-right font-mono">
+                            <span className="block text-[10px] opacity-80 mt-1 text-right font-mono">
                               {m.time}
                             </span>
                           </div>
@@ -148,13 +148,13 @@ export default function FloatingMessenger({
 
                   {/* Real-time Typing Bubble */}
                   {typingUsers[friend.id] && (
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 pl-1 py-1">
+                    <div className="flex items-center gap-2 text-xs text-slate-400 pl-1 py-1">
                       <div className="flex items-center gap-1 bg-slate-200/70 dark:bg-slate-800 px-2 py-1 rounded-full">
                         <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                         <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                         <span className="w-1.5 h-1.5 bg-[#1877f2] rounded-full animate-bounce"></span>
                       </div>
-                      <span className="text-[10px] text-slate-400 italic">typing...</span>
+                      <span className="text-xs text-slate-400 italic">typing...</span>
                     </div>
                   )}
                 </div>
@@ -162,21 +162,21 @@ export default function FloatingMessenger({
                 {/* Message input */}
                 <form
                   onSubmit={(e) => handleSend(friend.id, e)}
-                  className="p-2.5 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 flex items-center gap-2"
+                  className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 flex items-center gap-2"
                 >
                   <input
                     type="text"
                     placeholder="Type a message..."
                     value={inputs[friend.id] || ""}
                     onChange={(e) => handleInputChange(friend.id, e.target.value)}
-                    className="flex-1 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
+                    className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
                   />
                   <button
                     type="submit"
                     disabled={!inputs[friend.id]?.trim()}
-                    className="p-1.5 bg-[#1877f2] hover:bg-[#166fe5] text-white rounded-full disabled:opacity-30 transition cursor-pointer"
+                    className="p-2 bg-[#1877f2] hover:bg-[#166fe5] text-white rounded-full disabled:opacity-30 transition cursor-pointer"
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-4 h-4" />
                   </button>
                 </form>
               </>
