@@ -323,14 +323,14 @@ export default function NotesView({
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500/10 via-[#1877f2]/10 to-purple-500/10 dark:from-indigo-500/20 dark:via-[#1877f2]/20 dark:to-purple-500/20 border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 mb-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1877f2]/10 text-[#1877f2] dark:text-[#60a5fa] text-xs font-bold mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1877f2]/10 text-[#1877f2] dark:text-[#60a5fa] text-sm font-bold mb-2">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Personal Knowledge & Scratchpad</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               My Notes & Ideas
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-lg">
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1 max-w-lg">
               Capture quick thoughts, manage checklists, store code snippets, or convert notes into Kite feed posts anytime.
             </p>
           </div>
@@ -372,7 +372,7 @@ export default function NotesView({
             placeholder="Search notes, checklists, tags..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#1877f2] shadow-2xs backdrop-blur-sm transition"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#1877f2] shadow-2xs backdrop-blur-sm transition"
           />
         </div>
 
@@ -387,7 +387,7 @@ export default function NotesView({
                   setActiveCategory(cat);
                   setSelectedTag(null);
                 }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                className={`px-3.5 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition cursor-pointer ${
                   isActive
                     ? "bg-[#1877f2] text-white shadow-xs font-bold"
                     : "bg-white/80 dark:bg-slate-900/80 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
