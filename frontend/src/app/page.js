@@ -606,7 +606,7 @@ export default function Home() {
 
               {/* Feed Search Indicator */}
               {searchQuery && (
-                <div className="mb-4 p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-xs text-xs flex items-center justify-between border border-slate-200/80 dark:border-slate-800">
+                <div className="mb-4 p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-xs text-sm flex items-center justify-between border border-slate-200/80 dark:border-slate-800">
                   <span>
                     Searching posts for &ldquo;<strong>{searchQuery}</strong>&rdquo; ({displayedPosts.length} results)
                   </span>
@@ -623,17 +623,17 @@ export default function Home() {
               {displayedPosts.length === 0 ? (
                 <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl text-center shadow-xs border border-slate-200/80 dark:border-slate-800 text-slate-400">
                   <Sparkles className="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                  <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
                     No posts to display
                   </h3>
-                  <p className="text-xs mt-1 max-w-sm mx-auto">
+                  <p className="text-sm mt-1 max-w-sm mx-auto">
                     {searchQuery
                       ? "Try searching for a different keyword."
                       : "Be the first to share an update or photo with your friends!"}
                   </p>
                   <button
                     onClick={() => setIsCreatePostOpen(true)}
-                    className="mt-4 px-5 py-2.5 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-xs rounded-full shadow-xs transition cursor-pointer"
+                    className="mt-4 px-5 py-2.5 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-sm rounded-full shadow-xs transition cursor-pointer"
                   >
                     Create Post
                   </button>
@@ -661,10 +661,10 @@ export default function Home() {
             <div className="space-y-4">
               <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                     Saved Posts
                   </h2>
-                  <p className="text-xs text-slate-400">Posts and links you saved for later</p>
+                  <p className="text-sm text-slate-400">Posts and links you saved for later</p>
                 </div>
                 <Bookmark className="w-6 h-6 text-[#1877f2]" />
               </div>
