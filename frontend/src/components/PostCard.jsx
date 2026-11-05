@@ -241,12 +241,12 @@ export default function PostCard({
 
       {/* Main Text Content or Vibrant Gradient Box */}
       {post.bgGradient ? (
-        <div className={`w-full p-8 font-bold text-center text-xl sm:text-2xl text-white flex items-center justify-center min-h-[200px] ${post.bgGradient}`}>
+        <div className={`w-full p-8 font-bold text-center text-2xl sm:text-3xl text-white flex items-center justify-center min-h-[200px] ${post.bgGradient}`}>
           <p className="max-w-md drop-shadow-md leading-relaxed">{post.content}</p>
         </div>
       ) : (
         post.content && (
-          <div className="px-4 py-2 text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-pre-line leading-relaxed">
+          <div className="px-4 py-2 text-sm sm:text-base text-slate-800 dark:text-slate-200 whitespace-pre-line leading-relaxed">
             {post.content}
           </div>
         )
@@ -340,7 +340,7 @@ export default function PostCard({
           </div>
 
           {/* Formatted Code with line numbers */}
-          <div className="p-3 font-mono text-xs overflow-x-auto text-slate-200 leading-relaxed max-h-72 scrollbar-thin">
+          <div className="p-3 font-mono text-sm overflow-x-auto text-slate-200 leading-relaxed max-h-72 scrollbar-thin">
             <pre className="text-cyan-300">
               <code>{post.codeSnippet.code}</code>
             </pre>
