@@ -250,7 +250,7 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
               <Briefcase className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Careers & Jobs
               </h2>
               <p className="text-xs text-slate-500">
@@ -264,7 +264,7 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button
             onClick={() => setIsPostJobModalOpen(true)}
-            className="w-full sm:w-auto px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Post a Job</span>
@@ -273,7 +273,7 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-sm">
         <button
           onClick={() => setActiveTab("explore")}
           className={`px-3.5 py-2 rounded-xl font-semibold transition cursor-pointer shrink-0 ${
