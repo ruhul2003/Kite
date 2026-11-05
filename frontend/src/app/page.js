@@ -46,7 +46,7 @@ import {
   INITIAL_CONVERSATIONS,
   INITIAL_NOTES,
 } from "../data/mockData";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Sparkles } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
