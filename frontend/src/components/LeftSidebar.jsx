@@ -106,10 +106,10 @@ export default function LeftSidebar({
           <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-[#1877f2] transition">
+          <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-[#1877f2] transition">
             {currentUser?.name}
           </p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
             <span>@{currentUser?.username || "user"}</span>
             {currentUser?.isGuest && (
               <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[8px] font-semibold px-1 rounded border border-slate-200 dark:border-slate-700">
@@ -130,7 +130,7 @@ export default function LeftSidebar({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition text-left text-xs font-semibold cursor-pointer ${
+              className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition text-left text-sm font-semibold cursor-pointer ${
                 isItemActive
                   ? "bg-[#1877f2]/10 text-[#1877f2] font-bold shadow-xs"
                   : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60"
@@ -147,7 +147,7 @@ export default function LeftSidebar({
               </div>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#1877f2]/10 text-[#1877f2]">
+                <span className="text-xs font-bold px-1.5 py-0.5 rounded-full bg-[#1877f2]/10 text-[#1877f2]">
                   {item.badge}
                 </span>
               )}
@@ -179,10 +179,10 @@ export default function LeftSidebar({
                 {c.icon}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-[#1877f2] transition">
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-[#1877f2] transition">
                   {c.name}
                 </p>
-                <p className="text-[10px] text-slate-400 truncate">{c.members}</p>
+                <p className="text-xs text-slate-400 truncate">{c.members}</p>
               </div>
             </div>
           ))}
