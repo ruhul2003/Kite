@@ -205,10 +205,10 @@ export default function LoginPage() {
           <div className="w-full max-w-md">
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4">
               <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                   Sign in to Kite
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-sm text-slate-400 mt-0.5">
                   Enter your account details to continue
                 </p>
               </div>
@@ -227,7 +227,7 @@ export default function LoginPage() {
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2] transition"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2] transition"
                   />
                 </div>
 
@@ -238,7 +238,7 @@ export default function LoginPage() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2] transition pr-11"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1877f2] transition pr-11"
                   />
                   <button
                     type="button"
@@ -252,7 +252,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold rounded-xl shadow-xs transition active:scale-[0.99] text-sm cursor-pointer disabled:opacity-50"
+                  className="w-full py-3 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold rounded-xl shadow-xs transition active:scale-[0.99] text-base cursor-pointer disabled:opacity-50"
                 >
                   {isLoading ? "Signing in..." : "Log In"}
                 </button>
