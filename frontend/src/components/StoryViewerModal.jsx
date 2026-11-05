@@ -115,8 +115,8 @@ export default function StoryViewerModal({ story, stories, onClose, onSelectStor
               className="w-10 h-10 rounded-full object-cover ring-2 ring-[#1877f2]"
             />
             <div className="flex-1 min-w-0 text-white">
-              <p className="text-sm font-bold truncate drop-shadow">{story.authorName}</p>
-              <p className="text-[11px] text-white/70 drop-shadow">{story.timestamp || "Active now"}</p>
+              <p className="text-base font-bold truncate drop-shadow">{story.authorName}</p>
+              <p className="text-xs text-white/70 drop-shadow">{story.timestamp || "Active now"}</p>
             </div>
           </div>
         </div>
@@ -124,13 +124,13 @@ export default function StoryViewerModal({ story, stories, onClose, onSelectStor
         {/* Center / Bottom Caption & Reply Bar */}
         <div className="relative z-10 p-4 space-y-3">
           {story.caption && (
-            <p className="text-white text-sm font-medium drop-shadow-lg bg-black/40 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-center">
+            <p className="text-white text-base font-medium drop-shadow-lg bg-black/40 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-center">
               {story.caption}
             </p>
           )}
 
           {/* Quick Reaction Emojis */}
-          <div className="flex items-center justify-center gap-4 text-2xl py-1">
+          <div className="flex items-center justify-center gap-4 text-3xl py-1">
             <button onClick={() => handleReaction("👍")} className="hover:scale-125 transition drop-shadow">👍</button>
             <button onClick={() => handleReaction("❤️")} className="hover:scale-125 transition drop-shadow">❤️</button>
             <button onClick={() => handleReaction("😂")} className="hover:scale-125 transition drop-shadow">😂</button>
@@ -145,7 +145,7 @@ export default function StoryViewerModal({ story, stories, onClose, onSelectStor
               placeholder={`Reply to ${story.authorName}...`}
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
-              className="flex-1 px-4 py-2.5 rounded-full bg-white/20 backdrop-blur-md text-white placeholder-white/70 text-sm border border-white/20 focus:outline-none focus:bg-white/30 transition"
+              className="flex-1 px-4 py-2.5 rounded-full bg-white/20 backdrop-blur-md text-white placeholder-white/70 text-base border border-white/20 focus:outline-none focus:bg-white/30 transition"
             />
             <button
               type="submit"
