@@ -17,14 +17,14 @@ export default function FriendsView({
       {/* Header */}
       <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Friends</h2>
-          <p className="text-xs text-slate-500">Manage connections and new requests</p>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Friends</h2>
+          <p className="text-sm text-slate-500">Manage connections and new requests</p>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
           <button
             onClick={() => setActiveTab("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+            className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition cursor-pointer ${
               activeTab === "all" ? "bg-white dark:bg-slate-900 text-[#1877f2] shadow-xs" : "text-slate-600 dark:text-slate-400"
             }`}
           >
@@ -32,7 +32,7 @@ export default function FriendsView({
           </button>
           <button
             onClick={() => setActiveTab("requests")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+            className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition cursor-pointer ${
               activeTab === "requests" ? "bg-white dark:bg-slate-900 text-[#1877f2] shadow-xs" : "text-slate-600 dark:text-slate-400"
             }`}
           >
@@ -75,13 +75,13 @@ export default function FriendsView({
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => onAcceptRequest(req)}
-                        className="py-1 px-3 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-xs rounded-lg transition cursor-pointer"
+                        className="py-1 px-3 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-sm rounded-lg transition cursor-pointer"
                       >
                         Confirm
                       </button>
                       <button
                         onClick={() => onDeclineRequest(req.id)}
-                        className="py-1 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition cursor-pointer"
+                        className="py-1 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-lg transition cursor-pointer"
                       >
                         Delete
                       </button>
@@ -114,10 +114,10 @@ export default function FriendsView({
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                  <p className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white truncate">
                     {friend.name}
                   </p>
-                  <p className="text-[11px] text-slate-400 truncate">
+                  <p className="text-xs text-slate-400 truncate">
                     {friend.mutualFriends} mutual friends
                   </p>
                 </div>
