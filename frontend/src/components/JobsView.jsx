@@ -496,13 +496,13 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
                       className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-slate-200 dark:border-slate-700"
                     />
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                         {selectedJob.title}
                       </h3>
-                      <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
+                      <p className="text-base font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
                         {selectedJob.company}
                       </p>
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-2">
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400 mt-2">
                         <span className="flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5" />
                           <span>{selectedJob.location}</span>
@@ -535,7 +535,7 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
                   {hasAppliedToSelected ? (
                     <button
                       disabled
-                      className="flex-1 py-2.5 px-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-xs rounded-xl flex items-center justify-center gap-2"
+                      className="flex-1 py-2.5 px-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-sm rounded-xl flex items-center justify-center gap-2"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       <span>Application Submitted</span>
@@ -581,10 +581,10 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
 
                 {/* Job Description */}
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">
                     About the Role
                   </h4>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                  <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
                     {selectedJob.description}
                   </p>
                 </div>
@@ -592,10 +592,10 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
                 {/* Key Requirements */}
                 {selectedJob.requirements?.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">
                       Key Qualifications
                     </h4>
-                    <ul className="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                    <ul className="space-y-1.5 text-sm sm:text-base text-slate-700 dark:text-slate-300">
                       {selectedJob.requirements.map((req, i) => (
                         <li key={i} className="flex items-start gap-2">
                           <span className="text-[#1877f2] font-bold mt-0.5">•</span>
@@ -609,7 +609,7 @@ export default function JobsView({ currentUser, onOpenChatWithUser }) {
                 {/* Skills Tags */}
                 {selectedJob.skills?.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">
                       Skills & Tech Stack
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
