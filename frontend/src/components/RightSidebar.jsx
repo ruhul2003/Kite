@@ -49,7 +49,7 @@ export default function RightSidebar({
       {friendRequests && friendRequests.length > 0 && (
         <div className="mb-4 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Friend Requests ({friendRequests.length})
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function RightSidebar({
                     <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                       {req.name}
                     </p>
-                    <p className="text-[10px] text-slate-400 truncate">
+                    <p className="text-xs text-slate-400 truncate">
                       {req.mutualFriends} mutual friends
                     </p>
                   </div>
@@ -99,7 +99,7 @@ export default function RightSidebar({
       <div className="mb-4 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <div className="flex items-center gap-1.5 mb-2.5 text-slate-400">
           <TrendingUp className="w-3.5 h-3.5 text-[#1877f2]" />
-          <p className="text-[10px] font-bold uppercase tracking-wider">
+          <p className="text-xs font-bold uppercase tracking-wider">
             Trending Topics
           </p>
         </div>
@@ -114,7 +114,7 @@ export default function RightSidebar({
                 <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#1877f2] transition">
                   {item.tag}
                 </p>
-                <p className="text-[10px] text-slate-400">{item.category}</p>
+                <p className="text-xs text-slate-400">{item.category}</p>
               </div>
               <span className="text-[10px] font-mono font-medium text-slate-400">
                 {item.posts}
@@ -127,7 +127,7 @@ export default function RightSidebar({
       {/* Active Contacts */}
       <div className="p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Contacts
           </p>
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -159,7 +159,7 @@ export default function RightSidebar({
                   <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-[#1877f2] transition">
                     {friend.name}
                   </p>
-                  <p className="text-[10px] text-slate-400 truncate">
+                  <p className="text-xs text-slate-400 truncate">
                     {friend.online ? "Online" : friend.lastSeen || "Offline"}
                   </p>
                 </div>
