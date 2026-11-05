@@ -81,7 +81,7 @@ export default function ProfileModal({
                       </span>
                     )}
                   </h1>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {currentUser?.friendsCount || 0} friends · {userPosts.length} posts
                   </p>
                 </div>
@@ -91,7 +91,7 @@ export default function ProfileModal({
                 {!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs rounded-xl transition flex items-center gap-2 cursor-pointer"
+                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm rounded-xl transition flex items-center gap-2 cursor-pointer"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                     <span>Edit Profile</span>
@@ -99,7 +99,7 @@ export default function ProfileModal({
                 ) : (
                   <button
                     onClick={handleSaveProfile}
-                    className="px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-xs rounded-xl transition flex items-center gap-2 cursor-pointer"
+                    className="px-4 py-2 bg-[#1877f2] hover:bg-[#166fe5] text-white font-semibold text-sm rounded-xl transition flex items-center gap-2 cursor-pointer"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>Save Changes</span>
@@ -112,40 +112,40 @@ export default function ProfileModal({
             {isEditing ? (
               <form onSubmit={handleSaveProfile} className="space-y-3 pt-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Full Name</label>
+                  <label className="block text-sm font-semibold text-slate-500 mb-1">Full Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
+                    className="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Bio</label>
+                  <label className="block text-sm font-semibold text-slate-500 mb-1">Bio</label>
                   <input
                     type="text"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    className="w-full px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
+                    className="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1">Workplace</label>
+                    <label className="block text-sm font-semibold text-slate-500 mb-1">Workplace</label>
                     <input
                       type="text"
                       value={work}
                       onChange={(e) => setWork(e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
+                      className="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1">Lives in</label>
+                    <label className="block text-sm font-semibold text-slate-500 mb-1">Lives in</label>
                     <input
                       type="text"
                       value={livesIn}
                       onChange={(e) => setLivesIn(e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
+                      className="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#1877f2]"
                     />
                   </div>
                 </div>
